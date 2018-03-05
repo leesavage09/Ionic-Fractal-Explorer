@@ -1,0 +1,11 @@
+<div id="container">
+
+    <div #gradientDisplayContainer id="gradient-display-container">
+        <canvas #gradientDisplay id="gradient-display"></canvas>
+    </div>
+
+    <div #StopMarkerSlider id="stop-markers" (window:resize)="windowResized()" (mousedown)="createStopMarker($event)" (window:mousemove)="move($event);" (window:touchmove)="touchMove($event);">
+        <template #stopMarkers></template>
+    </div>
+
+</div>

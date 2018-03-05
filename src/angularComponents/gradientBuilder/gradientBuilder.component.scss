@@ -1,0 +1,27 @@
+#container {
+    font-size: 0px;
+    display: flex;
+    height: 100%;
+    flex-direction: column;
+
+    #gradient-display-container {
+        height: 0px;
+        width: 100%;
+        flex-shrink: 1;
+        flex-grow: 1;
+        
+        #gradient-display {
+            width: 1px;
+            height:1px;
+        }
+    }
+
+    #stop-markers {
+        height: 20px;
+        width: 100%;
+        background-color: grey;
+        margin: 0;
+        position: relative;
+        cursor: cell;
+    }
+}

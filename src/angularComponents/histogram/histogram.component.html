@@ -1,0 +1,12 @@
+<div #container id="container" (window:resize)="windowResized()" (window:mouseup)="mouseup($event)" (window:mousemove)="mousemove($event)" (window:touchend)="touchEnd($event)" (window:touchmove)="touchMove($event)">
+    <div id="histogram-canvas-container">
+        <canvas #histogramCanvas id="histogram-canvas"></canvas>
+    </div>
+    <div id="gradientSlider">
+        <app-colourslider #gradientSlider> </app-colourslider>
+    </div>
+    <div #markerMin id="markerMin" (mousedown)="mousedown($event)" (touchstart)="touchStart($event)"></div>
+    <div #markerMid id="markerMid" (mousedown)="mousedown($event)" (touchstart)="touchStart($event)"></div>
+    <div #markerMax id="markerMax" (mousedown)="mousedown($event)" (touchstart)="touchStart($event)"></div>
+
+</div>

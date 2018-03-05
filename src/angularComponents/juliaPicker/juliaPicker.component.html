@@ -1,0 +1,6 @@
+<div #juliadiv id="juliadiv" (window:mouseup)="mouseup($event)" (window:mousemove)="mousemove($event)" (window:touchend)="touchEnd($event)" (window:touchmove)="touchMove($event)">
+    <div #picker class="picker" (mousedown)="mousedown($event)" (touchstart)="touchStart($event)">
+            <i class="fa fa-crosshairs" aria-hidden="true"></i>
+    </div>
+    <app-fractalView id="mainFractalView" #mainFractalView (viewChanged)="viewChanged()"></app-fractalView>
+</div>

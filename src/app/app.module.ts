@@ -3,14 +3,34 @@ import { ErrorHandler, NgModule } from '@angular/core';
 import { IonicApp, IonicErrorHandler, IonicModule } from 'ionic-angular';
 import { SplashScreen } from '@ionic-native/splash-screen';
 import { StatusBar } from '@ionic-native/status-bar';
+import { SocialSharing } from '@ionic-native/social-sharing';
 
 import { MyApp } from './app.component';
 import { HomePage } from '../pages/home/home';
 
+import { ExplorerIonicComponent } from "../ionicComponents/explorer/explorer.component";
+import { ColoursliderIonicComponent } from '../ionicComponents/histogram/colourslider/colourslider.component';
+import { GradientBuilderIonicComponent } from '../ionicComponents/gradientBuilder/gradientBuilder.component';
+import { StopMarkerIonicComponent } from '../ionicComponents/gradientBuilder/stop-marker/stop-marker.component';
+import { StopMarkerComponent } from '../angularComponents/gradientBuilder/stop-marker/stop-marker.component';
+import { HistogramIonicComponent } from '../ionicComponents/histogram/histogram.component';
+import { JuliaPickerIonicComponent } from '../ionicComponents/juliaPicker/juliaPicker.component';
+import { FractalViewIonicComponent } from '../ionicComponents/fractalView/fractalView.component';
+import { AlertIonicComponent } from '../ionicComponents/alert/alert.component';
+
 @NgModule({
   declarations: [
     MyApp,
-    HomePage
+    HomePage,
+    ExplorerIonicComponent,
+    ColoursliderIonicComponent,
+    GradientBuilderIonicComponent,
+    StopMarkerIonicComponent,
+    HistogramIonicComponent,
+    JuliaPickerIonicComponent,
+    FractalViewIonicComponent,
+    AlertIonicComponent,
+    StopMarkerComponent
   ],
   imports: [
     BrowserModule,
@@ -19,9 +39,11 @@ import { HomePage } from '../pages/home/home';
   bootstrap: [IonicApp],
   entryComponents: [
     MyApp,
-    HomePage
+    HomePage,
+    StopMarkerComponent
   ],
   providers: [
+    SocialSharing,
     StatusBar,
     SplashScreen,
     {provide: ErrorHandler, useClass: IonicErrorHandler}

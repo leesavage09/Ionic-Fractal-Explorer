@@ -1,0 +1,21 @@
+#container {
+    display: flex;
+    flex-direction: column;
+
+    #canvas-container {
+        width: 100%;
+        flex-grow: 1;
+        flex-shrink: 1;
+        height: 20px;
+
+        canvas {
+            height: 1px;
+            width: 1px;
+            // cursor: move;
+
+            // &:active:hover {
+            //     cursor: col-resize;
+            // }
+        }
+    }
+}

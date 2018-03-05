@@ -1,0 +1,139 @@
+<div class={{theme}}>
+  <div #explorer id="explorer" (window:resize)="windowResized()">
+
+    <input #jscolor id="jscolor" (change)="HTMLgradient.setColorActive($event)" class="jscolor {width:250,  height:150}" value="000000">
+
+    <div class="controls bottom-right">
+      <div #zoomControls class="btn-group-vertical" data-toggle="buttons">
+        <a (click)="zoomInClick($event)" class="btn">
+          <i class="fa fa-plus" aria-hidden="true"></i>
+        </a>
+        <a (click)="zoomOutClick($event)" class="btn">
+          <i class="fa fa-minus" aria-hidden="true"></i>
+        </a>
+      </div>
+
+      <a #fullScreenControls (click)="toggelFullScreen()" class="btn">
+        <i class="fa fa-arrows-alt" aria-hidden="true"></i>
+      </a>
+      <a (click)="toggelEye()" class="btn eye">
+        <i #eyeControls class="fa fa-eye-slash" aria-hidden="true"></i>
+      </a>
+
+    </div>
+
+    <div class="controls bottom-left">
+      <a #shareButton (click)="share($event)" class="btn">
+        <i class="fa fa-share-alt" aria-hidden="true"></i>
+      </a>
+      <!-- <div #shareButton class="select-container">
+        <select #shareSelect class="select" id="eq-select" (change)="share($event)">
+          <option value="non-option" disabled>Share Options</option>
+          <option value="link">Copy Link</option>
+          <option value="mailto">Email</option>
+          <option value="facebook">Facebook</option>
+          <option value="fb-messenger">Facebook Messenger</option>
+          <option value="whatsapp">WhatsApp</option>
+          <option value="twitter">Twitter</option>
+          <option value="linkedin">LinkedIn</option>
+          <option value="plus.google">Google +</option>
+        </select>
+        <div class="select-icon" id="select-caret-down">
+          <i class="fa fa-share-alt" aria-hidden="true"></i>
+        </div>
+      </div> -->
+      <div #saveButton class="select-container" (mousedown)="abortDownload()">
+        <select #saveSelect class="select" id="eq-select" (change)="save($event)">
+          <option value="non-option" disabled>Save jpg</option>
+          <option value="HD 1920×1080">HD 1920×1080</option>
+          <option value="2K 2048×1080">2K 2048×1080</option>
+          <option value="4K 4096×2160">4K 4096×2160</option>
+          <option value="8k 7680×4320">8k 7680×4320</option>
+          <option value="16k 15360×8640">16k 15360×8640</option>
+        </select>
+        <div class="select-icon" id="select-caret-down">
+          <i #saveIcon class="fa fa-save" aria-hidden="true"></i>
+        </div>
+        <i #saveIconText class="icon-text" style="display:none" aria-hidden="true"></i>
+      </div>
+    </div>
+
+    <div #juliaPullOut class="juliaPullOut center-left">
+
+      <div id="juliaPullOut-btn" (click)="toggleJuliaPullOut()">
+        <i #juliaPullOutCaret class="fa fa-caret-right" aria-hidden="true"></i>
+      </div>
+
+      <div #juliaPickerDiv class="juliaPicker">
+        <app-juliaPicker #juliaPicker (numberChanged)="juliaNumberChanged($event)"></app-juliaPicker>
+      </div>
+
+    </div>
+
+    <div #colorPullDown id="colorPullDown">
+      <div id="colorPullDown-btn" (click)="toggleColorPullDown($event)">
+        <i #colorPullDownCaret class="fa fa-caret-down" aria-hidden="true"></i>
+      </div>
+
+      <div #histogramdiv id="histogrampanel">
+        <app-histogram #histogram></app-histogram>
+      </div>
+      <div #gradientdiv id="gradientpanel">
+        <app-gradientbuilder #gradient></app-gradientbuilder>
+      </div>
+    </div>
+
+    <div #colorControls class="controls top-right">
+      <div class="select-container">
+        <select #eqSelect class="select" id="eq-select" dir="rtl" (change)="onEqChanged($event)">
+          <option value="non-option" disabled>Select equation</option>
+          <option value="Mandelbrot">Mandelbrot z=z^2+C</option>
+          <option value="MandelbrotPow4">Mandelbrot z=z^4+C</option>
+          <option value="MandelbrotPow6">Mandelbrot z=z^6+C</option>
+          <option value="Tricorn">Tricorn</option>
+          <option value="BurningShip">Burning Ship</option>
+          <option value="Julia">Julia</option>
+        </select>
+        <div class="select-icon" id="select-caret-down">
+          <i>f<sub>(x)</sub></i>
+        </div>
+      </div>
+      <div class="select-container ">
+        <select #colourSelect class="select" id="colour-select" dir="rtl" (change)="onColorChanged($event)">
+          <option value="non-option" disabled>Select colour</option>
+          <option value={{colorBlueGold}}>Blue/Gold</option>
+          <option value={{colorBW}}>B/W</option>
+          <option value={{colorRainbow}}>Rainbow</option>
+          <option value={{colorBlackBlue}}>Black/Blue</option>
+          <option value={{colorCell}}>Cell</option>
+          <option value={{colorBlob}}>Blob</option>
+          <option value={{colorCrystal}}>Crystal</option>
+        </select>
+        <div class="select-icon" id="select-caret-down">
+          <i class="fa fa-paint-brush" aria-hidden="true"></i>
+        </div>
+      </div>
+    </div>
+
+    <div #iterationControls class="controls top-left">
+      <div class="btn-group shaddow-high" data-toggle="buttons">
+        <a (touchstart)="startChangingIterations(0.95)" (touchend)="stopChangingIterations()" (mousedown)='startChangingIterations(0.9)' (mouseup)="stopChangingIterations()" (mouseleave)='stopChangingIterations()' class="btn">
+          <i class="fa fa-minus" aria-hidden="true"></i>
+        </a>
+        <input class="iteration-textbox" [(ngModel)]="NumIterations" (ngModelChange)="iterationsChanged()" type="number" min="1" value="85">
+        <a (touchstart)="startChangingIterations(1.05)" (touchend)="stopChangingIterations()" (mousedown)='startChangingIterations(1.1)' (mouseup)="stopChangingIterations()" (mouseleave)='stopChangingIterations()' class="btn">
+          <i class="fa fa-plus" aria-hidden="true"></i>
+        </a>
+      </div>
+    </div>
+
+    <div #fractalContainer id="fractalContainer">
+      <app-fractalView id="mainFractalView" #mainFractalView></app-fractalView>
+    </div>
+
+    <div #alert class="alert center" (wheel)="$event.preventDefault()">
+      <app-alert #alertComponent></app-alert>
+    </div>
+
+  </div>
+</div>

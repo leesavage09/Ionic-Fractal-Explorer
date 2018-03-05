@@ -1,0 +1,18 @@
+<h4>{{titleStr}}</h4>
+<p>{{textStr}}</p>
+
+<a #inputCopy (click)="copyClick()" (window:copy)="copy($event)" class="btn" >
+    Copy to clipboard
+</a>
+
+<a #close (click)="closeClick()" class="btn" >
+      {{closeStr}}
+</a>
+
+<a #yes href="{{yesHREF}}" download="fractal.jpg" (click)="yesClick()" class="btn" >
+    {{yesStr}}
+</a>
+
+<a #no (click)="noClick()" class="btn" >
+    {{noStr}}
+</a>

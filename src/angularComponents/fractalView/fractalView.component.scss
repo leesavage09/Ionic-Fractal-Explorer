@@ -1,0 +1,11 @@
+#fractalCanvas {
+    height: 100%;
+    width: 100%;
+    align-items: stretch;
+    display: block;
+    cursor: grab;
+
+    &:active:hover {
+        cursor: grabbing;
+    }
+}
