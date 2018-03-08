@@ -1,7 +1,5 @@
-import { Component, OnInit, Output, ViewChild, ElementRef, EventEmitter, ComponentFactory, ViewContainerRef, ComponentFactoryResolver, ComponentRef } from '@angular/core';
-import { createElement } from '@angular/core/src/view/element';
+import { Component, OnInit, ViewChild, ElementRef, ComponentFactory, ViewContainerRef, ComponentFactoryResolver, ComponentRef } from '@angular/core';
 import { StopMarkerComponent } from './stop-marker/stop-marker.component';
-import { createComponent } from '@angular/compiler/src/core';
 
 import { FractalColor } from "../../fractal/fractalColouring";
 import { General } from "../../helper/helper.module";
@@ -20,14 +18,12 @@ export class GradientBuilderComponent implements OnInit, FractalColor.LinearGrad
 
   public maxCSSleft
 
-  private startMouseX: number;
   private factory: ComponentFactory<StopMarkerComponent>;
   private allMarkers: Array<StopMarkerComponent> = new Array();
   private selectedMarker: StopMarkerComponent;
   private selectedMarkerIsPoped: boolean = false;
   private activeMarker: StopMarkerComponent;
   private gradient: FractalColor.LinearGradient = null;
-  private gradientDisplayMoving: boolean = false;
   private colorPicker: ElementRef;
 
   constructor(r: ComponentFactoryResolver) {

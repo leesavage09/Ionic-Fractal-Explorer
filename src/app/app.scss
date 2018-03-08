@@ -14,3 +14,19 @@
 // To declare rules for a specific mode, create a child rule
 // for the .md, .ios, or .wp mode classes. The mode class is
 // automatically applied to the <body> element in the app.
+app-alert {
+    input {
+        @include interactive;
+
+        width: 100%;
+    }
+
+    .btn {
+        @include interactive;
+
+        display: inline-block;
+        padding: $padding;
+        height: $font-size + $padding * 2;
+        line-height: ($font-size / 2) + $padding;
+    }
+}

@@ -1,4 +1,4 @@
-import { Component, OnInit, ComponentFactoryResolver, ComponentRef, ElementRef, Output, EventEmitter, ViewChild } from '@angular/core';
+import { Component, ComponentRef, ElementRef, ViewChild } from '@angular/core';
 import { General } from "../../../helper/helper.module";
 
 import { GradientBuilderComponent } from '../gradientBuilder.component';
@@ -7,7 +7,7 @@ import { FractalColor } from "../../../fractal/fractalColouring";
 @Component({
   selector: 'app-stop-marker',
   templateUrl: './stop-marker.component.html',
-  styleUrls: ['./stop-marker.component.scss']
+//  styleUrls: ['./stop-marker.component.scss']
 })
 export class StopMarkerComponent {
   @ViewChild('marker') stopMarker: ElementRef;

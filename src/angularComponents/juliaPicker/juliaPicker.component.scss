@@ -14,6 +14,7 @@
         width: 32px;
         height: 32px;
         cursor: grab;
+        pointer-events: none;
 
         i{
             border-radius: 10px;
@@ -21,10 +22,6 @@
             line-height: 32px;
             color: black;
             box-shadow: 2px -2px 1px 1px rgba($color: #000, $alpha: 0.5);
-        }
-
-        &:active:hover {
-            cursor: grabbing;
         }
     }
 }

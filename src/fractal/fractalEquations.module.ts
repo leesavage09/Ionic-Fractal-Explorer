@@ -4,8 +4,8 @@ export namespace FractalEquations {
 		calculate(Cr: number, Ci: number, i: number, e: number): [number, number, number] {
 			var Zr = Cr;
 			var Zi = Ci;
-			var Tr = 0;
-			var Ti = 0;
+			//var Tr = 0;
+			//var Ti = 0;
 
 			var n = 0;
 			for (; n < i && (Zr + Zi) <= e; ++n) {

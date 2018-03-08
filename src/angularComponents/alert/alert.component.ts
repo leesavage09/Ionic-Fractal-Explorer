@@ -1,11 +1,6 @@
-import { Component, OnInit, Input, Output, ViewChild, ElementRef, EventEmitter } from '@angular/core';
+import { Component, Input, ViewChild, ElementRef } from '@angular/core';
 
 import { Fractals } from "../../fractal/fractal.module";
-import { FractalColor, FractalHistogram } from "../../fractal/fractalColouring";
-import { General } from "../../helper/helper.module";
-import { FractalEquations } from "../../fractal/fractalEquations.module"
-import { ComplexNumber } from '../../fractal/complexNumbers';
-import { FractalViewComponent } from '../fractalView/fractalView.component';
 
 @Component({
   selector: 'app-alert',
@@ -25,7 +20,7 @@ export class AlertComponent {
   @ViewChild('inputCopy') inputCopyElm: ElementRef;
 
   private callback: Function;
-  private juliaFractal: Fractals.Fractal = null;
+  //private juliaFractal: Fractals.Fractal = null;
 
   private readonly CLOSE = 'close'
   private readonly YES = 'yes'

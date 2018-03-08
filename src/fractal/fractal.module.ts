@@ -103,11 +103,11 @@ export namespace Fractals {
 			}
 			this.complexPlain.updateCanvas(y);
 
+			var self = this;
 			if (y < this.complexPlain.getDrawableHeight()) {
 				var now = (new Date).getTime();
 				if ((now - this.lastUpdate) >= this.updateTimeout) {
 					this.lastUpdate = now;
-					var self = this;
 					setTimeout(function () {
 						self.scanLine(y + 1, version);
 					}, 1);// using timeout 1 to force thread to yeald so we can update UI
@@ -120,7 +120,6 @@ export namespace Fractals {
 				this.histogram.notify(null);
 				this.complexPlain.makeAlternativeResolutionCanvas(1);
 				this.lastUpdate = (new Date).getTime();
-				var self = this;
 				setTimeout(function () {
 					self.scanLine(0, version);
 				}, 1);

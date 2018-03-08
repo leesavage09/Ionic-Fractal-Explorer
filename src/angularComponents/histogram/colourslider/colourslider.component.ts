@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, Input, ElementRef, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, ViewChild, Input, ElementRef } from '@angular/core';
 
 import { FractalColor } from "../../../fractal/fractalColouring";
 import { General } from "../../../helper/helper.module";
@@ -10,9 +10,9 @@ import { General } from "../../../helper/helper.module";
 })
 export class ColoursliderComponent implements OnInit, FractalColor.LinearGradientObserver {
   @ViewChild('slider') HTMLslider: ElementRef;
-  private trackingMove: boolean = false;
-  private startX: number = null;
-  private startPhase;
+  // private trackingMove: boolean = false;
+  // private startX: number = null;
+  // private startPhase;
   private linearGradient: FractalColor.LinearGradient = null;
   constructor() { }
 

@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, ViewChild, ElementRef } from "@angular/core";
+import { Component } from "@angular/core";
 
 import { StopMarkerComponent } from "../../../angularComponents/gradientBuilder/stop-marker/stop-marker.component";
 

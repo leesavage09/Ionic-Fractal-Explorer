@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ElementRef, Output, EventEmitter } from "@angular/core";
+import { Component, ViewChild, ElementRef, Output, EventEmitter } from "@angular/core";
 
 import { Fractals } from "../../fractal/fractal.module";
 import { FractalEquations } from "../../fractal/fractalEquations.module";
@@ -15,6 +15,7 @@ export class FractalViewComponent implements Fractals.ChangeObserver {
   private fractal: Fractals.Fractal;
   private downloadingFractal: Fractals.Fractal;
   private zoomGestureHappening: boolean = false;
+  private lastMouseDown = (new Date).getTime();
 
   constructor() { }
 
@@ -68,9 +69,9 @@ export class FractalViewComponent implements Fractals.ChangeObserver {
       newFun.juliaReal = (<FractalEquations.Julia>oldfun).juliaReal
       newFun.juliaImaginary = (<FractalEquations.Julia>oldfun).juliaImaginary
     }
-    
-    
-    
+
+
+
 
     let cp = new Fractals.ComplexPlain(oldCp.getSquare().center.r, oldCp.getSquare().center.i, oldCp.getSquare().width, canvas)
     this.downloadingFractal = new Fractals.Fractal(cp, newFun, this.fractal.getColor());
@@ -83,15 +84,15 @@ export class FractalViewComponent implements Fractals.ChangeObserver {
     this.downloadingFractal.render(true);
   }
 
-  getDownloadProgress():number {
-    let num = 100*(this.downloadingFractal.currentScanLine/this.downloadingFractal.complexPlain.getViewCanvas().height);
+  getDownloadProgress(): number {
+    let num = 100 * (this.downloadingFractal.currentScanLine / this.downloadingFractal.complexPlain.getViewCanvas().height);
     return Math.trunc(num)
   }
 
-  abortDownload(){
-    if (this.downloadingFractal!=null){
+  abortDownload() {
+    if (this.downloadingFractal != null) {
       this.downloadingFractal.stopRendering();
-    } 
+    }
   }
 
 
@@ -168,7 +169,16 @@ export class FractalViewComponent implements Fractals.ChangeObserver {
 
   mousedown(event) {
     this.removeAllSelections();
-    this.fractal.getAnimator().dragStart(event.offsetX, event.offsetY);
+
+    let now = (new Date).getTime();
+    let delta = (new Date).getTime() - this.lastMouseDown;
+    this.lastMouseDown = now;
+
+    if (delta < 250) {
+      this.fractal.getAnimator().zoomStart(event.offsetX, event.offsetY, 2, 200);
+    } else {
+      this.fractal.getAnimator().dragStart(event.offsetX, event.offsetY);
+    }
   }
 
   mouseup(event) {

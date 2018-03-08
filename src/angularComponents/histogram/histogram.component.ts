@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, ViewChild, ElementRef, EventEmitter } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 
 import { Fractals } from "../../fractal/fractal.module";
 import { FractalColor, FractalHistogram } from "../../fractal/fractalColouring";
@@ -140,7 +140,7 @@ export class HistogramComponent implements OnInit, FractalHistogram.HistogramObs
       total += this.data[i];
     }
     var avg = total / this.data.length;
-    let max = Math.max(...this.data);
+    //let max = Math.max(...this.data);
 
     const widthBin = ctx.canvas.width / numBin
     const hightCount = ctx.canvas.height / (avg)//(max*1.1)

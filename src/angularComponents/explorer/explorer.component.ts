@@ -2,10 +2,7 @@ import { Component, Input, OnInit, ViewChild, ElementRef } from "@angular/core";
 
 import { Fractals } from "../../fractal/fractal.module";
 import { FractalEquations } from "../../fractal/fractalEquations.module"
-import { CompiledStylesheet } from "@angular/compiler";
-import { error } from "util";
 import { ComplexNumber } from "../../fractal/complexNumbers";
-import { ColoursliderComponent } from "../histogram/colourslider/colourslider.component";
 import { FractalColor } from "../../fractal/fractalColouring";
 import { GradientBuilderComponent } from '../gradientBuilder/gradientBuilder.component';
 import { HistogramComponent } from "../histogram/histogram.component";
@@ -71,15 +68,12 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner {
   readonly colorBlob: string = '{"phase":0,"frequency":1,"min":0,"mid":0.36363636363636365,"max":1,"arr":[{"stop":0,"color":{"r":255,"g":255,"b":255}},{"stop":0.1495601173020528,"color":{"r":255,"g":255,"b":255}},{"stop":0.16715542521994134,"color":{"r":0,"g":0,"b":0}},{"stop":0.18841642228739003,"color":{"r":255,"g":255,"b":255}},{"stop":0.30058651026392963,"color":{"r":255,"g":0,"b":0}},{"stop":0.5175953079178885,"color":{"r":255,"g":110,"b":63}},{"stop":1,"color":{"r":255,"g":221,"b":0}}]}'
   readonly colorCrystal: string = '{"phase":0,"frequency":1,"min":0.2653958944281525,"mid":0.4868035190615836,"max":1,"arr":[{"stop":0,"color":{"r":0,"g":0,"b":0}},{"stop":0.001466275659824047,"color":{"r":0,"g":0,"b":0}},{"stop":0.4897360703812317,"color":{"r":250,"g":255,"b":115}},{"stop":1,"color":{"r":106,"g":103,"b":255}}]}'
 
-  private isIonic = false;
   private explorerCSSHeight;
   private explorerWindowStyle: string;
   private jscolorWindowStyle: string;
   protected fractal: Fractals.Fractal;
-  private juliaFractal: Fractals.Fractal;
   private explorerWindowIsMaximised: boolean = false;
   private iterationsAreChanging: boolean = false;
-  private zoomGestureHappening: boolean = false;
   private static readonly htmlClassForFaEyeOpen: string = "fa fa-eye"
   private static readonly htmlClassForFaEyeClosed: string = "fa fa-eye-slash"
 
@@ -89,11 +83,6 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner {
   constructor() { }
 
   ngOnInit() {
-    if (this.isIonic) {
-      this.maximized = "true"
-      this.HTMLfullScreenControls.nativeElement.style.display = "none";
-    }
-
     this.HTMLjuliaPickerDiv.nativeElement.style.width = "0px";
     this.HTMLjuliaPullOut.nativeElement.style.display = "none"
     this.HTMLgradient.setColorPicker(this.HTMLjscolor);
@@ -239,6 +228,11 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner {
         break;
     }
 
+    this.platformSave(width,height);
+    (<HTMLSelectElement>this.HTMLsaveSelect.nativeElement).selectedIndex = 0
+  }
+
+  protected platformSave(width:number, height:number){
     var element = {
       base: <Fractals.ChangeObserver>{
         explorer: this,
@@ -263,8 +257,6 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner {
     this.mainFractalView.downloadImage(width, height, element.base);
 
     this.updateSaveProgress();
-
-    (<HTMLSelectElement>this.HTMLsaveSelect.nativeElement).selectedIndex = 0
   }
 
   share(event) {
@@ -324,12 +316,12 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner {
   }
 
   windowResized() {
-    let d = <any>document;
-    var fullscreenElement = d.fullscreenElement || d.mozFullScreenElement || d.webkitFullscreenElement || d.msFullscreenElement;
-    if (fullscreenElement == undefined && this.explorerWindowIsMaximised) {
-      this.toggelFullScreen()
-    }
-    else if (this.explorerWindowIsMaximised) {
+    // let d = <any>document;
+    // var fullscreenElement = d.fullscreenElement || d.mozFullScreenElement || d.webkitFullscreenElement || d.msFullscreenElement;
+    // if (fullscreenElement == undefined && this.explorerWindowIsMaximised) {
+    //   this.toggelNativeFullScreen()
+    // }
+    if (this.explorerWindowIsMaximised) {
       this.fullScreenWindow();
     }
   }
@@ -493,6 +485,7 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner {
   }
 
   iterationsChanged() {
+    if (this.NumIterations<2) this.NumIterations = 2;
     this.fractal.iterations = this.NumIterations;
     this.HTMLjuliaPicker.setIterations(this.NumIterations);
     this.fractal.render();
@@ -599,7 +592,7 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner {
     }
   }
 
-  private updateSaveProgress() {
+  protected updateSaveProgress() {
     this.HTMLsaveIconText.nativeElement.style.display = "block"
     this.HTMLsaveIconText.nativeElement.innerHTML = this.mainFractalView.getDownloadProgress() + "%"
 

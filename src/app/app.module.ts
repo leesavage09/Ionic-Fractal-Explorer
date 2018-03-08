@@ -2,8 +2,9 @@ import { BrowserModule } from '@angular/platform-browser';
 import { ErrorHandler, NgModule } from '@angular/core';
 import { IonicApp, IonicErrorHandler, IonicModule } from 'ionic-angular';
 import { SplashScreen } from '@ionic-native/splash-screen';
-import { StatusBar } from '@ionic-native/status-bar';
 import { SocialSharing } from '@ionic-native/social-sharing';
+import { PhotoLibrary } from '@ionic-native/photo-library';
+import { AndroidFullScreen } from '@ionic-native/android-full-screen';
 
 import { MyApp } from './app.component';
 import { HomePage } from '../pages/home/home';
@@ -44,7 +45,8 @@ import { AlertIonicComponent } from '../ionicComponents/alert/alert.component';
   ],
   providers: [
     SocialSharing,
-    StatusBar,
+    PhotoLibrary,
+    AndroidFullScreen,
     SplashScreen,
     {provide: ErrorHandler, useClass: IonicErrorHandler}
   ]
