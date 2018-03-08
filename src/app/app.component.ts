@@ -3,6 +3,7 @@ import { Platform } from 'ionic-angular';
 import { SplashScreen } from '@ionic-native/splash-screen';
 
 import { HomePage } from '../pages/home/home';
+
 @Component({
   templateUrl: 'app.html'
 })
@@ -15,10 +16,17 @@ export class MyApp {
       // Here you can do any higher level native things you might need.
       //statusBar.styleDefault();
       splashScreen.hide();
+
+      if ((<any>window).plugins)
+      (<any>window).plugins.intentShim.getIntent((intent) => {
+        if (intent && intent.data) {
+          console.log("URL",intent.data)
+        }
+      }, () => console.log("intent error"));
     });
 
     platform.resume.subscribe(() => {
-      
+      console.log("resume")
     });
   }
 
