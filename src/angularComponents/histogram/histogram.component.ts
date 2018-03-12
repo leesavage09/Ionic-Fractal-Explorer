@@ -88,6 +88,7 @@ export class HistogramComponent implements OnInit, FractalHistogram.HistogramObs
   }
 
   mousedown(event) {
+    event.preventDefault();
     this.movingMarker = event.target || event.srcElement || event.currentTarget;
     this.startX = event.screenX
   }
@@ -107,7 +108,7 @@ export class HistogramComponent implements OnInit, FractalHistogram.HistogramObs
 
   mousemove(event) {
     if (this.movingMarker == null) return;
-
+    event.preventDefault();
     let offset = event.screenX - this.startX
 
     let currentPos = this.getCSSLeft(this.movingMarker)

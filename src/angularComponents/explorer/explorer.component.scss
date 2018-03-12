@@ -1,4 +1,4 @@
-$button-size: 40px !default;
+$button-size: 55px !default;
 $input-spacing: 10px !default;
 $iterations-width: 40px !default;
 $select-width: $iterations-width + $button-size * 2 !default;
@@ -22,8 +22,8 @@ $color-transparent: rgba(255, 255, 255, 0) !default;
 $shaddow-low: 2px 2px 6px 2px rgba($color: #000, $alpha: 1);
 $font-family: Arial, sans-serif !default;
 $font-weight: bold !default;
-$font-size: 18px !default;
-$font-size-small: 16px !default;
+$font-size: 24px !default;
+$font-size-small: 18px !default;
 
 @keyframes disabled-blink {
     0% {
@@ -284,27 +284,35 @@ $font-size-small: 16px !default;
                 position: absolute;
                 left: 0px;
                 top: 0px;
-                padding-top: $padding + 2;
-                padding-left: $padding + 4;
-                line-height: $font-size - $padding / 2;
+                width: $button-size+2;
+                height: $button-size+2;
+                text-align: center;
+                
                 color: $colour-tool;
                 pointer-events: none;
 
                 i {
+                    line-height: $button-size+2;
+                    margin:0;
                     font-size: $font-size;
+                    sub {
+                        position: relative;
+                        top:-4px;
+                        margin:0;
+                    }
                 }
             }
 
             .icon-text {
                 position: absolute;
+                width: $button-size;
+                height: $button-size;
                 left: 0px;
                 top: 0px;
-                line-height: $button-size / 2;
-                width: $button-size;
+                line-height: $button-size;
+                
                 font-size: $font-size;
                 color: $colour-tool;
-                height: $button-size;
-                padding-top: $padding;
                 text-align: center;
             }
 
@@ -336,7 +344,8 @@ $font-size-small: 16px !default;
             line-height: $button-size;
 
             i {
-                margin: auto;
+               line-height: $button-size;
+               margin: auto;
             }
         }
     }

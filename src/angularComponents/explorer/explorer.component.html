@@ -70,19 +70,6 @@
 
     </div>
 
-    <div #colorPullDown id="colorPullDown">
-      <div id="colorPullDown-btn" (click)="toggleColorPullDown($event)">
-        <i #colorPullDownCaret class="fa fa-caret-down" aria-hidden="true"></i>
-      </div>
-
-      <div #histogramdiv id="histogrampanel">
-        <app-histogram #histogram></app-histogram>
-      </div>
-      <div #gradientdiv id="gradientpanel">
-        <app-gradientbuilder #gradient></app-gradientbuilder>
-      </div>
-    </div>
-
     <div #colorControls class="controls top-right">
       <div class="select-container">
         <select #eqSelect class="select" id="eq-select" dir="rtl" (change)="onEqChanged($event)">
@@ -124,6 +111,19 @@
         <a (touchstart)="startChangingIterations(1.05)" (touchend)="stopChangingIterations()" (mousedown)='startChangingIterations(1.1)' (mouseup)="stopChangingIterations()" (mouseleave)='stopChangingIterations()' class="btn">
           <i class="fa fa-plus" aria-hidden="true"></i>
         </a>
+      </div>
+    </div>
+
+    <div #colorPullDown id="colorPullDown">
+      <div id="colorPullDown-btn" (click)="toggleColorPullDown($event)">
+        <i #colorPullDownCaret class="fa fa-caret-down" aria-hidden="true"></i>
+      </div>
+
+      <div #histogramdiv id="histogrampanel">
+        <app-histogram #histogram></app-histogram>
+      </div>
+      <div #gradientdiv id="gradientpanel">
+        <app-gradientbuilder #gradient></app-gradientbuilder>
       </div>
     </div>
 

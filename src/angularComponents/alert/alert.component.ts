@@ -43,15 +43,43 @@ export class AlertComponent {
   }
 
   copyClick() {
+    var textArea,
+      copy;
+
+    textArea = document.createElement('textArea');
+    textArea.value = this.inputStr;
+    textArea.style.fontSize = "xx-large";
+    document.body.appendChild(textArea);
+
+    var range,
+      selection;
+
+    if (navigator.userAgent.match(/ipad|iphone/i)) {
+      range = document.createRange();
+      range.selectNodeContents(textArea);
+      selection = window.getSelection();
+      selection.removeAllRanges();
+      selection.addRange(range);
+      textArea.setSelectionRange(0, 999999);
+    } else {
+      textArea.select();
+    }
+
     document.execCommand('copy');
+    document.body.removeChild(textArea);
+
+
+
+    //document.execCommand('copy');
     this.callback(this.CLOSE);
   }
 
   copy(event) {
-    event.preventDefault();
-    if (event.clipboardData) {
-      event.clipboardData.setData("text/plain", this.inputStr);
-    }
+    // console.log("copy event")
+    // event.preventDefault();
+    // if (event.clipboardData) {
+    //   event.clipboardData.setData("text/plain", this.inputStr);
+    // }
   }
 
   enableOptions(close: boolean, yes: boolean, no: boolean, input: boolean) {
