@@ -13,9 +13,6 @@
         </a>
       </div>
 
-      <a #fullScreenControls (click)="toggelFullScreen()" class="btn">
-        <i class="fa fa-arrows-alt" aria-hidden="true"></i>
-      </a>
       <a (click)="toggelEye()" class="btn eye">
         <i #eyeControls class="fa fa-eye-slash" aria-hidden="true"></i>
       </a>
@@ -26,22 +23,6 @@
       <a #shareButton (click)="share($event)" class="btn">
         <i class="fa fa-share-alt" aria-hidden="true"></i>
       </a>
-      <!-- <div #shareButton class="select-container">
-        <select #shareSelect class="select" id="eq-select" (change)="share($event)">
-          <option value="non-option" disabled>Share Options</option>
-          <option value="link">Copy Link</option>
-          <option value="mailto">Email</option>
-          <option value="facebook">Facebook</option>
-          <option value="fb-messenger">Facebook Messenger</option>
-          <option value="whatsapp">WhatsApp</option>
-          <option value="twitter">Twitter</option>
-          <option value="linkedin">LinkedIn</option>
-          <option value="plus.google">Google +</option>
-        </select>
-        <div class="select-icon" id="select-caret-down">
-          <i class="fa fa-share-alt" aria-hidden="true"></i>
-        </div>
-      </div> -->
       <div #saveButton class="select-container" (mousedown)="abortDownload()">
         <select #saveSelect class="select" id="eq-select" (change)="save($event)">
           <option value="non-option" disabled>Save jpg</option>

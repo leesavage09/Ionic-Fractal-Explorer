@@ -7,7 +7,6 @@ import { PhotoLibrary } from '@ionic-native/photo-library';
 import { AndroidFullScreen } from '@ionic-native/android-full-screen';
 
 import { MyApp } from './app.component';
-import { HomePage } from '../pages/home/home';
 
 import { ExplorerComponent } from "../components/explorer/explorer.component";
 import { ColoursliderComponent } from '../components/histogram/colourslider/colourslider.component';
@@ -21,7 +20,6 @@ import { AlertComponent } from '../components/alert/alert.component';
 @NgModule({
   declarations: [
     MyApp,
-    HomePage,
     ExplorerComponent,
     ColoursliderComponent,
     GradientBuilderComponent,
@@ -39,7 +37,6 @@ import { AlertComponent } from '../components/alert/alert.component';
   bootstrap: [IonicApp],
   entryComponents: [
     MyApp,
-    HomePage,
     StopMarkerComponent
   ],
   providers: [

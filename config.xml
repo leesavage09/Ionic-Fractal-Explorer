@@ -39,6 +39,24 @@
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data android:host="leesavage.co.uk" android:scheme="" />
             </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:host="www.leesavage.co.uk" android:scheme="https" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:host="www.leesavage.co.uk" android:scheme="http" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:host="www.leesavage.co.uk" android:scheme="" />
+            </intent-filter>
         </config-file>
         <allow-intent href="market:*" />
         <icon density="ldpi" src="resources/android/icon/drawable-ldpi-icon.png" />
@@ -106,6 +124,6 @@
         <variable name="PHOTO_LIBRARY_USAGE_DESCRIPTION" value="To save photos" />
     </plugin>
     <plugin name="cordova-plugin-fullscreen" spec="^1.2.0" />
-    <plugin name="com-darryncampbell-cordova-plugin-intent" spec="^1.0.0" />
     <engine name="android" spec="~7.0.0" />
+    <plugin name="com-darryncampbell-cordova-plugin-intent" spec="^1.0.0" />
 </widget>

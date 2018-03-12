@@ -198,7 +198,7 @@ export class GradientBuilderComponent implements OnInit, FractalColor.LinearGrad
   private draw() {
     let gradient = new Array();
     this.allMarkers.forEach(marker => {
-      gradient.push({ stop: marker.getStopValue(), color: marker.getColor() });
+      gradient.push({ s: marker.getStopValue(), c: marker.getColor() });
     });
     this.gradient.replaceAllStops(gradient);
 
@@ -224,7 +224,7 @@ export class GradientBuilderComponent implements OnInit, FractalColor.LinearGrad
     let arr: Array<FractalColor.LinearGradientStop> = this.gradient.getStops()
     for (let i = 0; i < arr.length; i++) {
       const stop = arr[i];
-      this.addStopMarker(stop.stop, null, stop.color, false);
+      this.addStopMarker(stop.s, null, stop.c, false);
     }
     this.draw();
   }

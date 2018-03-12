@@ -6,11 +6,9 @@ export namespace FractalColor {
 
 	export class LinearGradient {
 		private arr: Array<LinearGradientStop>
-		private phase: number = 0;
-		private frequency: number = 1;
-		private min: number = 0;
-		private mid: number = 0.5;
-		private max: number = 1;
+		private mn: number = 0;
+		private md: number = 0.5;
+		private mx: number = 1;
 		private subscribers: Array<LinearGradientObserver> = new Array();
 		constructor(arr: Array<LinearGradientStop> = null) {
 			if (arr != null) {
@@ -20,13 +18,13 @@ export namespace FractalColor {
 
 		public replaceAllStops(arr: Array<LinearGradientStop>) {
 			arr.sort(function (a: LinearGradientStop, b: LinearGradientStop): number {
-				if (a.stop > b.stop) return 1
-				if (a.stop < b.stop) return -1
-				if (a.stop == b.stop) return 0
+				if (a.s > b.s) return 1
+				if (a.s < b.s) return -1
+				if (a.s == b.s) return 0
 			});
 
-			if (arr[0].stop > 0) arr.unshift({ stop: 0, color: arr[0].color });
-			if (arr[arr.length - 1].stop < 1) arr.push({ stop: 1, color: arr[arr.length - 1].color });
+			if (arr[0].s > 0) arr.unshift({ s: 0, c: arr[0].c });
+			if (arr[arr.length - 1].s < 1) arr.push({ s: 1, c: arr[arr.length - 1].c });
 
 			this.arr = arr;
 		}
@@ -34,11 +32,9 @@ export namespace FractalColor {
 		public decodeJSON(json: string): void {
 			let obj = JSON.parse(json);
 			this.arr = obj.arr;
-			this.phase = obj.phase;
-			this.frequency = obj.frequency
-			this.min = obj.min
-			this.mid = obj.mid
-			this.max = obj.max
+			this.mn = obj.mn
+			this.md = obj.md
+			this.mx = obj.mx
 		}
 
 		public encodeJSON(): string {
@@ -69,25 +65,16 @@ export namespace FractalColor {
 			}
 		}
 
-		public setPhase(phase: number): void {
-			this.phase = phase * this.frequency
-		}
-
-		public setFrequency(frequency: number): void {
-			if (frequency < 1) frequency = 1;
-			else this.frequency = Math.abs(frequency)
-		}
-
 		public setMin(n: number) {
-			this.min = n;
+			this.mn = n;
 		}
 
 		public setMid(n: number) {
-			this.mid = n;
+			this.md = n;
 		}
 
 		public setMax(n: number) {
-			this.max = n;
+			this.mx = n;
 		}
 
 		public addStop(stop: LinearGradientStop): void {
@@ -98,24 +85,16 @@ export namespace FractalColor {
 			return this.arr
 		}
 
-		public getPhase(): number {
-			return this.phase
-		}
-
-		public getFrequency(): number {
-			return this.frequency
-		}
-
 		public getMin(): number {
-			return this.min;
+			return this.mn;
 		}
 
 		public getMid(): number {
-			return this.mid;
+			return this.md;
 		}
 
 		public getMax(): number {
-			return this.max;
+			return this.mx;
 		}
 
 
@@ -151,16 +130,15 @@ export namespace FractalColor {
 		public getColorAt(val: number, levels: { min: number, mid: number, max: number } = null, frequency: number = null, phase: number = null): RGBcolor {
 			if (this.arr.length < 1) return { r: 0, g: 0, b: 0 };
 
-			if (levels == null) levels = { min: this.min, mid: this.mid, max: this.max }
-			if (frequency == null) frequency = this.frequency
-			if (phase == null) phase = this.phase
+
+			if (levels == null) levels = { min: this.mn, mid: this.md, max: this.mx }
 
 			if (val < levels.min) val = 0;
 			else if (val > levels.max) val = 1;
 			else if (val <= levels.mid) val = General.mapInOut(val, levels.min, levels.mid, 0, 0.5);
 			else if (val > levels.mid) val = General.mapInOut(val, levels.mid, levels.max, 0.5, 1);
 
-			val = val * frequency + phase - 1
+			val = val - 1
 			let trunc = Math.trunc(val);
 			val = Math.abs(val % 1)
 			if ((trunc % 2) == 0) val = Math.abs(1 - val)
@@ -169,21 +147,22 @@ export namespace FractalColor {
 
 			var colorInRange = []
 			for (var i = 0, len = this.arr.length; i < len; i++) {
-				if (i > 0 && val <= this.arr[i].stop) {
+				if (i > 0 && val <= this.arr[i].s) {
 					colorInRange = [i - 1, i]
 					break;
 				}
 			}
 
-			let firstColor = this.arr[colorInRange[0]].color;
-			let secondColor = this.arr[colorInRange[1]].color;
-			var firstStop = this.arr[colorInRange[0]].stop;
-			var secondStop = this.arr[colorInRange[1]].stop - firstStop;
+
+			let firstColor = this.arr[colorInRange[0]].c;
+			let secondColor = this.arr[colorInRange[1]].c;
+			var firstStop = this.arr[colorInRange[0]].s;
+			var secondStop = this.arr[colorInRange[1]].s - firstStop;
 			var valBetweenStops = (val) - firstStop;
 			var secondRatio = valBetweenStops / secondStop
 			var firstRatio = 1 - secondRatio
 
-			return {
+			return {				
 				r: Math.round(firstColor.r * firstRatio + secondColor.r * secondRatio),
 				g: Math.round(firstColor.g * firstRatio + secondColor.g * secondRatio),
 				b: Math.round(firstColor.b * firstRatio + secondColor.b * secondRatio)
@@ -196,11 +175,11 @@ export namespace FractalColor {
 	}
 
 	export class LinearGradientStop {
-		stop: number
-		color: RGBcolor
+		s: number
+		c: RGBcolor
 		constructor(stop: number, color: RGBcolor) {
-			this.stop = stop;
-			this.color = color;
+			this.s = stop;
+			this.c = color;
 		}
 	}
 
