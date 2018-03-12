@@ -9,28 +9,27 @@ import { AndroidFullScreen } from '@ionic-native/android-full-screen';
 import { MyApp } from './app.component';
 import { HomePage } from '../pages/home/home';
 
-import { ExplorerIonicComponent } from "../ionicComponents/explorer/explorer.component";
-import { ColoursliderIonicComponent } from '../ionicComponents/histogram/colourslider/colourslider.component';
-import { GradientBuilderIonicComponent } from '../ionicComponents/gradientBuilder/gradientBuilder.component';
-import { StopMarkerIonicComponent } from '../ionicComponents/gradientBuilder/stop-marker/stop-marker.component';
-import { StopMarkerComponent } from '../angularComponents/gradientBuilder/stop-marker/stop-marker.component';
-import { HistogramIonicComponent } from '../ionicComponents/histogram/histogram.component';
-import { JuliaPickerIonicComponent } from '../ionicComponents/juliaPicker/juliaPicker.component';
-import { FractalViewIonicComponent } from '../ionicComponents/fractalView/fractalView.component';
-import { AlertIonicComponent } from '../ionicComponents/alert/alert.component';
+import { ExplorerComponent } from "../components/explorer/explorer.component";
+import { ColoursliderComponent } from '../components/histogram/colourslider/colourslider.component';
+import { GradientBuilderComponent } from '../components/gradientBuilder/gradientBuilder.component';
+import { StopMarkerComponent } from '../components/gradientBuilder/stop-marker/stop-marker.component';
+import { HistogramComponent } from '../components/histogram/histogram.component';
+import { JuliaPickerComponent } from '../components/juliaPicker/juliaPicker.component';
+import { FractalViewComponent } from '../components/fractalView/fractalView.component';
+import { AlertComponent } from '../components/alert/alert.component';
 
 @NgModule({
   declarations: [
     MyApp,
     HomePage,
-    ExplorerIonicComponent,
-    ColoursliderIonicComponent,
-    GradientBuilderIonicComponent,
-    StopMarkerIonicComponent,
-    HistogramIonicComponent,
-    JuliaPickerIonicComponent,
-    FractalViewIonicComponent,
-    AlertIonicComponent,
+    ExplorerComponent,
+    ColoursliderComponent,
+    GradientBuilderComponent,
+    StopMarkerComponent,
+    HistogramComponent,
+    JuliaPickerComponent,
+    FractalViewComponent,
+    AlertComponent,
     StopMarkerComponent
   ],
   imports: [

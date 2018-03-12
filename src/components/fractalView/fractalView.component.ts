@@ -7,7 +7,7 @@ import { FractalEquations } from "../../fractal/fractalEquations.module";
 @Component({
   selector: "app-fractalView",
   templateUrl: "./fractalView.component.html",
-  styleUrls: ["./fractalView.component.scss"]
+  //styleUrls: ["./fractalView.component.scss"]
 })
 export class FractalViewComponent implements Fractals.ChangeObserver {
   @ViewChild('fractalCanvas') HTMLcanvas: ElementRef;

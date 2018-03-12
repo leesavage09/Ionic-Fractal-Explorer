@@ -7,7 +7,7 @@ import { General } from "../../helper/helper.module";
 @Component({
   selector: 'app-gradientbuilder',
   templateUrl: './gradientBuilder.component.html',
-  styleUrls: ['./gradientBuilder.component.scss']
+ // styleUrls: ['./gradientBuilder.component.scss']
 })
 export class GradientBuilderComponent implements OnInit, FractalColor.LinearGradientObserver {
   @ViewChild('stopMarkers', { read: ViewContainerRef }) stopMarkers;

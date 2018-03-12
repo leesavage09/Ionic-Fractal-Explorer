@@ -1,4 +1,8 @@
 import { Component, Input, OnInit, ViewChild, ElementRef } from "@angular/core";
+import { Platform } from 'ionic-angular';
+import { SocialSharing } from '@ionic-native/social-sharing';
+import { PhotoLibrary } from '@ionic-native/photo-library';
+import { AndroidFullScreen } from '@ionic-native/android-full-screen';
 
 import { Fractals } from "../../fractal/fractal.module";
 import { FractalEquations } from "../../fractal/fractalEquations.module"
@@ -13,7 +17,7 @@ import { AlertComponent } from "../alert/alert.component";
 @Component({
   selector: "ExplorerComponent",
   templateUrl: "./explorer.component.html",
-  styleUrls: ["./explorerThemes.component.scss"]
+  //  styleUrls: ["./explorerThemes.component.scss"]
 })
 export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner {
   // component config
@@ -80,9 +84,28 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner {
   public imageToDownload: string = null;
   public NumIterations: number = 50;
 
-  constructor() { }
+  constructor(public platform: Platform, private socialSharing: SocialSharing, private photoLibrary: PhotoLibrary, private androidFullScreen: AndroidFullScreen) {
+    this.socialSharing = socialSharing;
+    this.photoLibrary = photoLibrary;
+    this.platform = platform;
+
+    console.log("this.platform", this.platform.platforms());
+
+    if (this.platform.is("android") && this.platform.is("cordova")) {
+      androidFullScreen.isImmersiveModeSupported()
+        .then(() => androidFullScreen.immersiveMode())
+        .catch((error: any) => console.log(error));
+    }
+  }
 
   ngOnInit() {
+    this.maximized = "true"
+    this.HTMLfullScreenControls.nativeElement.style.display = "none";
+    if (this.platform.is("android") && this.platform.is("cordova")) {
+      this.HTMLzoomControls.nativeElement.style.display = "none";
+    }
+
+
     (<HTMLSelectElement>this.HTMLsaveSelect.nativeElement).selectedIndex = 0;
     (<HTMLSelectElement>this.HTMLcolourSelect.nativeElement).selectedIndex = 0;
     (<HTMLSelectElement>this.HTMLeqSelect.nativeElement).selectedIndex = 0;
@@ -232,91 +255,127 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner {
         break;
     }
 
-    this.platformSave(width,height);
+    this.platformSave(width, height);
     (<HTMLSelectElement>this.HTMLsaveSelect.nativeElement).selectedIndex = 0
   }
 
-  protected platformSave(width:number, height:number){
-    var element = {
-      base: <Fractals.ChangeObserver>{
-        explorer: this,
-        changed(fractal: Fractals.Fractal) {
-          fractal.unsubscribe(element.base)
-          this.explorer.imageToDownload = fractal.complexPlain.getViewCanvas().toDataURL("image/jpeg");
+  private platformSave(width: number, height: number) {
+    if (this.platform.is("android") && this.platform.is("cordova")) {
+      var element = {
+        base: <Fractals.ChangeObserver>{
+          explorer: this,
+          changed(fractal: Fractals.Fractal) {
+            fractal.unsubscribe(element.base)
+            this.explorer.imageToDownload = fractal.complexPlain.getViewCanvas().toDataURL("image/png");
+            this.explorer.photoLibrary.requestAuthorization().then(() => {
+              var album = 'Fractal Explorer';
+              this.explorer.photoLibrary.saveImage(this.explorer.imageToDownload, album, function (libraryItem) { }, function (err) { });
 
-          this.explorer.HTMLalertComponent.titleStr = "Download Ready"
-          this.explorer.HTMLalertComponent.textStr = ""
-          this.explorer.HTMLalertComponent.yesStr = "Download"
-          this.explorer.HTMLalertComponent.setYesHref(this.explorer.imageToDownload)
-          this.explorer.HTMLalertComponent.noStr = "Cancel"
-          this.explorer.HTMLalertComponent.enableOptions(false, true, true)
-          this.explorer.HTMLalertComponent.setCallback(this.explorer.closeAlert.bind(this.explorer))
-          this.explorer.HTMLalert.nativeElement.style.visibility = "visible";
+              this.explorer.HTMLalertComponent.titleStr = "All Done"
+              this.explorer.HTMLalertComponent.textStr = "Image Saved."
+              this.explorer.HTMLalertComponent.closeStr = "Close"
+              this.explorer.HTMLalertComponent.enableOptions(true, false, false, false)
+              this.explorer.HTMLalertComponent.setCallback(this.explorer.closeAlert.bind(this.explorer))
+              this.explorer.HTMLalert.nativeElement.style.visibility = "visible";
 
-          this.explorer.HTMLsaveIcon.nativeElement.style.display = "block"
-          this.explorer.HTMLsaveSelect.nativeElement.setAttribute("class", "select");
+              this.explorer.HTMLsaveIcon.nativeElement.style.display = "block"
+              this.explorer.HTMLsaveSelect.nativeElement.setAttribute("class", "select");
+            }).catch(err => {
+              console.log('permissions weren\'t granted ' + err)
+              this.explorer.HTMLsaveIcon.nativeElement.style.display = "block"
+              this.explorer.HTMLsaveSelect.nativeElement.setAttribute("class", "select");
+            });
+
+            this.explorer.HTMLsaveIconText.nativeElement.innerHTML = "Saving"
+
+          }
         }
       }
-    }
-    this.mainFractalView.downloadImage(width, height, element.base);
+      this.mainFractalView.downloadImage(width, height, element.base);
 
-    this.updateSaveProgress();
+      this.updateSaveProgress();
+    }
+    else {
+      var element = {
+        base: <Fractals.ChangeObserver>{
+          explorer: this,
+          changed(fractal: Fractals.Fractal) {
+            fractal.unsubscribe(element.base)
+            this.explorer.imageToDownload = fractal.complexPlain.getViewCanvas().toDataURL("image/jpeg");
+  
+            this.explorer.HTMLalertComponent.titleStr = "Download Ready"
+            this.explorer.HTMLalertComponent.textStr = ""
+            this.explorer.HTMLalertComponent.yesStr = "Download"
+            this.explorer.HTMLalertComponent.setYesHref(this.explorer.imageToDownload)
+            this.explorer.HTMLalertComponent.noStr = "Cancel"
+            this.explorer.HTMLalertComponent.enableOptions(false, true, true)
+            this.explorer.HTMLalertComponent.setCallback(this.explorer.closeAlert.bind(this.explorer))
+            this.explorer.HTMLalert.nativeElement.style.visibility = "visible";
+  
+            this.explorer.HTMLsaveIcon.nativeElement.style.display = "block"
+            this.explorer.HTMLsaveSelect.nativeElement.setAttribute("class", "select");
+          }
+        }
+      }
+      this.mainFractalView.downloadImage(width, height, element.base);
+  
+      this.updateSaveProgress();
+    }
   }
 
   share(event) {
-    // var host = location.protocol + "//" + window.location.hostname + ":" + location.port + "/?"
+    var host = "https://www.leesavage.co.uk/?";
 
-    // let theme = this.theme
-    // let equation = this.fractal.getCalculationFunction().getName();
-    // let color = this.fractal.getColor().encodeJSON()
-    // let iterations = this.fractal.iterations.toString()
-    // let complexCenter = this.fractal.complexPlain.getSquare().center.toString();
-    // let complexWidth = this.fractal.complexPlain.getSquare().width.toString();
-    // let complexJuliaPicker = new ComplexNumber(0, 0).toString();
 
-    // let fun = this.fractal.getCalculationFunction();
-    // if (fun instanceof FractalEquations.Julia) {
-    //   let julia = <FractalEquations.Julia>fun;
-    //   complexJuliaPicker = new ComplexNumber(julia.juliaReal, julia.juliaImaginary).toString()
-    // }
+    let theme = this.theme
+    let equation = this.fractal.getCalculationFunction().getName();
+    let color = this.fractal.getColor().encodeJSON()
+    let iterations = this.fractal.iterations.toString()
+    let complexCenter = this.fractal.complexPlain.getSquare().center.toString();
+    let complexWidth = this.fractal.complexPlain.getSquare().width.toString();
+    let complexJuliaPicker = new ComplexNumber(0, 0).toString();
 
-    // let content = host + "theme=" + theme + "&equation=" + equation + "&color=" + color + "&iterations=" + iterations + "&complexCenter=" + complexCenter + "&complexWidth=" + complexWidth + "&complexJuliaPicker=" + complexJuliaPicker;
-    // content = encodeURI(content);
+    let fun = this.fractal.getCalculationFunction();
+    if (fun instanceof FractalEquations.Julia) {
+      let julia = <FractalEquations.Julia>fun;
+      complexJuliaPicker = new ComplexNumber(julia.juliaReal, julia.juliaImaginary).toString()
+    }
 
-    // // let service = null
+    let content = host + "theme=" + theme + "&equation=" + equation + "&color=" + color + "&iterations=" + iterations + "&complexCenter=" + complexCenter + "&complexWidth=" + complexWidth + "&complexJuliaPicker=" + complexJuliaPicker;
+    content = encodeURI(content);
 
-    // // switch (event.target.value) {
-    // //   case "facebook":
-    // //     service = "http://www.facebook.com/sharer.php?u=" + content
-    // //     break;
-    // //   case "fb-messenger":
-    // //     service = "fb-messenger:share/?link=" + content
-    // //     break;
-    // //   case "whatsapp":
-    // //     service = "whatsapp://send?text=" + content
-    // //     break;
-    // //   case "twitter":
-    // //     service = "https://twitter.com/share?url=" + content
-    // //     break;
-    // //   case "linkedin":
-    // //     service = "http://www.linkedin.com/shareArticle?mini=true&amp;url=" + content
-    // //     break;
-    // //   case "plus.google":
-    // //     service = "https://plus.google.com/share?url=" + content
-    // //     break;
-    // //   case "mailto":
-    // //     service = "mailto:?Body=" + content;
-    // //     break;
-    // // }
+    if (this.platform.is("android") && this.platform.is("cordova")) {
+      this.socialSharing.share("", "", null, content)
+    } else {
+      var textArea, copy, range, selection;
 
-    // // if (service != null) window.open(service);
-    // // else {
-    // this.HTMLalertComponent.titleStr = "Share Link"
-    // this.HTMLalertComponent.textStr = "You can share this link."
-    // this.HTMLalertComponent.inputStr = content;
-    // this.HTMLalertComponent.enableOptions(false, false, false, true)
-    // this.HTMLalertComponent.setCallback(this.closeAlert.bind(this))
-    // this.HTMLalert.nativeElement.style.visibility = "visible";
+      textArea = document.createElement('textArea');
+      textArea.value = content;
+      textArea.style.fontSize = "xx-large";
+      document.body.appendChild(textArea);
+
+      if (navigator.userAgent.match(/ipad|iphone/i)) {
+        range = document.createRange();
+        range.selectNodeContents(textArea);
+        selection = window.getSelection();
+        selection.removeAllRanges();
+        selection.addRange(range);
+        textArea.setSelectionRange(0, 999999);
+      } else {
+        textArea.select();
+      }
+
+      document.execCommand('copy');
+      document.body.removeChild(textArea);
+
+      this.HTMLalertComponent.titleStr = "Share Link"
+      this.HTMLalertComponent.textStr = "The URL has been copied to your clipboard."
+      this.HTMLalertComponent.inputStr = content;
+      this.HTMLalertComponent.enableOptions(true, false, false, false)
+      this.HTMLalertComponent.setCallback(this.closeAlert.bind(this))
+      this.HTMLalert.nativeElement.style.visibility = "visible";
+    }
+
   }
 
   windowResized() {
@@ -489,7 +548,7 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner {
   }
 
   iterationsChanged() {
-    if (this.NumIterations<2) this.NumIterations = 2;
+    if (this.NumIterations < 2) this.NumIterations = 2;
     this.fractal.iterations = this.NumIterations;
     this.HTMLjuliaPicker.setIterations(this.NumIterations);
     this.fractal.render();

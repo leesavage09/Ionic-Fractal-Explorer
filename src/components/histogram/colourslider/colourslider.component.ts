@@ -6,7 +6,7 @@ import { General } from "../../../helper/helper.module";
 @Component({
   selector: 'app-colourslider',
   templateUrl: './colourslider.component.html',
-  styleUrls: ['./colourslider.component.scss']
+  //styleUrls: ['./colourslider.component.scss']
 })
 export class ColoursliderComponent implements OnInit, FractalColor.LinearGradientObserver {
   @ViewChild('slider') HTMLslider: ElementRef;

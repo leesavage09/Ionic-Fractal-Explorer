@@ -9,7 +9,7 @@ import { FractalViewComponent } from '../fractalView/fractalView.component';
 @Component({
   selector: 'app-juliaPicker',
   templateUrl: './juliaPicker.component.html',
-  styleUrls: ['./juliaPicker.component.scss']
+ // styleUrls: ['./juliaPicker.component.scss']
 })
 export class JuliaPickerComponent {
   private juliaFractal: Fractals.Fractal = null;

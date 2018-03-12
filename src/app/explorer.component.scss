@@ -203,7 +203,7 @@ $font-size-small: 18px !default;
         width: $explorer-width / 1.5;
         box-shadow: $shaddow-low;
 
-        ::ng-deep app-alert {
+        app-alert {
             input {
                 @include interactive;
 
@@ -215,8 +215,8 @@ $font-size-small: 18px !default;
 
                 display: inline-block;
                 padding: $padding;
-                height: 20px;
-                line-height: 20px;
+                height: $font-size + $padding * 2;
+                line-height: $font-size / 2 + $padding;
             }
         }
     }
@@ -263,7 +263,7 @@ $font-size-small: 18px !default;
                 }
 
                 &:focus {
-                    color:$color-transparent;
+                    color: $color-transparent;
                 }
 
                 option {
@@ -284,21 +284,21 @@ $font-size-small: 18px !default;
                 position: absolute;
                 left: 0px;
                 top: 0px;
-                width: $button-size+2;
-                height: $button-size+2;
+                width: $button-size + 2;
+                height: $button-size + 2;
                 text-align: center;
-                
                 color: $colour-tool;
                 pointer-events: none;
 
                 i {
-                    line-height: $button-size+2;
-                    margin:0;
+                    line-height: $button-size + 2;
+                    margin: 0;
                     font-size: $font-size;
+
                     sub {
                         position: relative;
-                        top:-4px;
-                        margin:0;
+                        top: -4px;
+                        margin: 0;
                     }
                 }
             }
@@ -310,7 +310,6 @@ $font-size-small: 18px !default;
                 left: 0px;
                 top: 0px;
                 line-height: $button-size;
-                
                 font-size: $font-size;
                 color: $colour-tool;
                 text-align: center;
@@ -344,8 +343,8 @@ $font-size-small: 18px !default;
             line-height: $button-size;
 
             i {
-               line-height: $button-size;
-               margin: auto;
+                line-height: $button-size;
+                margin: auto;
             }
         }
     }
