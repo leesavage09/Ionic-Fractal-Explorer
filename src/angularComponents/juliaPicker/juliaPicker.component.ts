@@ -60,6 +60,7 @@ export class JuliaPickerComponent {
 
   touchStart(event) {
     event.screenX = event.targetTouches[0].screenX
+    event.screenY = event.targetTouches[0].screenY
     this.mousedown(event);
   }
 

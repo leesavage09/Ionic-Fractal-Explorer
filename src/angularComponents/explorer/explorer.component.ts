@@ -264,59 +264,59 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner {
   }
 
   share(event) {
-    var host = location.protocol + "//" + window.location.hostname + ":" + location.port + "/?"
+    // var host = location.protocol + "//" + window.location.hostname + ":" + location.port + "/?"
 
-    let theme = this.theme
-    let equation = this.fractal.getCalculationFunction().getName();
-    let color = this.fractal.getColor().encodeJSON()
-    let iterations = this.fractal.iterations.toString()
-    let complexCenter = this.fractal.complexPlain.getSquare().center.toString();
-    let complexWidth = this.fractal.complexPlain.getSquare().width.toString();
-    let complexJuliaPicker = new ComplexNumber(0, 0).toString();
+    // let theme = this.theme
+    // let equation = this.fractal.getCalculationFunction().getName();
+    // let color = this.fractal.getColor().encodeJSON()
+    // let iterations = this.fractal.iterations.toString()
+    // let complexCenter = this.fractal.complexPlain.getSquare().center.toString();
+    // let complexWidth = this.fractal.complexPlain.getSquare().width.toString();
+    // let complexJuliaPicker = new ComplexNumber(0, 0).toString();
 
-    let fun = this.fractal.getCalculationFunction();
-    if (fun instanceof FractalEquations.Julia) {
-      let julia = <FractalEquations.Julia>fun;
-      complexJuliaPicker = new ComplexNumber(julia.juliaReal, julia.juliaImaginary).toString()
-    }
-
-    let content = host + "theme=" + theme + "&equation=" + equation + "&color=" + color + "&iterations=" + iterations + "&complexCenter=" + complexCenter + "&complexWidth=" + complexWidth + "&complexJuliaPicker=" + complexJuliaPicker;
-    content = encodeURI(content);
-
-    // let service = null
-
-    // switch (event.target.value) {
-    //   case "facebook":
-    //     service = "http://www.facebook.com/sharer.php?u=" + content
-    //     break;
-    //   case "fb-messenger":
-    //     service = "fb-messenger:share/?link=" + content
-    //     break;
-    //   case "whatsapp":
-    //     service = "whatsapp://send?text=" + content
-    //     break;
-    //   case "twitter":
-    //     service = "https://twitter.com/share?url=" + content
-    //     break;
-    //   case "linkedin":
-    //     service = "http://www.linkedin.com/shareArticle?mini=true&amp;url=" + content
-    //     break;
-    //   case "plus.google":
-    //     service = "https://plus.google.com/share?url=" + content
-    //     break;
-    //   case "mailto":
-    //     service = "mailto:?Body=" + content;
-    //     break;
+    // let fun = this.fractal.getCalculationFunction();
+    // if (fun instanceof FractalEquations.Julia) {
+    //   let julia = <FractalEquations.Julia>fun;
+    //   complexJuliaPicker = new ComplexNumber(julia.juliaReal, julia.juliaImaginary).toString()
     // }
 
-    // if (service != null) window.open(service);
-    // else {
-    this.HTMLalertComponent.titleStr = "Share Link"
-    this.HTMLalertComponent.textStr = "You can share this link."
-    this.HTMLalertComponent.inputStr = content;
-    this.HTMLalertComponent.enableOptions(false, false, false, true)
-    this.HTMLalertComponent.setCallback(this.closeAlert.bind(this))
-    this.HTMLalert.nativeElement.style.visibility = "visible";
+    // let content = host + "theme=" + theme + "&equation=" + equation + "&color=" + color + "&iterations=" + iterations + "&complexCenter=" + complexCenter + "&complexWidth=" + complexWidth + "&complexJuliaPicker=" + complexJuliaPicker;
+    // content = encodeURI(content);
+
+    // // let service = null
+
+    // // switch (event.target.value) {
+    // //   case "facebook":
+    // //     service = "http://www.facebook.com/sharer.php?u=" + content
+    // //     break;
+    // //   case "fb-messenger":
+    // //     service = "fb-messenger:share/?link=" + content
+    // //     break;
+    // //   case "whatsapp":
+    // //     service = "whatsapp://send?text=" + content
+    // //     break;
+    // //   case "twitter":
+    // //     service = "https://twitter.com/share?url=" + content
+    // //     break;
+    // //   case "linkedin":
+    // //     service = "http://www.linkedin.com/shareArticle?mini=true&amp;url=" + content
+    // //     break;
+    // //   case "plus.google":
+    // //     service = "https://plus.google.com/share?url=" + content
+    // //     break;
+    // //   case "mailto":
+    // //     service = "mailto:?Body=" + content;
+    // //     break;
+    // // }
+
+    // // if (service != null) window.open(service);
+    // // else {
+    // this.HTMLalertComponent.titleStr = "Share Link"
+    // this.HTMLalertComponent.textStr = "You can share this link."
+    // this.HTMLalertComponent.inputStr = content;
+    // this.HTMLalertComponent.enableOptions(false, false, false, true)
+    // this.HTMLalertComponent.setCallback(this.closeAlert.bind(this))
+    // this.HTMLalert.nativeElement.style.visibility = "visible";
   }
 
   windowResized() {
