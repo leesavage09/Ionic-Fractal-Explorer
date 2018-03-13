@@ -10,7 +10,7 @@ import { ColoursliderComponent } from "./colourslider/colourslider.component";
   templateUrl: './histogram.component.html',
   //styleUrls: ['./histogram.component.scss']
 })
-export class HistogramComponent implements OnInit, FractalHistogram.HistogramObserver, FractalColor.LinearGradientObserver {
+export class HistogramComponent implements OnInit, FractalHistogram.HistogramObserver {
   @ViewChild('histogramCanvas') histogramCanvas: ElementRef;
   private fractal: Fractals.Fractal = null;
   @ViewChild('markerMin') markerMin: ElementRef;
@@ -32,12 +32,12 @@ export class HistogramComponent implements OnInit, FractalHistogram.HistogramObs
   setFractal(fractal: Fractals.Fractal) {
     if (this.fractal != null) {
       this.fractal.getHistogram().unsubscribe(this);
-      this.fractal.getColor().unsubscribe(this);
+      //this.fractal.getColor().unsubscribe(this);
     }
     this.fractal = fractal;
     if (this.fractal != null) {
       fractal.getHistogram().subscribe(this);
-      this.fractal.getColor().subscribe(this);
+      //this.fractal.getColor().subscribe(this);
       this.HTMLgradientSlider.color = this.fractal.getColor();
       this.windowResized()
     }
@@ -75,11 +75,8 @@ export class HistogramComponent implements OnInit, FractalHistogram.HistogramObs
 
   histogramChanged() {
     this.data = this.fractal.getHistogram().getData()
+    if (this.movingMarker != null) return;
     this.drawHistogram();
-  }
-
-  linearGradientChanged(){
-    this.windowResized();
   }
 
   touchStart(event) {

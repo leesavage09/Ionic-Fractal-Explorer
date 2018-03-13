@@ -246,7 +246,6 @@ export namespace FractalHistogram {
 		}
 
 		public incrementData(i: number) {
-			if (this.subscribers.length < 1) return;
 			this.histogram[i] = this.histogram[i] + 1;
 		}
 

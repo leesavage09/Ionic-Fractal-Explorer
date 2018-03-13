@@ -1,7 +1,7 @@
-<div class={{theme}}>
+<div class="fractal-lime">
   <div #explorer id="explorer" (window:resize)="windowResized()">
 
-    <input #jscolor id="jscolor" (change)="HTMLgradient.setColorActive($event)" class="jscolor {width:250,  height:150}" value="000000">
+    <input #jscolor id="jscolor" (change)="HTMLgradient.setColorActive($event)" class="jscolor {width:250,  height:250}" value="000000">
 
     <div class="controls bottom-right">
       <div #zoomControls class="btn-group-vertical" data-toggle="buttons">
@@ -21,16 +21,16 @@
 
     <div class="controls bottom-left">
       <a #shareButton (click)="share($event)" class="btn">
-        <i class="fa fa-share-alt" aria-hidden="true"></i>
+        <ion-icon name="share"></ion-icon>
       </a>
       <div #saveButton class="select-container" (mousedown)="abortDownload()">
         <select #saveSelect class="select" id="eq-select" (change)="save($event)">
           <option value="non-option" disabled>Save jpg</option>
-          <option value="HD 1920×1080">HD 1920×1080</option>
-          <option value="2K 2048×1080">2K 2048×1080</option>
-          <option value="4K 4096×2160">4K 4096×2160</option>
-          <option value="8k 7680×4320">8k 7680×4320</option>
-          <option value="16k 15360×8640">16k 15360×8640</option>
+          <option value="1x">1X Screen Size</option>
+          <option value="2x">2X Screen Size</option>
+          <option value="3x">3X Screen Size</option>
+          <option value="5x">5X Screen Size</option>
+          <option value="8x">8X Screen Size</option>
         </select>
         <div class="select-icon" id="select-caret-down">
           <i #saveIcon class="fa fa-save" aria-hidden="true"></i>
@@ -39,16 +39,13 @@
       </div>
     </div>
 
-    <div #juliaPullOut class="juliaPullOut center-left">
-
+    <div #juliaPullOut class="juliaPullOut open">
+      <div class="juliaPicker">
+        <app-juliaPicker #juliaPicker (numberChanged)="juliaNumberChanged($event)"></app-juliaPicker>
+      </div>
       <div id="juliaPullOut-btn" (click)="toggleJuliaPullOut()">
         <i #juliaPullOutCaret class="fa fa-caret-right" aria-hidden="true"></i>
       </div>
-
-      <div #juliaPickerDiv class="juliaPicker">
-        <app-juliaPicker #juliaPicker (numberChanged)="juliaNumberChanged($event)"></app-juliaPicker>
-      </div>
-
     </div>
 
     <div #colorControls class="controls top-right">
@@ -63,7 +60,9 @@
           <option value="Julia">Julia</option>
         </select>
         <div class="select-icon" id="select-caret-down">
-          <i>f<sub>(x)</sub></i>
+          <i>f
+            <sub>(x)</sub>
+          </i>
         </div>
       </div>
       <div class="select-container ">
@@ -95,8 +94,8 @@
       </div>
     </div>
 
-    <div #colorPullDown id="colorPullDown">
-      <div id="colorPullDown-btn" (click)="toggleColorPullDown($event)">
+    <div #colorPullDown class="colorPullDown close">
+      <div class="colorPullDown-btn" (click)="toggleColorPullDown()">
         <i #colorPullDownCaret class="fa fa-caret-down" aria-hidden="true"></i>
       </div>
 
@@ -108,8 +107,25 @@
       </div>
     </div>
 
-    <div #fractalContainer id="fractalContainer">
-      <app-fractalView id="mainFractalView" #mainFractalView></app-fractalView>
+    <app-fractalView class="fractal-view" #fractalView></app-fractalView>
+
+    <div #webView class="web-view" (swipe)="closeWebView($event)">
+
+      <div id="web-view-btn" (click)="openWebView()">
+        <i #webViewCaret class="fa fa-caret-left" aria-hidden="true"></i>
+      </div>
+
+      <div class="web-view-inner">
+
+
+        <h1>Hello World</h1>
+
+        <p>
+          Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
+        </p>
+
+      </div>
+
     </div>
 
     <div #alert class="alert center" (wheel)="$event.preventDefault()">

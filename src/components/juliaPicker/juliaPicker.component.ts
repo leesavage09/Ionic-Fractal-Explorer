@@ -9,7 +9,7 @@ import { FractalViewComponent } from '../fractalView/fractalView.component';
 @Component({
   selector: 'app-juliaPicker',
   templateUrl: './juliaPicker.component.html',
- // styleUrls: ['./juliaPicker.component.scss']
+  // styleUrls: ['./juliaPicker.component.scss']
 })
 export class JuliaPickerComponent {
   private juliaFractal: Fractals.Fractal = null;
@@ -21,6 +21,7 @@ export class JuliaPickerComponent {
   private startX: number;
   private startY: number;
   public hasInit: boolean = false
+  public isOnScreen: boolean = true;
   constructor() {
   }
 
@@ -40,7 +41,7 @@ export class JuliaPickerComponent {
     this.juliaFractal.iterations = iterations;
     this.mainFractalView.setFractal(this.juliaFractal)
 
-    this.setXY(this.getPickerX(),this.getPickerY());
+    this.setXY(this.getPickerX(), this.getPickerY());
     this.hasInit = true;
   }
 
@@ -53,7 +54,7 @@ export class JuliaPickerComponent {
   */
 
   viewChanged() {
-    if (this.getMaxX()!=0 && this.getMaxY()!=0) {
+    if (this.getMaxX() != 0 && this.getMaxY() != 0) {
       this.numberChanged.emit(new ComplexNumber(this.getRealNumber(0), this.getImaginaryNumber(0)));
     }
   }
@@ -98,7 +99,9 @@ export class JuliaPickerComponent {
   public setIterations(i: number) {
     if (this.hasInit) {
       this.juliaFractal.iterations = i;
-      this.juliaFractal.render();
+      if (this.isOnScreen) {
+        this.juliaFractal.render();
+      }
     }
   }
 
@@ -108,10 +111,10 @@ export class JuliaPickerComponent {
   */
 
   private getRealNumber(offset) {
-    return this.juliaFractal.complexPlain.getRealNumber(this.getPickerX()-offset)
+    return this.juliaFractal.complexPlain.getRealNumber(this.getPickerX() - offset)
   }
   private getImaginaryNumber(offset) {
-    return this.juliaFractal.complexPlain.getImaginaryNumber(this.getPickerY()-offset)
+    return this.juliaFractal.complexPlain.getImaginaryNumber(this.getPickerY() - offset)
   }
 
   private getMaxX() {
@@ -123,11 +126,11 @@ export class JuliaPickerComponent {
   }
 
   private getPickerX() {
-    return this.getMaxX()/2;
+    return this.getMaxX() / 2;
   }
 
   private getPickerY() {
-    return this.getMaxY()/2;
+    return this.getMaxY() / 2;
   }
 
   private setXY(x: number, y: number) {

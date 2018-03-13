@@ -70,7 +70,7 @@ export namespace Fractals {
 			this.compiledColor = this.color.getCompiledColor(this.iterations);
 			var self = this;
 			setTimeout(function () {
-				self.scanLine(0, self.renderVersion);
+				self.scanLine(self.complexPlain.getDrawableHeight(), self.renderVersion);
 			}, 0);
 		}
 
@@ -104,16 +104,16 @@ export namespace Fractals {
 			this.complexPlain.updateCanvas(y);
 
 			var self = this;
-			if (y < this.complexPlain.getDrawableHeight()) {
+			if (y>1) {
 				var now = (new Date).getTime();
 				if ((now - this.lastUpdate) >= this.updateTimeout) {
 					this.lastUpdate = now;
 					setTimeout(function () {
-						self.scanLine(y + 1, version);
+						self.scanLine(y - 1, version);
 					}, 1);// using timeout 1 to force thread to yeald so we can update UI
 				}
 				else {
-					this.scanLine(y + 1, version);
+					this.scanLine(y - 1, version);
 				}
 			}
 			else if (!this.complexPlain.drawableAndViewAreEqual()) {
@@ -121,7 +121,7 @@ export namespace Fractals {
 				this.complexPlain.makeAlternativeResolutionCanvas(1);
 				this.lastUpdate = (new Date).getTime();
 				setTimeout(function () {
-					self.scanLine(0, version);
+					self.scanLine(self.complexPlain.getDrawableHeight(), version);
 				}, 1);
 			}
 			else {

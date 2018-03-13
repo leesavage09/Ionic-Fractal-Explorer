@@ -85,7 +85,7 @@ export class FractalViewComponent implements Fractals.ChangeObserver {
   }
 
   getDownloadProgress(): number {
-    let num = 100 * (this.downloadingFractal.currentScanLine / this.downloadingFractal.complexPlain.getViewCanvas().height);
+    let num = 100- (100 * (this.downloadingFractal.currentScanLine / this.downloadingFractal.complexPlain.getViewCanvas().height));
     return Math.trunc(num)
   }
 

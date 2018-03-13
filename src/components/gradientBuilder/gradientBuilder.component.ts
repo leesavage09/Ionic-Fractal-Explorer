@@ -7,7 +7,7 @@ import { General } from "../../helper/helper.module";
 @Component({
   selector: 'app-gradientbuilder',
   templateUrl: './gradientBuilder.component.html',
- // styleUrls: ['./gradientBuilder.component.scss']
+  // styleUrls: ['./gradientBuilder.component.scss']
 })
 export class GradientBuilderComponent implements OnInit, FractalColor.LinearGradientObserver {
   @ViewChild('stopMarkers', { read: ViewContainerRef }) stopMarkers;
@@ -72,11 +72,11 @@ export class GradientBuilderComponent implements OnInit, FractalColor.LinearGrad
   move(event) {
     if (this.selectedMarker != undefined) {
       let offsetY = Math.abs(this.getScreenY() - event.clientY)
-      if (offsetY > 25 && this.allMarkers.length > 1) {
+      if (offsetY > 45 && this.allMarkers.length > 1) {
         this.popMarker();
       }
 
-      if (offsetY > 25 && this.selectedMarkerIsPoped) {
+      if (offsetY > 45 && this.selectedMarkerIsPoped) {
         let x = event.clientX - this.getScreenLeft() - this.selectedMarker.getCSSWidth() / 2
         let y = event.clientY - this.getScreenTop() - this.selectedMarker.getCSSWidth() / 2
         this.selectedMarker.setCSSLeftTop(x, y);
@@ -84,9 +84,10 @@ export class GradientBuilderComponent implements OnInit, FractalColor.LinearGrad
       else {
         this.unpopMarker();
         this.selectedMarker.offsetCSSLeft(event.screenX);
+        this.draw();
+        this.gradient.notify(this);
       }
-      this.draw();
-      this.gradient.notify(this);
+
     }
   }
 
