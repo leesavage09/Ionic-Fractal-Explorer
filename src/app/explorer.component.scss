@@ -42,6 +42,28 @@ $font-size-small: 18px !default;
     }
 }
 
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+    }
+
+    100% {
+        visibility: visible;
+        opacity: 1;
+    }
+}
+
+@keyframes fadeOut {
+    0% {
+        opacity: 1;
+    }
+
+    100% {
+        visibility: hidden;
+        opacity: 0;
+    }
+}
+
 @mixin interactive {
     background-color: $color-tool-bg;
     color: $colour-tool;
@@ -74,6 +96,18 @@ $font-size-small: 18px !default;
     -moz-user-select: none; /* Firefox */
     -ms-user-select: none; /* Internet Explorer/Edge */
     user-select: none;
+}
+
+.fade-show {
+    animation-name: fadeIn;
+    animation-duration: 0.5s;
+    animation-fill-mode: forwards;
+}
+
+.fade-hide {
+    animation-name: fadeOut;
+    animation-duration: 0.5s;
+    animation-fill-mode: forwards;
 }
 
 #jscolor {
@@ -121,13 +155,13 @@ $font-size-small: 18px !default;
         flex-direction: column-reverse;
 
         &.open {
-            top: 0px;
-            transition: 0.4s;
+            transform: translateY(0px);
+            transition: 0.2s;
         }
 
         &.close {
-            top: -50%;
-            transition: 0.4s;
+            transform: translateY(-100%);
+            transition: 0.2s;
         }
 
         #gradientpanel {
@@ -156,6 +190,47 @@ $font-size-small: 18px !default;
             border-top-right-radius: 0px;
             box-shadow: $shadow;
         }
+
+        .iteration {
+            position: absolute;
+            bottom: -$button-size - $padding * 2;
+            left: 0;
+
+            div.btn-group {
+                box-shadow: $shadow;
+                border-radius: $corner-radius;
+            }
+
+            .btn {
+                margin: 0px;
+                vertical-align: top;
+                height: $button-size;
+                line-height: $button-size;
+            }
+
+            :first-child {
+                border-right-style: none;
+                border-top-right-radius: 0px;
+                border-bottom-right-radius: 0px;
+            }
+
+            :last-child {
+                border-left-style: none;
+                border-top-left-radius: 0px;
+                border-bottom-left-radius: 0px;
+            }
+
+            input {
+                border-right-style: none;
+                border-left-style: none;
+                margin: 0px;
+                margin-left: 0;
+                margin-right: 0;
+                width: $iterations-width;
+                height: $button-size;
+                border-radius: 0px;
+            }
+        }
     }
 
     .juliaPullOut {
@@ -164,13 +239,13 @@ $font-size-small: 18px !default;
         bottom: 0;
 
         &.open {
-            left: 0;
-            transition: 0.3s;
+            transform: translateX(0%);
+            transition: 0.2s;
         }
 
         &.close {
-            left: -$julia-picker-width;
-            transition: 0.3s;
+            transform: translateX(-100%);
+            transition: 0.2s;
         }
 
         .juliaPicker {
@@ -209,13 +284,18 @@ $font-size-small: 18px !default;
         height: 100%;
 
         &.open {
-            right: 0%;
-            transition: 0.5s;
+            transform: translateX(-35%);
+            transition: 0.2s;
+        }
+
+        &.open-full {
+            transform: translateX(-135%);
+            transition: 0.4s;
         }
 
         &.close {
-            right: -100%;
-            transition: 0.5s;
+            transform: translateX(0%);
+            transition: 0.2s;
         }
 
         #web-view-btn {
@@ -236,12 +316,77 @@ $font-size-small: 18px !default;
             transform: perspective(1px) translateY(-50%);
         }
 
+        .web-view-outer {
+            width: 35%;
+            height: 100%;
+            background-color: white;
+            padding: $padding;
+            position: relative;
+            display: inline-block;
+            text-align: center;
+            overflow: scroll;
+
+            .btn {
+                @include interactive;
+
+                padding: $padding;
+                display: block;
+                height: $button-size;
+                line-height: $button-size - $padding * 2;
+                overflow: hidden;
+                position: relative;
+
+                &.disabled {
+                    cursor: wait;
+                    animation-name: disabled-blink;
+                    animation-duration: 1s;
+                    animation-iteration-count: infinite;
+
+                    .fa-save {
+                        display: none;
+                    }
+                }
+            }
+        }
+
         .web-view-inner {
             width: 100%;
             height: 100%;
             background-color: white;
             padding: $padding;
-            position: relative;
+            position: absolute;
+            display: inline-block;
+            overflow: scroll;
+
+            section .hide {
+                visibility: hidden;
+            }
+
+            section .show {
+                visibility: visible;
+            }
+
+            ul {
+                list-style-type: none;
+                -webkit-padding-start: 0;
+
+                li {
+                    @include interactive;
+
+                    margin: auto;
+                    margin-top: $padding * 2;
+                    width: 70%;
+                    list-style-type: none;
+                }
+            }
+
+            .btn {
+                @include interactive;
+
+                padding: $padding;
+                height: $button-size;
+                margin: $padding;
+            }
         }
     }
 
@@ -288,94 +433,8 @@ $font-size-small: 18px !default;
             pointer-events: all;
         }
 
-        input, label, a, .btn {
+        input, .btn {
             @include interactive;
-        }
-
-        .btn.pop-out {
-            margin: 0px;
-            border-top-right-radius: 0;
-            border-bottom-right-radius: 0;
-            height: $button-size;
-            width: $button-size / 2;
-            border-right: 0px;
-        }
-
-        .select-container {
-            .select {
-                -moz-appearance: none;
-                -webkit-appearance: none;
-
-                @include interactive;
-
-                height: $button-size + 2;
-                width: $button-size + 2;
-                font-size: $font-size;
-                color: $color-transparent;
-                margin:0;
-
-                &:hover {
-                    color: $color-transparent;
-                }
-
-                &:focus {
-                    color: $color-transparent;
-                }
-
-                option {
-                    font-size: $font-size;
-                    color: $colour-tool;
-                    background-color: $color-tool-bg;
-                }
-
-                &.disabled {
-                    cursor: wait;
-                    animation-name: disabled-blink;
-                    animation-duration: 1s;
-                    animation-iteration-count: infinite;
-                }
-            }
-
-            .select-icon {
-                position: absolute;
-                left: 0px;
-                top: 0px;
-                width: $button-size + 2;
-                height: $button-size + 2;
-                text-align: center;
-                color: $colour-tool;
-                pointer-events: none;
-
-                i {
-                    line-height: $button-size + 2;
-                    margin: 0;
-                    font-size: $font-size;
-
-                    sub {
-                        position: relative;
-                        top: -4px;
-                        margin: 0;
-                    }
-                }
-            }
-
-            .icon-text {
-                position: absolute;
-                width: $button-size;
-                height: $button-size;
-                left: 0px;
-                top: 0px;
-                line-height: $button-size;
-                font-size: $font-size;
-                color: $colour-tool;
-                text-align: center;
-            }
-
-            &:hover {
-                .select-icon {
-                    color: $color-mouseover;
-                }
-            }
         }
 
         input[type=number]::-webkit-inner-spin-button,
@@ -397,11 +456,6 @@ $font-size-small: 18px !default;
             width: $button-size + 2;
             height: $button-size + 2;
             line-height: $button-size;
-
-            i, ion-icon {
-                line-height: $button-size;
-                margin: auto;
-            }
         }
     }
 
@@ -415,89 +469,6 @@ $font-size-small: 18px !default;
         z-index: 99;
     }
 
-    .top-left {
-        position: absolute;
-        top: 0;
-        left: 0;
-
-        div.btn-group {
-            box-shadow: $shadow;
-            border-radius: $corner-radius;
-        }
-
-        .btn {
-            margin: 0px;
-            vertical-align: top;
-            height: $button-size;
-            line-height: $button-size;
-        }
-
-        :first-child {
-            border-right-style: none;
-            border-top-right-radius: 0px;
-            border-bottom-right-radius: 0px;
-        }
-
-        :last-child {
-            border-left-style: none;
-            border-top-left-radius: 0px;
-            border-bottom-left-radius: 0px;
-        }
-
-        input {
-            border-right-style: none;
-            border-left-style: none;
-            margin: 0px;
-            margin-left: 0;
-            margin-right: 0;
-            width: $iterations-width;
-            height: $button-size;
-            border-radius: 0px;
-        }
-    }
-
-    .top-right {
-        position: absolute;
-        top: 0;
-        right: 0;
-
-        .select-container {
-            position: relative;
-            display: inline-block;
-        }
-
-        select {
-            box-shadow: $shadow;
-        }
-
-        :first-child {
-            margin-right: $padding;
-        }
-    }
-
-    .bottom-left {
-        position: absolute;
-        bottom: 0;
-        left: 0;
-
-        :first-child {
-            margin-right: $padding;
-        }
-
-        .select-container {
-            position: absolute;
-            display: inline-block;
-
-            select {
-                box-shadow: $shadow;
-            }
-        }
-
-        a {
-            box-shadow: $shadow;
-        }
-    }
-
     .bottom-right {
         position: absolute;
         bottom: 0;
@@ -506,37 +477,30 @@ $font-size-small: 18px !default;
         a {
             box-shadow: $shadow;
         }
+    }
 
-        .btn-group-vertical {
-            border-radius: $corner-radius;
-            box-shadow: $shadow;
-            width: $button-size;
-            margin-left: auto;
-            margin-right: 2px;
+    .bottom-left {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        border-radius: $corner-radius;
+        box-shadow: $shadow;
+        width: $button-size+2;
+        height: $button-size*2 +4;
+        margin-left: $padding;
+        margin-bottom: $padding;
+        padding: 0;
 
-            .btn {
-                display: block;
-                margin-top: $input-spacing * 2;
-                margin-bottom: $input-spacing * 2;
-                box-shadow: none;
-            }
-
-            > .btn:first-child {
-                margin-bottom: 0 - $input-spacing * 2;
-                border-bottom-left-radius: 0px;
-                border-bottom-right-radius: 0px;
-                border-bottom: 1px;
-                border-bottom-style: solid;
-            }
-
-            > .btn:last-child {
-                border-top-left-radius: 0px;
-                border-top-right-radius: 0px;
-            }
+        > .btn:first-child {
+            border-bottom-left-radius: 0px;
+            border-bottom-right-radius: 0px;
+            border-bottom: 1px;
+            border-bottom-style: solid;
         }
 
         > .btn:last-child {
-            margin-left: $input-spacing;
+            border-top-left-radius: 0px;
+            border-top-right-radius: 0px;
         }
     }
 }

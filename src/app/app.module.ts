@@ -5,6 +5,7 @@ import { SplashScreen } from '@ionic-native/splash-screen';
 import { SocialSharing } from '@ionic-native/social-sharing';
 import { PhotoLibrary } from '@ionic-native/photo-library';
 import { AndroidFullScreen } from '@ionic-native/android-full-screen';
+import { IonicSwipeAllModule } from 'ionic-swipe-all';
 
 import { MyApp } from './app.component';
 
@@ -32,7 +33,8 @@ import { AlertComponent } from '../components/alert/alert.component';
   ],
   imports: [
     BrowserModule,
-    IonicModule.forRoot(MyApp)
+    IonicModule.forRoot(MyApp),
+    IonicSwipeAllModule
   ],
   bootstrap: [IonicApp],
   entryComponents: [
