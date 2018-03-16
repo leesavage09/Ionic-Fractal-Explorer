@@ -1,6 +1,6 @@
 $button-size: 55px !default;
 $input-spacing: 10px !default;
-$iterations-width: 40px !default;
+$iterations-width: 60px !default;
 $select-width: $iterations-width + $button-size * 2 !default;
 $corner-radius: 3px !default;
 $padding: 10px !default;
@@ -219,16 +219,18 @@ $font-size-small: 18px !default;
                 border-top-left-radius: 0px;
                 border-bottom-left-radius: 0px;
             }
-
+  
             input {
                 border-right-style: none;
                 border-left-style: none;
                 margin: 0px;
                 margin-left: 0;
                 margin-right: 0;
+                min-width:10px;
                 width: $iterations-width;
                 height: $button-size;
                 border-radius: 0px;
+                transition: width 0.5s;
             }
         }
     }
@@ -437,14 +439,14 @@ $font-size-small: 18px !default;
             @include interactive;
         }
 
-        input[type=number]::-webkit-inner-spin-button,
-        input[type=number]::-webkit-outer-spin-button {
+        input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button {
             -webkit-appearance: none;
             margin: 0;
         }
 
         input[type=number] {
             -moz-appearance: textfield;
+            font-size: $font-size-small;
         }
 
         input:focus, select:focus {
@@ -485,8 +487,8 @@ $font-size-small: 18px !default;
         left: 0;
         border-radius: $corner-radius;
         box-shadow: $shadow;
-        width: $button-size+2;
-        height: $button-size*2 +4;
+        width: $button-size + 2;
+        height: $button-size * 2 + 4;
         margin-left: $padding;
         margin-bottom: $padding;
         padding: 0;
@@ -503,4 +505,12 @@ $font-size-small: 18px !default;
             border-top-right-radius: 0px;
         }
     }
+}
+#hide{
+    visibility: hidden;
+    position: absolute;
+    white-space:pre;
+    font-size: $font-size-small;
+    margin:0;
+    padding:4px;
 }

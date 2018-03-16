@@ -2,6 +2,7 @@
   <div #explorer id="explorer" (window:resize)="windowResized()">
 
     <input #jscolor id="jscolor" (change)="HTMLgradient.setColorActive($event)" class="jscolor {width:250,  height:250}" value="000000">
+    <span #itSpan id="hide">this is a test</span>
 
     <div class="controls bottom-right">
       <a (click)="clickEye()" class="btn eye">
@@ -47,7 +48,7 @@
           <a (touchstart)="startChangingIterations(0.95)" (touchend)="stopChangingIterations()" (mousedown)='startChangingIterations(0.9)' (mouseup)="stopChangingIterations()" (mouseleave)='stopChangingIterations()' class="btn">
             <i class="fa fa-minus" aria-hidden="true"></i>
           </a>
-          <input class="iteration-textbox" [(ngModel)]="NumIterations" (ngModelChange)="ngModelChangeIterations()" type="number" min="1" value="85">
+          <input #itInput class="iteration-textbox" [(ngModel)]="NumIterations" (ngModelChange)="ngModelChangeIterations()" type="number" min="2" value="85">
           <a (touchstart)="startChangingIterations(1.05)" (touchend)="stopChangingIterations()" (mousedown)='startChangingIterations(1.1)' (mouseup)="stopChangingIterations()" (mouseleave)='stopChangingIterations()' class="btn">
             <i class="fa fa-plus" aria-hidden="true"></i>
           </a>

@@ -13,7 +13,7 @@ export namespace Fractals {
 		img: ImageData;
 		private calculationFunction: FractalEquations.equation;
 		private renderVersion: number = 0;
-		public updateTimeout: number = 100
+		public updateTimeout: number = 50;
 		private lastUpdate: number = (new Date).getTime();
 		private animator: FractalNavigationAnimator;
 		private maxZoomListner: MaxZoomListner;

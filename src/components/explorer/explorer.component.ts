@@ -39,6 +39,8 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner {
   @ViewChild('saveSection') readonly saveSection: ElementRef;
   @ViewChild('equationSection') readonly equationSection: ElementRef;
   @ViewChild('gradientSection') readonly gradientSection: ElementRef;
+  @ViewChild('itSpan') readonly itSpan: ElementRef;
+  @ViewChild('itInput') readonly itInput: ElementRef;
 
   readonly colorBW: string = '{"mn":0,"md":0.5,"mx":1,"arr":[{"s":0,"c":{"r":0,"g":0,"b":0}},{"s":1,"c":{"r":255,"g":255,"b":255}}]}'
   readonly colorRainbow: string = '{"mn":0,"md":0.5,"mx":1,"arr":[{"s":0,"c":{"r":255,"g":0,"b":0}},{"s":0.166,"c":{"r":255,"g":100,"b":0}},{"s":0.332,"c":{"r":249,"g":255,"b":0}},{"s":0.498,"c":{"r":0,"g":255,"b":13}},{"s":0.664,"c":{"r":0,"g":67,"b":255}},{"s":0.830,"c":{"r":133,"g":0,"b":255}},{"s":1,"c":{"r":255,"g":0,"b":215}}]}'
@@ -109,6 +111,8 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner {
     this.fractal.setMaxZoomListener(this);
     this.mainFractalView.setFractal(this.fractal);
     this.fractal.render();
+
+    this.ngModelChangeIterations();
   }
 
   init() {
@@ -214,11 +218,18 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner {
     this.iterationsAreChanging = false;
   }
 
-  ngModelChangeIterations() {
-    if (this.NumIterations < 2) this.NumIterations = 2;
+  ngModelChangeIterations() {  
+    if (this.NumIterations < 2) {
+      this.NumIterations = 2;
+      this.iterationsAreChanging = false;
+    }
     this.fractal.iterations = this.NumIterations;
     this.HTMLjuliaPicker.setIterations(this.NumIterations);
     this.fractal.render();
+ 
+    this.itSpan.nativeElement.innerHTML = this.NumIterations;
+    var width = getComputedStyle(this.itSpan.nativeElement).width;
+    this.itInput.nativeElement.style.width = width;  
   }
 
   saveSize(val) {
@@ -498,10 +509,6 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner {
       this.NumIterations = Math.floor(this.NumIterations * i)
     }
 
-    if (this.NumIterations < 2) {
-      this.NumIterations = 2;
-      this.iterationsAreChanging = false;
-    }
     this.ngModelChangeIterations();
   }
 
