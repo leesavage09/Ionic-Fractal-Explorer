@@ -26,12 +26,12 @@
         <app-juliaPicker #juliaPicker (numberChanged)="juliaNumberChanged($event)"></app-juliaPicker>
       </div>
       <div id="juliaPullOut-btn" (click)="clickJuliaPullOut()" (swipe)="swipeJuliaPullOut($event)">
-       <ion-icon name="ios-locate-outline"></ion-icon>
+        <ion-icon name="ios-locate-outline"></ion-icon>
       </div>
     </div>
 
 
-    <div class="paddedPullDown"> 
+    <div class="paddedPullDown">
       <div #colorPullDown class="colorPullDown close">
         <div class="colorPullDown-btn" (click)="clickColorPullDown()" swipeAll (swipe)="swipeColorPullDown($event)">
           <ion-icon name="ios-color-palette"></ion-icon>
@@ -42,7 +42,7 @@
           <app-histogram #histogram></app-histogram>
           <div #intColor id="int-color" (mouseup)="clickSetInteriorColor($event)" (touchend)="clickSetInteriorColor($event);">
           </div>
-          
+
         </div>
         <div #gradientdiv id="gradientpanel">
           <app-gradientbuilder #gradient></app-gradientbuilder>
@@ -74,10 +74,11 @@
         <h1>Options</h1>
 
         <p>
-          
-          
+
+
           <a #saveButton (click)="clickSave($event)" class="btn">
-            <ion-icon name="ios-image"></ion-icon> <span #saveText> Save</span>
+            <ion-icon name="ios-image"></ion-icon>
+            <span #saveText> Save</span>
           </a>
           <a (click)="clickLibrary($event)" class="btn">
             <ion-icon name="ios-bookmark"></ion-icon> Library
@@ -89,7 +90,8 @@
             <ion-icon name="ios-color-palette"></ion-icon> Gradients
           </a>
           <a #saveButton (click)="clickFavorite($event)" class="btn">
-            <ion-icon name="ios-star"></ion-icon> <span #saveText> Favorite</span>
+            <ion-icon name="ios-star"></ion-icon>
+            <span #saveText> Favorite</span>
           </a>
           <a (click)="clickShare($event)" class="btn">
             <ion-icon name="share"></ion-icon> Share
@@ -100,86 +102,131 @@
       </div>
 
       <div class="web-view-inner" (swipe)="swipeWebView($event,false,true,false)">
-        <a (click)="clickWebView(true)" class="btn">
-          <i class="fa fa-caret-left" aria-hidden="true"></i> Back
-        </a>
 
         <section #saveSection class="hide">
-          <h1>Select Image Size To Save</h1>
+          <div class="header">
+            <ion-icon (click)="clickWebView(true)" name="md-close-circle"></ion-icon>
+            <h1>Save Size</h1>
+          </div>
 
           <ul>
             <li (click)="saveSize(1)">
+              <ion-icon name="ios-image"></ion-icon>
               1X screen size
-              <br> {{this.fractal.complexPlain.getViewCanvas().width}} X {{this.fractal.complexPlain.getViewCanvas().height}}
+              <span>{{this.fractal.complexPlain.getViewCanvas().width}} X {{this.fractal.complexPlain.getViewCanvas().height}}</span>
             </li>
             <li (click)="saveSize(2)">
+              <ion-icon name="ios-image"></ion-icon>
               2X screen size
-              <br> {{this.fractal.complexPlain.getViewCanvas().width * 2}} X {{this.fractal.complexPlain.getViewCanvas().height * 2}}
+              <span>{{this.fractal.complexPlain.getViewCanvas().width * 2}} X {{this.fractal.complexPlain.getViewCanvas().height * 2}}</span>
             </li>
             <li (click)="saveSize(3)">
+              <ion-icon name="ios-image"></ion-icon>
               3X screen size
-              <br> {{this.fractal.complexPlain.getViewCanvas().width * 3}} X {{this.fractal.complexPlain.getViewCanvas().height * 3}}
+              <span>{{this.fractal.complexPlain.getViewCanvas().width * 3}} X {{this.fractal.complexPlain.getViewCanvas().height * 3}}</span>
             </li>
             <li (click)="saveSize(5)">
+              <ion-icon name="ios-image"></ion-icon>
               5X screen size
-              <br> {{this.fractal.complexPlain.getViewCanvas().width * 5}} X {{this.fractal.complexPlain.getViewCanvas().height * 5}}
+              <span>{{this.fractal.complexPlain.getViewCanvas().width * 5}} X {{this.fractal.complexPlain.getViewCanvas().height * 5}}</span>
             </li>
             <li (click)="saveSize(8)">
+              <ion-icon name="ios-image"></ion-icon>
               8X screen size
-              <br> {{this.fractal.complexPlain.getViewCanvas().width * 8}} X {{this.fractal.complexPlain.getViewCanvas().height * 8}}
+              <span>{{this.fractal.complexPlain.getViewCanvas().width * 8}} X {{this.fractal.complexPlain.getViewCanvas().height * 8}}</span>
             </li>
           </ul>
         </section>
 
         <section #equationSection class="hide">
-          <h1>Select Equations</h1>
+          <div class="header">
+            <ion-icon (click)="clickWebView(true)" name="md-close-circle"></ion-icon>
+            <h1>Equations</h1>
+          </div>
 
           <ul>
             <li (click)="onEqChanged('Mandelbrot')">
-              Mandelbrot z=z^2+C
+              <ion-icon name="ios-cog"></ion-icon>
+              Classic mandelbrot
             </li>
             <li (click)="onEqChanged('MandelbrotPow4')">
-              Mandelbrot z=z^4+C
+              <ion-icon name="ios-cog"></ion-icon>
+              Mandelbrot 4th power
             </li>
             <li (click)="onEqChanged('MandelbrotPow6')">
-              Mandelbrot z=z^6+C
+              <ion-icon name="ios-cog"></ion-icon>
+              Mandelbrot 6th power
             </li>
             <li (click)="onEqChanged('Tricorn')">
+              <ion-icon name="ios-cog"></ion-icon>
               Tricorn
             </li>
             <li (click)="onEqChanged('BurningShip')">
+              <ion-icon name="ios-cog"></ion-icon>
               Burning Ship
             </li>
             <li (click)="onEqChanged('Julia')">
-              Julia
+              <ion-icon name="ios-cog"></ion-icon>
+              Julia explorer
             </li>
           </ul>
         </section>
 
         <section #gradientSection class="hide">
-          <h1>Select Gradient</h1>
+          <div class="header">
+            <ion-icon (click)="clickWebView(true)" name="md-close-circle"></ion-icon>
+            <h1>Gradients</h1>
+          </div>
 
           <ul>
             <li (click)="onGradientChanged(colorBlueGold)">
+              <ion-icon name="ios-color-palette"></ion-icon>
               Blue/Gold
+              <div class="gradient">
+                <app-colourslider colorStr="{{colorBlueGold}}"> </app-colourslider>
+              </div>
             </li>
             <li (click)="onGradientChanged(colorBW)">
+              <ion-icon name="ios-color-palette"></ion-icon>
               B/W
+              <div class="gradient">
+                <app-colourslider colorStr="{{colorBW}}"> </app-colourslider>
+              </div>
             </li>
             <li (click)="onGradientChanged(colorRainbow)">
+              <ion-icon name="ios-color-palette"></ion-icon>
               Rainbow
+              <div class="gradient">
+                <app-colourslider colorStr="{{colorRainbow}}"> </app-colourslider>
+              </div>
             </li>
             <li (click)="onGradientChanged(colorBlackBlue)">
+              <ion-icon name="ios-color-palette"></ion-icon>
               Black/Blue
+              <div class="gradient">
+                <app-colourslider colorStr="{{colorBlackBlue}}"> </app-colourslider>
+              </div>
             </li>
             <li (click)="onGradientChanged(colorCell)">
+              <ion-icon name="ios-color-palette"></ion-icon>
               Cell
+              <div class="gradient">
+                <app-colourslider colorStr="{{colorCell}}"> </app-colourslider>
+              </div>
             </li>
             <li (click)="onGradientChanged(colorBlob)">
+              <ion-icon name="ios-color-palette"></ion-icon>
               Blob
+              <div class="gradient">
+                <app-colourslider colorStr="{{colorBlob}}"> </app-colourslider>
+              </div>
             </li>
             <li (click)="onGradientChanged(colorCrystal)">
+              <ion-icon name="ios-color-palette"></ion-icon>
               Crystal
+              <div class="gradient">
+                <app-colourslider colorStr="{{colorCrystal}}"> </app-colourslider>
+              </div>
             </li>
           </ul>
         </section>

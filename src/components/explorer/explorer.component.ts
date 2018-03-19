@@ -87,16 +87,16 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner, Fract
       this.HTMLzoomControls.nativeElement.style.display = "none";
     }
     else {
-      this.HTMLalertComponent.titleStr = "Welcome";
-      this.HTMLalertComponent.textStr = "For the best experence run fullscreen";
-      this.HTMLalertComponent.enableOptions(false, true, true);
-      this.HTMLalertComponent.setCallback(function (result) {
-        if (result == "yes") {
-          this.requestNativeFullScreen();
-        }
-        this.closeAlert();
-      }.bind(this))
-      this.HTMLalert.nativeElement.style.visibility = "visible";
+      // this.HTMLalertComponent.titleStr = "Welcome";
+      // this.HTMLalertComponent.textStr = "For the best experence run fullscreen";
+      // this.HTMLalertComponent.enableOptions(false, true, true);
+      // this.HTMLalertComponent.setCallback(function (result) {
+      //   if (result == "yes") {
+      //     this.requestNativeFullScreen();
+      //   }
+      //   this.closeAlert();
+      // }.bind(this)) 
+      // this.HTMLalert.nativeElement.style.visibility = "visible";
     }
 
     let canvas = <HTMLCanvasElement>this.mainFractalView.getCanvas();
@@ -256,8 +256,9 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner, Fract
   }
 
   clickGradient() {
-    this.HTMLwebView.nativeElement.setAttribute("class", "web-view open-full");
+    this.HTMLwebView.nativeElement.setAttribute("class", "web-view open-full"); 
     this.setWebViewSection(this.gradientSection);
+    window.dispatchEvent(new Event('resize'));
   }
 
   clickShare(event) {

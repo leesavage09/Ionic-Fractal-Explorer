@@ -10,9 +10,6 @@ import { General } from "../../../helper/helper.module";
 })
 export class ColoursliderComponent implements OnInit, FractalColor.LinearGradientObserver {
   @ViewChild('slider') HTMLslider: ElementRef;
-  // private trackingMove: boolean = false;
-  // private startX: number = null;
-  // private startPhase;
   private linearGradient: FractalColor.LinearGradient = null;
   constructor() { }
 
@@ -32,6 +29,13 @@ export class ColoursliderComponent implements OnInit, FractalColor.LinearGradien
     }
   }
 
+  @Input()
+  set colorStr(c: string) {
+    var g = new FractalColor.LinearGradient();
+    g.decodeJSON(c);
+    this.color = g;
+  }
+
 
 
   /*
@@ -41,6 +45,7 @@ export class ColoursliderComponent implements OnInit, FractalColor.LinearGradien
   windowResized() {
     if (this.linearGradient == null) return;
     General.resizeCanvasToFillParent(this.HTMLslider.nativeElement);
+    if (this.HTMLslider.nativeElement.parentNode.getBoundingClientRect().width == 0 || this.HTMLslider.nativeElement.parentNode.getBoundingClientRect().height == 0) return;
     this.updateImg();
   }
 
