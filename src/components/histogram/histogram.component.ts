@@ -85,7 +85,8 @@ export class HistogramComponent implements OnInit, FractalHistogram.HistogramObs
   mousedown(event) {
     event.preventDefault();
     this.movingMarker = event.target || event.srcElement || event.currentTarget;
-    this.startX = event.screenX
+    this.startX = event.screenX;
+    this.movingMarker.style.borderRadius = "50px";
   }
 
   touchEnd(event) {
@@ -93,7 +94,8 @@ export class HistogramComponent implements OnInit, FractalHistogram.HistogramObs
   }
 
   mouseup(event) {
-    this.movingMarker = null;
+    if (this.movingMarker) this.movingMarker.style.borderRadius = "0px";
+    this.movingMarker = null;    
   }
 
   touchMove(event) {
@@ -147,13 +149,13 @@ export class HistogramComponent implements OnInit, FractalHistogram.HistogramObs
       for (var x = 0; x < ctx.canvas.width; ++x) {
         let binNum = Math.trunc(x / widthBin)
 
-        if ((y / hightCount) < this.data[binNum]) c = new FractalColor.RGBcolor(0, 0, 0)
-        else c = new FractalColor.RGBcolor(255, 255, 255)
+        if ((y / hightCount) < this.data[binNum]) c = {r:255,g:255,b:255,a:255};
+        else c = {r:41,g:21,b:63,a:64};
 
         img.data[(x * 4) + 0] = c.r;
         img.data[(x * 4) + 1] = c.g;
         img.data[(x * 4) + 2] = c.b;
-        img.data[(x * 4) + 3] = 255;
+        img.data[(x * 4) + 3] = c.a;
       }
       ctx.putImageData(img, 0, ctx.canvas.height - y);
     }

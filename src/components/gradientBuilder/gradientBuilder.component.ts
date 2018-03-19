@@ -14,7 +14,6 @@ export class GradientBuilderComponent implements OnInit, FractalColor.LinearGrad
   @ViewChild('StopMarkerSlider') StopMarkerSlider: ElementRef;
   @ViewChild('colorActive') colorActive: ElementRef;
   @ViewChild('gradientDisplay') gradientDisplay: ElementRef;
-  @ViewChild('gradientDisplayContainer') gradientDisplayContainer: ElementRef;
 
   public maxCSSleft
 
@@ -60,6 +59,7 @@ export class GradientBuilderComponent implements OnInit, FractalColor.LinearGrad
     event.stopPropagation();
     this.addStopMarker(null, event.offsetX, null)
     this.gradient.notify(this);
+    this.colorPicker.nativeElement.jscolor.show();
   }
 
   touchMove(event) {
@@ -136,9 +136,7 @@ export class GradientBuilderComponent implements OnInit, FractalColor.LinearGrad
   }
 
   setActiveMarker(marker: StopMarkerComponent) {
-    if (this.activeMarker != undefined) this.activeMarker.styleActive(false);
     this.activeMarker = marker;
-    this.activeMarker.styleActive(true);
     if (this.colorPicker.nativeElement.jscolor != undefined) this.colorPicker.nativeElement.jscolor.fromRGB(this.activeMarker.getColor().r, this.activeMarker.getColor().g, this.activeMarker.getColor().b);
   }
 
@@ -167,6 +165,7 @@ export class GradientBuilderComponent implements OnInit, FractalColor.LinearGrad
       this.allMarkers.splice(this.allMarkers.lastIndexOf(this.selectedMarker), 1);
       this.draw();
       this.gradient.notify(this)
+    this.colorPicker.nativeElement.jscolor.hide();
     }
   }
 
@@ -178,6 +177,7 @@ export class GradientBuilderComponent implements OnInit, FractalColor.LinearGrad
       this.allMarkers.push(this.selectedMarker);
       this.draw();
       this.gradient.notify(this);
+    this.colorPicker.nativeElement.jscolor.show();
     }
   }
 

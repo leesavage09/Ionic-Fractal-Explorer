@@ -19,7 +19,7 @@ import { AlertComponent } from "../alert/alert.component";
   selector: "ExplorerComponent",
   templateUrl: "./explorer.component.html"
 })
-export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner {
+export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner, FractalColor.LinearGradientObserver {
   @ViewChild('fractalView') readonly mainFractalView: FractalViewComponent;
   @ViewChild('juliaPicker') readonly HTMLjuliaPicker: JuliaPickerComponent;
   @ViewChild('juliaPullOut') readonly HTMLjuliaPullOut: ElementRef;
@@ -28,12 +28,12 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner {
   @ViewChild('zoomControls') readonly HTMLzoomControls: ElementRef;
   @ViewChild('eyeControls') readonly HTMLeyeControls: ElementRef;
   @ViewChild('jscolor') readonly HTMLjscolor: ElementRef;
+  @ViewChild('jscolor2') readonly HTMLjscolor2: ElementRef;
   @ViewChild('histogram') readonly HTMLhistogram: HistogramComponent;
   @ViewChild('gradient') readonly HTMLgradient: GradientBuilderComponent;
   @ViewChild('colorPullDown') readonly HTMLcolorPullDown: ElementRef;
-  @ViewChild('colorPullDownCaret') readonly HTMLcolorPullDownCaret: ElementRef;
-  @ViewChild('juliaPullOutCaret') readonly HTMLjuliaPullOutCaret: ElementRef;
   @ViewChild('saveButton') readonly HTMLsaveButton: ElementRef;
+  @ViewChild('saveText') readonly HTMLsaveText: ElementRef;
   @ViewChild('alertComponent') readonly HTMLalertComponent: AlertComponent;
   @ViewChild('webView') readonly HTMLwebView: ElementRef;
   @ViewChild('saveSection') readonly saveSection: ElementRef;
@@ -41,6 +41,7 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner {
   @ViewChild('gradientSection') readonly gradientSection: ElementRef;
   @ViewChild('itSpan') readonly itSpan: ElementRef;
   @ViewChild('itInput') readonly itInput: ElementRef;
+  @ViewChild('intColor') readonly intColor: ElementRef;
 
   readonly colorBW: string = '{"mn":0,"md":0.5,"mx":1,"arr":[{"s":0,"c":{"r":0,"g":0,"b":0}},{"s":1,"c":{"r":255,"g":255,"b":255}}]}'
   readonly colorRainbow: string = '{"mn":0,"md":0.5,"mx":1,"arr":[{"s":0,"c":{"r":255,"g":0,"b":0}},{"s":0.166,"c":{"r":255,"g":100,"b":0}},{"s":0.332,"c":{"r":249,"g":255,"b":0}},{"s":0.498,"c":{"r":0,"g":255,"b":13}},{"s":0.664,"c":{"r":0,"g":67,"b":255}},{"s":0.830,"c":{"r":133,"g":0,"b":255}},{"s":1,"c":{"r":255,"g":0,"b":215}}]}'
@@ -111,6 +112,8 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner {
     this.fractal.setMaxZoomListener(this);
     this.mainFractalView.setFractal(this.fractal);
     this.fractal.render();
+    this.fractal.getColor().subscribe(this);
+    this.linearGradientChanged();
 
     this.ngModelChangeIterations();
   }
@@ -366,14 +369,12 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner {
     if (openView) {
       this.HTMLjuliaPullOut.nativeElement.classList.remove("close");
       this.HTMLjuliaPullOut.nativeElement.classList.add("open");
-      this.HTMLjuliaPullOutCaret.nativeElement.setAttribute("class", "fa fa-caret-left");
       if (!this.HTMLjuliaPicker.hasInit) this.HTMLjuliaPicker.init(this.fractal.getColor(), this.NumIterations, this.complexJuliaPicker);
       this.HTMLjuliaPicker.isOnScreen = true;
     }
     else {
       this.HTMLjuliaPullOut.nativeElement.classList.remove("open");
       this.HTMLjuliaPullOut.nativeElement.classList.add("close");
-      this.HTMLjuliaPullOutCaret.nativeElement.setAttribute("class", "fa fa-caret-right");
       this.HTMLjuliaPicker.isOnScreen = false;
     }
   }
@@ -383,7 +384,6 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner {
       var openView = this.HTMLcolorPullDown.nativeElement.className.indexOf("close") > -1
     }
     if (openView) {
-      this.HTMLcolorPullDownCaret.nativeElement.setAttribute("class", "fa fa-caret-up");
       this.HTMLgradient.setGradient(this.fractal.getColor());
       this.HTMLhistogram.setFractal(this.fractal);
       this.HTMLcolorPullDown.nativeElement.classList.remove("close");
@@ -397,7 +397,6 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner {
 
     }
     else {
-      this.HTMLcolorPullDownCaret.nativeElement.setAttribute("class", "fa fa-caret-down");
       this.HTMLgradient.setGradient(null);
       this.HTMLhistogram.setFractal(null);
       this.HTMLcolorPullDown.nativeElement.classList.remove("open");
@@ -460,9 +459,25 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner {
     }
   }
 
+  clickSetInteriorColor(event){
+    if (this.HTMLjscolor2.nativeElement.jscolor != undefined) this.HTMLjscolor2.nativeElement.jscolor.fromRGB(50,50,50);
+    this.HTMLjscolor2.nativeElement.jscolor.show();
+  }
+
+  setInteriorColor(event){
+    let rgb = FractalColor.hexToRGB(this.HTMLjscolor2.nativeElement.jscolor.toHEXString());
+    this.fractal.getColor().setInteriorColor(rgb);
+    this.fractal.getColor().notify(null);
+  }
+
   /*
   * Callbacks
   */
+
+ linearGradientChanged(){
+  var rgb = this.fractal.getColor().getInteriorColor();
+  this.intColor.nativeElement.style.backgroundColor = "rgb(" + rgb.r + "," + rgb.g + "," + rgb.b + ")"
+ }
 
   maxZoomReached() {
     this.HTMLalertComponent.titleStr = "Alert"
@@ -539,7 +554,7 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner {
   }
 
   private updateSaveProgress() {
-    this.HTMLsaveButton.nativeElement.innerHTML = this.mainFractalView.getDownloadProgress() + "% Rendered"
+    this.HTMLsaveText.nativeElement.innerHTML = this.mainFractalView.getDownloadProgress() + "%"
 
     if (this.HTMLsaveButton.nativeElement.classList.contains("disabled")) {
       let self = this
@@ -548,7 +563,7 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner {
       }, 50);
     }
     else {
-      this.HTMLsaveButton.nativeElement.innerHTML = '<i class="fa fa-save" aria-hidden="true"></i> Save Img';
+      this.HTMLsaveText.nativeElement.innerHTML = 'Save';
     }
 
   }
@@ -621,7 +636,8 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner {
   private setWebViewSection(section: ElementRef) {
     if (this.activeSection != undefined) this.activeSection.nativeElement.setAttribute("class", "hide");
     this.activeSection = section;
-    this.activeSection.nativeElement.setAttribute("class", "show");
+    this.activeSection.nativeElement.setAttribute("class", "show"); 
+    this.activeSection.nativeElement.parentElement.scrollTop = 0;
   }
 
 }

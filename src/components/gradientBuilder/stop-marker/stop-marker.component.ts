@@ -50,20 +50,21 @@ export class StopMarkerComponent {
     this.lastCSSLeft = this.getCSSLeft();
     this.parent.setSelectedMarker(this, event.screenX);
     this.parent.setActiveMarker(this);
+    this.styleActive(true);    
+    this.colorPicker.nativeElement.jscolor.show();
   }
 
   mouseup(event): void {
     if (this.moveStarted) {
       this.moveStarted = false
-      this.mouseupWindow(event)
-    } else {
-      this.colorPicker.nativeElement.jscolor.show();
-     }
+      this.mouseupWindow(event)      
+    }
   }
 
   mouseupWindow(event) {
     event.stopPropagation();
     this.parent.dropMarker();
+    this.styleActive(false);
   }
 
   windowResized() {
@@ -125,10 +126,10 @@ export class StopMarkerComponent {
 
   styleActive(flag: boolean) {
     if (flag) {
-      this.stopMarker.nativeElement.style.borderWidth = "2px"
+      this.stopMarker.nativeElement.style.borderRadius = "50px"
     }
     else {
-      this.stopMarker.nativeElement.style.borderWidth = "0px"
+      this.stopMarker.nativeElement.style.borderRadius = "0px"
     }
   }
 

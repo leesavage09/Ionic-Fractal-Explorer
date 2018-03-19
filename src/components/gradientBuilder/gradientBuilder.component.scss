@@ -1,27 +1,19 @@
 #container {
-    font-size: 0px;
-    display: flex;
-    height: 100%;
-    flex-direction: column;
+    height: 44px;
+    width: 100%;
 
-    #gradient-display-container {
-        height: 0px;
+    #gradient-display {
         width: 100%;
-        flex-shrink: 1;
-        flex-grow: 1;
-        
-        #gradient-display {
-            width: 1px;
-            height:1px;
-        }
+        height:44px;
     }
 
     #stop-markers {
-        height: 20px;
+        height: 44px;
         width: 100%;
-        background-color: grey;
+        background-color: rgba(0, 0, 0, 0.2);
         margin: 0;
-        position: relative;
+        position: absolute;
+        bottom:0;
         cursor: cell;
     }
 }

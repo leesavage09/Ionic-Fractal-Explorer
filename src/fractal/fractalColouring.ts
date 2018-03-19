@@ -10,10 +10,21 @@ export namespace FractalColor {
 		private md: number = 0.5;
 		private mx: number = 1;
 		private subscribers: Array<LinearGradientObserver> = new Array();
+		private interiorColor: RGBcolor = new RGBcolor(0,0,0);
+		private compiledArray: Array<RGBcolor>;
+		
 		constructor(arr: Array<LinearGradientStop> = null) {
 			if (arr != null) {
 				this.replaceAllStops(arr)
 			}
+		}
+
+		public setInteriorColor(color:RGBcolor){
+			this.interiorColor = color;
+		}
+
+		public getInteriorColor(){
+			return this.interiorColor;
 		}
 
 		public replaceAllStops(arr: Array<LinearGradientStop>) {
@@ -55,9 +66,6 @@ export namespace FractalColor {
 		}
 
 		public notify(excludeObserver: LinearGradientObserver) {
-			//console.log("Color:")
-			//console.log(this.encodeJSON())
-			//console.log()
 			for (let i = 0; i < this.subscribers.length; i++) {
 				if (excludeObserver != this.subscribers[i]) {
 					this.subscribers[i].linearGradientChanged();
@@ -99,27 +107,26 @@ export namespace FractalColor {
 
 
 
-		public static smoothColorFromCompiledColor(n: number, a: Array<RGBcolor>) {
+		public smoothColorFromCompiledColor(n: number) {
 			let trunc = Math.floor(n);
-			if (n == a.length - 1) return new RGBcolor(0, 0, 0)
+			if (n == this.compiledArray.length - 1) return this.interiorColor;
 			if (n < 0) return new RGBcolor(0, 0, 0)
 			else {
-				let r = Math.round(General.mapInOut(n, trunc, trunc + 1, a[trunc].r, a[trunc + 1].r))
-				let g = Math.round(General.mapInOut(n, trunc, trunc + 1, a[trunc].g, a[trunc + 1].g))
-				let b = Math.round(General.mapInOut(n, trunc, trunc + 1, a[trunc].b, a[trunc + 1].b))
+				let r = Math.round(General.mapInOut(n, trunc, trunc + 1, this.compiledArray[trunc].r, this.compiledArray[trunc + 1].r))
+				let g = Math.round(General.mapInOut(n, trunc, trunc + 1, this.compiledArray[trunc].g, this.compiledArray[trunc + 1].g))
+				let b = Math.round(General.mapInOut(n, trunc, trunc + 1, this.compiledArray[trunc].b, this.compiledArray[trunc + 1].b))
 				return new RGBcolor(r, g, b);
 			}
 		}
 
-		public getCompiledColor(maxValue: number): Array<RGBcolor> {
-			let array = new Array(maxValue + 1)
+		public compileColor(maxValue: number): void {
+			this.compiledArray = new Array(maxValue + 1)
 			let currentColorVal = 0;
-			for (let i = 0; i < array.length; i++) {
+			for (let i = 0; i < this.compiledArray.length; i++) {
 				let colorValue = General.mapInOut(currentColorVal, 0, maxValue - 1, 0, 1);
-				array[i] = i == maxValue ? new RGBcolor(0, 0, 0) : this.getColorAt(colorValue);
+				this.compiledArray[i] = i == maxValue ? new RGBcolor(0, 0, 0) : this.getColorAt(colorValue);
 				currentColorVal++;
 			}
-			return array;
 		}
 
 

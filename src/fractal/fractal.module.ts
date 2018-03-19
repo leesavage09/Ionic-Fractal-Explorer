@@ -18,7 +18,6 @@ export namespace Fractals {
 		private animator: FractalNavigationAnimator;
 		private maxZoomListner: MaxZoomListner;
 		private histogram: FractalHistogram.Histogram = new FractalHistogram.Histogram()
-		private compiledColor: Array<FractalColor.RGBcolor>
 		private subscribers: Array<ChangeObserver> = new Array();
 		public currentScanLine = 0;
 		constructor(complexPlain: ComplexPlain, fractalCalculationFunction: FractalEquations.equation, color: FractalColor.LinearGradient) {
@@ -67,7 +66,7 @@ export namespace Fractals {
 			}
 			if (!fullRes) this.complexPlain.makeAlternativeResolutionCanvas(0.2);
 			this.histogram.startHistogram(this.iterations);
-			this.compiledColor = this.color.getCompiledColor(this.iterations);
+			this.color.compileColor(this.iterations);
 			var self = this;
 			setTimeout(function () {
 				self.scanLine(self.complexPlain.getDrawableHeight(), self.renderVersion);
@@ -94,7 +93,7 @@ export namespace Fractals {
 				//if (n > this.iterations) throw Error("n out of bounds " + n + ">" + this.iterations)
 
 				this.histogram.incrementData(Math.floor(n))
-				let col = FractalColor.LinearGradient.smoothColorFromCompiledColor(n, this.compiledColor);
+				let col = this.color.smoothColorFromCompiledColor(n);
 
 				this.img.data[(x * 4) + 0] = col.r;
 				this.img.data[(x * 4) + 1] = col.g;

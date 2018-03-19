@@ -2,6 +2,7 @@
   <div #explorer id="explorer" (window:resize)="windowResized()">
 
     <input #jscolor id="jscolor" (change)="HTMLgradient.setColorActive($event)" class="jscolor {width:250,  height:250}" value="000000">
+    <input #jscolor2 id="jscolor2" (change)="setInteriorColor($event)" class="jscolor {width:250,  height:250}" value="000000">
     <span #itSpan id="hide">this is a test</span>
 
     <div class="controls bottom-right">
@@ -25,65 +26,73 @@
         <app-juliaPicker #juliaPicker (numberChanged)="juliaNumberChanged($event)"></app-juliaPicker>
       </div>
       <div id="juliaPullOut-btn" (click)="clickJuliaPullOut()" (swipe)="swipeJuliaPullOut($event)">
-        <i #juliaPullOutCaret class="fa fa-caret-right" aria-hidden="true"></i>
+       <ion-icon name="ios-locate-outline"></ion-icon>
       </div>
     </div>
 
 
+    <div class="paddedPullDown"> 
+      <div #colorPullDown class="colorPullDown close">
+        <div class="colorPullDown-btn" (click)="clickColorPullDown()" swipeAll (swipe)="swipeColorPullDown($event)">
+          <ion-icon name="ios-color-palette"></ion-icon>
+        </div>
 
-    <div #colorPullDown class="colorPullDown close">
-      <div class="colorPullDown-btn" (click)="clickColorPullDown()" swipeAll (swipe)="swipeColorPullDown($event)">
-        <i #colorPullDownCaret class="fa fa-caret-down" aria-hidden="true"></i>
-      </div>
 
-      <div #histogramdiv id="histogrampanel">
-        <app-histogram #histogram></app-histogram>
-      </div>
-      <div #gradientdiv id="gradientpanel">
-        <app-gradientbuilder #gradient></app-gradientbuilder>
-      </div>
+        <div #histogramdiv id="histogrampanel">
+          <app-histogram #histogram></app-histogram>
+          <div #intColor id="int-color" (mouseup)="clickSetInteriorColor($event)" (touchend)="clickSetInteriorColor($event);">
+          </div>
+          
+        </div>
+        <div #gradientdiv id="gradientpanel">
+          <app-gradientbuilder #gradient></app-gradientbuilder>
+        </div>
 
-      <div #iterationControls class="iteration controls">
-        <div class="btn-group shaddow-high" data-toggle="buttons">
-          <a (touchstart)="startChangingIterations(0.95)" (touchend)="stopChangingIterations()" (mousedown)='startChangingIterations(0.9)' (mouseup)="stopChangingIterations()" (mouseleave)='stopChangingIterations()' class="btn">
-            <i class="fa fa-minus" aria-hidden="true"></i>
-          </a>
-          <input #itInput class="iteration-textbox" [(ngModel)]="NumIterations" (ngModelChange)="ngModelChangeIterations()" type="number" min="2" value="85">
-          <a (touchstart)="startChangingIterations(1.05)" (touchend)="stopChangingIterations()" (mousedown)='startChangingIterations(1.1)' (mouseup)="stopChangingIterations()" (mouseleave)='stopChangingIterations()' class="btn">
-            <i class="fa fa-plus" aria-hidden="true"></i>
-          </a>
+        <div #iterationControls class="iteration controls">
+          <div class="btn-group shaddow-high" data-toggle="buttons">
+            <a (touchstart)="startChangingIterations(0.95)" (touchend)="stopChangingIterations()" (mousedown)='startChangingIterations(0.9)' (mouseup)="stopChangingIterations()" (mouseleave)='stopChangingIterations()' class="btn">
+              <i class="fa fa-minus" aria-hidden="true"></i>
+            </a>
+            <input #itInput class="iteration-textbox" [(ngModel)]="NumIterations" (ngModelChange)="ngModelChangeIterations()" type="number" min="2" value="85">
+            <a (touchstart)="startChangingIterations(1.05)" (touchend)="stopChangingIterations()" (mousedown)='startChangingIterations(1.1)' (mouseup)="stopChangingIterations()" (mouseleave)='stopChangingIterations()' class="btn">
+              <i class="fa fa-plus" aria-hidden="true"></i>
+            </a>
+          </div>
         </div>
       </div>
     </div>
 
     <app-fractalView class="fractal-view" #fractalView></app-fractalView>
 
-    <div #webView class="web-view" >
+    <div #webView class="web-view">
 
       <div id="web-view-btn" (click)="clickWebView()" (swipe)="swipeWebView($event)">
-        <i #webViewCaret class="fa fa-caret-left" aria-hidden="true"></i>
+        <i #webViewCaret class="fa fa-cogs" aria-hidden="true"></i>
       </div>
 
       <div class="web-view-outer" (swipe)="swipeWebView($event)">
         <h1>Options</h1>
 
         <p>
+          
+          
+          <a #saveButton (click)="clickSave($event)" class="btn">
+            <ion-icon name="ios-image"></ion-icon> <span #saveText> Save</span>
+          </a>
+          <a (click)="clickLibrary($event)" class="btn">
+            <ion-icon name="ios-bookmark"></ion-icon> Library
+          </a>
+          <a (click)="clickEquation($event)" class="btn">
+            <ion-icon name="ios-cog"></ion-icon> Equations
+          </a>
+          <a (click)="clickGradient($event)" class="btn">
+            <ion-icon name="ios-color-palette"></ion-icon> Gradients
+          </a>
+          <a #saveButton (click)="clickFavorite($event)" class="btn">
+            <ion-icon name="ios-star"></ion-icon> <span #saveText> Favorite</span>
+          </a>
           <a (click)="clickShare($event)" class="btn">
             <ion-icon name="share"></ion-icon> Share
-          </a>
-          <br>
-          <a #saveButton (click)="clickSave($event)" class="btn">
-            <i class="fa fa-save" aria-hidden="true"></i> Save Img
-          </a>
-          <br>
-          <a (click)="clickEquation($event)" class="btn">
-            <i>f
-              <sub>(x)</sub>
-            </i> Equations
-          </a>
-          <br>
-          <a (click)="clickGradient($event)" class="btn">
-            <i class="fa fa-paint-brush" aria-hidden="true"></i> Gradients
           </a>
 
         </p>
