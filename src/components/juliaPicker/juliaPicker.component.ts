@@ -26,7 +26,7 @@ export class JuliaPickerComponent {
   }
 
 
-  init(color: FractalColor.LinearGradient, iterations: number, pickerLoc: String) {
+  init(color: FractalColor.LinearGradient, iterations: number, pickerLoc: String, viewWidth: number) {
     let canvas = <HTMLCanvasElement>this.mainFractalView.getCanvas();
     let ctx = <CanvasRenderingContext2D>canvas.getContext("2d");
 
@@ -37,7 +37,7 @@ export class JuliaPickerComponent {
     let centercenterJuliaPickerR = parseFloat(centerJuliaPicker[0]);
     let centercenterJuliaPickerI = parseFloat(centerJuliaPicker[1]);
 
-    this.juliaFractal = new Fractals.Fractal(new Fractals.ComplexPlain(centercenterJuliaPickerR, centercenterJuliaPickerI, 3, canvas), new FractalEquations.Mandelbrot, color);
+    this.juliaFractal = new Fractals.Fractal(new Fractals.ComplexPlain(centercenterJuliaPickerR, centercenterJuliaPickerI, viewWidth, canvas), new FractalEquations.Mandelbrot, color);
     this.juliaFractal.iterations = iterations;
     this.mainFractalView.setFractal(this.juliaFractal)
 

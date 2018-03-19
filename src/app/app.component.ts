@@ -63,6 +63,9 @@ export class MyApp {
       if (element[0] == "p") {
         this.explorer.complexJuliaPicker = element[1];
       }
+      if (element[0] == "r") { 
+        this.explorer.juliaPickerWidth = element[1];
+      }
     }
     this.explorer.init();
   }

@@ -61,6 +61,7 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner, Fract
   public complexCenter: string = "-0.8, 0";
   public complexWidth: string = "3";
   public complexJuliaPicker: string = "-0.7,0.0";
+  public juliaPickerWidth: string = "3";
   public imageToDownload: string = null;
   public NumIterations: number = 50;
 
@@ -127,6 +128,8 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner, Fract
 
     this.NumIterations = parseInt(this.iterations)
 
+    let juliaPickerWidth = parseFloat(this.juliaPickerWidth);
+
     let colorCommandString = this.colorBlackBlue;
     if (this.color != null) {
       colorCommandString = this.color;
@@ -150,7 +153,8 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner, Fract
       let jNumStr = this.complexJuliaPicker.split(",");
       (<FractalEquations.Julia>fractalEq).juliaReal = parseFloat(jNumStr[0]);
       (<FractalEquations.Julia>fractalEq).juliaImaginary = parseFloat(jNumStr[1]);
-      this.HTMLjuliaPullOut.nativeElement.style.display = "block"
+      this.HTMLjuliaPullOut.nativeElement.style.display = "block";
+      this.clickJuliaPullOut(true);
     }
 
     this.fractal.complexPlain.replaceView(centerR, centerI, complexWidth, <HTMLCanvasElement>this.mainFractalView.getCanvas())
@@ -221,7 +225,7 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner, Fract
     this.iterationsAreChanging = false;
   }
 
-  ngModelChangeIterations() {  
+  ngModelChangeIterations() {
     if (this.NumIterations < 2) {
       this.NumIterations = 2;
       this.iterationsAreChanging = false;
@@ -229,10 +233,10 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner, Fract
     this.fractal.iterations = this.NumIterations;
     this.HTMLjuliaPicker.setIterations(this.NumIterations);
     this.fractal.render();
- 
+
     this.itSpan.nativeElement.innerHTML = this.NumIterations;
     var width = getComputedStyle(this.itSpan.nativeElement).width;
-    this.itInput.nativeElement.style.width = width;  
+    this.itInput.nativeElement.style.width = width;
   }
 
   saveSize(val) {
@@ -256,7 +260,7 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner, Fract
   }
 
   clickGradient() {
-    this.HTMLwebView.nativeElement.setAttribute("class", "web-view open-full"); 
+    this.HTMLwebView.nativeElement.setAttribute("class", "web-view open-full");
     this.setWebViewSection(this.gradientSection);
     window.dispatchEvent(new Event('resize'));
   }
@@ -272,6 +276,7 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner, Fract
     let complexCenter = this.fractal.complexPlain.getSquare().center.toString();
     let complexWidth = this.fractal.complexPlain.getSquare().width.toString();
     let complexJuliaPicker = new ComplexNumber(0, 0).toString();
+    let juliaWidth = this.HTMLjuliaPicker.getFractalView().getFractal().complexPlain.getSquare().width;
 
     let fun = this.fractal.getCalculationFunction();
     if (fun instanceof FractalEquations.Julia) {
@@ -279,7 +284,7 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner, Fract
       complexJuliaPicker = new ComplexNumber(julia.juliaReal, julia.juliaImaginary).toString()
     }
 
-    let content = host + "e=" + equation + "&g=" + color + "&i=" + iterations + "&c=" + complexCenter + "&w=" + complexWidth + "&p=" + complexJuliaPicker;
+    let content = host + "e=" + equation + "&g=" + color + "&i=" + iterations + "&c=" + complexCenter + "&w=" + complexWidth + "&p=" + complexJuliaPicker + "&r=" + juliaWidth;
     content = encodeURI(content);
 
     if (this.platform.is("android") && this.platform.is("cordova")) {
@@ -370,7 +375,8 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner, Fract
     if (openView) {
       this.HTMLjuliaPullOut.nativeElement.classList.remove("close");
       this.HTMLjuliaPullOut.nativeElement.classList.add("open");
-      if (!this.HTMLjuliaPicker.hasInit) this.HTMLjuliaPicker.init(this.fractal.getColor(), this.NumIterations, this.complexJuliaPicker);
+      let width = parseFloat(this.juliaPickerWidth);
+      if (!this.HTMLjuliaPicker.hasInit) this.HTMLjuliaPicker.init(this.fractal.getColor(), this.NumIterations, this.complexJuliaPicker, width);
       this.HTMLjuliaPicker.isOnScreen = true;
     }
     else {
@@ -423,21 +429,21 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner, Fract
     }
   }
 
-  swipeWebView(event,swipeLeftOpen = true,canOpen = true,canClose = true) {
+  swipeWebView(event, swipeLeftOpen = true, canOpen = true, canClose = true) {
     if (swipeLeftOpen) {
       if (canOpen && event.deltaX < 0) {
-        this.clickWebView(true);        
+        this.clickWebView(true);
       }
-      else if (canClose  && event.deltaX > 0) {
-        this.clickWebView(false);  
+      else if (canClose && event.deltaX > 0) {
+        this.clickWebView(false);
       }
     }
     else {
       if (canOpen && event.deltaX > 0) {
-        this.clickWebView(true);        
+        this.clickWebView(true);
       }
-      else if (canClose  && event.deltaX < 0) {
-        this.clickWebView(false);  
+      else if (canClose && event.deltaX < 0) {
+        this.clickWebView(false);
       }
     }
   }
@@ -460,12 +466,12 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner, Fract
     }
   }
 
-  clickSetInteriorColor(event){
-    if (this.HTMLjscolor2.nativeElement.jscolor != undefined) this.HTMLjscolor2.nativeElement.jscolor.fromRGB(50,50,50);
+  clickSetInteriorColor(event) {
+    if (this.HTMLjscolor2.nativeElement.jscolor != undefined) this.HTMLjscolor2.nativeElement.jscolor.fromRGB(50, 50, 50);
     this.HTMLjscolor2.nativeElement.jscolor.show();
   }
 
-  setInteriorColor(event){
+  setInteriorColor(event) {
     let rgb = FractalColor.hexToRGB(this.HTMLjscolor2.nativeElement.jscolor.toHEXString());
     this.fractal.getColor().setInteriorColor(rgb);
     this.fractal.getColor().notify(null);
@@ -475,10 +481,10 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner, Fract
   * Callbacks
   */
 
- linearGradientChanged(){
-  var rgb = this.fractal.getColor().getInteriorColor();
-  this.intColor.nativeElement.style.backgroundColor = "rgb(" + rgb.r + "," + rgb.g + "," + rgb.b + ")"
- }
+  linearGradientChanged() {
+    var rgb = this.fractal.getColor().getInteriorColor();
+    this.intColor.nativeElement.style.backgroundColor = "rgb(" + rgb.r + "," + rgb.g + "," + rgb.b + ")"
+  }
 
   maxZoomReached() {
     this.HTMLalertComponent.titleStr = "Alert"
@@ -637,7 +643,7 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner, Fract
   private setWebViewSection(section: ElementRef) {
     if (this.activeSection != undefined) this.activeSection.nativeElement.setAttribute("class", "hide");
     this.activeSection = section;
-    this.activeSection.nativeElement.setAttribute("class", "show"); 
+    this.activeSection.nativeElement.setAttribute("class", "show");
     this.activeSection.nativeElement.parentElement.scrollTop = 0;
   }
 
