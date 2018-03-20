@@ -142,6 +142,7 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner, Fract
       }
       if (element[0] == "i") {
         this.NumIterations = parseInt(element[1])
+        this.ngModelChangeIterations();
       }
       if (element[0] == "c") {
         complexCenter = element[1];
@@ -317,13 +318,14 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner, Fract
     let iterations = this.fractal.iterations.toString()
     let complexCenter = this.fractal.complexPlain.getSquare().center.toString();
     let complexWidth = this.fractal.complexPlain.getSquare().width.toString();
-    let complexJuliaPicker = new ComplexNumber(0, 0).toString();
-    let juliaWidth = this.HTMLjuliaPicker.getFractalView().getFractal().complexPlain.getSquare().width;
+    let complexJuliaPicker = "0.0,0.0";
+    let juliaWidth = "3";
 
     let fun = this.fractal.getCalculationFunction();
     if (fun instanceof FractalEquations.Julia) {
       let julia = <FractalEquations.Julia>fun;
       complexJuliaPicker = new ComplexNumber(julia.juliaReal, julia.juliaImaginary).toString()
+      juliaWidth = this.HTMLjuliaPicker.getFractalView().getFractal().complexPlain.getSquare().width.toString();
     }
 
     let content = host + "e=" + equation + "&g=" + color + "&i=" + iterations + "&c=" + complexCenter + "&w=" + complexWidth + "&p=" + complexJuliaPicker + "&r=" + juliaWidth;
