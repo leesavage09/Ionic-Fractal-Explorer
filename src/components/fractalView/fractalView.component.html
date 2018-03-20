@@ -1,5 +1,6 @@
 <canvas #fractalCanvas id="fractalCanvas" 
 
+(window:resize)="sizeChanged()"
 (mousedown)="mousedown($event)" 
 (mouseup)="mouseup($event)" 
 (mousemove)="mouseMove($event)" 

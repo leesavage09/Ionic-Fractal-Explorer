@@ -13,6 +13,8 @@ $julia-picker-height: 200px !default;
 
 $colour-tool: rgba(100, 100, 100, 0.85) !default;
 $color-tool-bg: rgba(255, 255, 255, 0.85) !default;
+
+$color-tool-bg-solid:  rgb(255, 255, 255) !default;
 $color-canvas-bg: rgb(0, 29, 0) !default;
 $color-mouseover: black !default;
 $color-text: black !default;
@@ -309,6 +311,7 @@ $font-size-small: 18px !default;
         right: -100%;
         width: 100%;
         height: 100%;
+        box-shadow: $shadow;
 
         &.open {
             transform: translateX(-35%);
@@ -351,14 +354,26 @@ $font-size-small: 18px !default;
             position: relative;
             display: inline-block;
             text-align: center;
-            overflow-y: scroll;
             border-left: solid;
             border-width: 1px;
             border-color: $colour-tool;
 
+            overflow-y: scroll;
+
             h1 {
+                position: fixed;
                 color: $color-text;
                 margin: 0px;
+                background-color: $color-tool-bg-solid;
+                z-index: 1;
+                margin: -$padding;
+                width: 35%;
+                padding: $padding;
+                box-shadow: $shadow;                
+            }
+
+            .menu {
+                padding-top: $button-size;
             }
 
             .btn {
@@ -412,6 +427,12 @@ $font-size-small: 18px !default;
             section {
                 padding-top: $button-size + $padding;
 
+                .fractalTumb {
+                    width: 100px;
+                    height: 100px;
+                    pointer-events: none;
+                }
+
                 &.hide {
                     visibility: hidden;
                 }
@@ -426,11 +447,12 @@ $font-size-small: 18px !default;
                     width: 100%;
                     height: $button-size;
                     box-shadow: $shadow;
-                    position: absolute;
+                    position: fixed;
                     top: 0;
-                    left: 0;
+                    left: 35%;
                     background-color: white;
                     color: $color-web-btn-bg;
+                    z-index: 1;
 
                     h1 {
                         font-size: $font-size;

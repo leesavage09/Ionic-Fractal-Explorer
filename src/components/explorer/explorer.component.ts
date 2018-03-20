@@ -1,5 +1,5 @@
 import { Component, Input, OnInit, ViewChild, ElementRef } from "@angular/core";
-import { Platform } from 'ionic-angular';
+import { Platform, Toast } from 'ionic-angular';
 import { SocialSharing } from '@ionic-native/social-sharing';
 import { PhotoLibrary } from '@ionic-native/photo-library';
 import { AndroidFullScreen } from '@ionic-native/android-full-screen';
@@ -39,6 +39,7 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner, Fract
   @ViewChild('saveSection') readonly saveSection: ElementRef;
   @ViewChild('equationSection') readonly equationSection: ElementRef;
   @ViewChild('gradientSection') readonly gradientSection: ElementRef;
+  @ViewChild('LibrarySection') readonly librarySection: ElementRef;
   @ViewChild('itSpan') readonly itSpan: ElementRef;
   @ViewChild('itInput') readonly itInput: ElementRef;
   @ViewChild('intColor') readonly intColor: ElementRef;
@@ -51,15 +52,13 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner, Fract
   readonly colorBlob: string = '{"mn":0,"md":0.36363636363636365,"mx":1,"arr":[{"s":0,"c":{"r":255,"g":255,"b":255}},{"s":0.1495601173020528,"c":{"r":255,"g":255,"b":255}},{"s":0.16715542521994134,"c":{"r":0,"g":0,"b":0}},{"s":0.18841642228739003,"c":{"r":255,"g":255,"b":255}},{"s":0.30058651026392963,"c":{"r":255,"g":0,"b":0}},{"s":0.5175953079178885,"c":{"r":255,"g":110,"b":63}},{"s":1,"c":{"r":255,"g":221,"b":0}}]}'
   readonly colorCrystal: string = '{"mn":0.2653958944281525,"md":0.4868035190615836,"mx":1,"arr":[{"s":0,"c":{"r":0,"g":0,"b":0}},{"s":0.001466275659824047,"c":{"r":0,"g":0,"b":0}},{"s":0.4897360703812317,"c":{"r":250,"g":255,"b":115}},{"s":1,"c":{"r":106,"g":103,"b":255}}]}'
 
+  readonly theFirst: string = '?e=Julia&g=%7B"mn":0,"md":0.5,"mx":1,"interiorColor":%7B"r":0,"g":0,"b":0%7D,"arr":%5B%7B"s":0,"c":%7B"r":255,"g":0,"b":0%7D%7D,%7B"s":0.166,"c":%7B"r":255,"g":100,"b":0%7D%7D,%7B"s":0.332,"c":%7B"r":249,"g":255,"b":0%7D%7D,%7B"s":0.498,"c":%7B"r":0,"g":255,"b":13%7D%7D,%7B"s":0.664,"c":%7B"r":0,"g":67,"b":255%7D%7D,%7B"s":0.83,"c":%7B"r":133,"g":0,"b":255%7D%7D,%7B"s":1,"c":%7B"r":255,"g":0,"b":215%7D%7D%5D,"compiledArray":%5B%7B"r":255,"g":0,"b":0%7D,%7B"r":255,"g":12,"b":0%7D,%7B"r":255,"g":25,"b":0%7D,%7B"r":255,"g":37,"b":0%7D,%7B"r":255,"g":49,"b":0%7D,%7B"r":255,"g":61,"b":0%7D,%7B"r":255,"g":74,"b":0%7D,%7B"r":255,"g":86,"b":0%7D,%7B"r":255,"g":98,"b":0%7D,%7B"r":254,"g":117,"b":0%7D,%7B"r":254,"g":136,"b":0%7D,%7B"r":253,"g":155,"b":0%7D,%7B"r":252,"g":174,"b":0%7D,%7B"r":251,"g":193,"b":0%7D,%7B"r":251,"g":212,"b":0%7D,%7B"r":250,"g":231,"b":0%7D,%7B"r":249,"g":250,"b":0%7D,%7B"r":227,"g":255,"b":1%7D,%7B"r":196,"g":255,"b":3%7D,%7B"r":165,"g":255,"b":4%7D,%7B"r":135,"g":255,"b":6%7D,%7B"r":104,"g":255,"b":8%7D,%7B"r":74,"g":255,"b":9%7D,%7B"r":43,"g":255,"b":11%7D,%7B"r":12,"g":255,"b":12%7D,%7B"r":0,"g":241,"b":31%7D,%7B"r":0,"g":218,"b":61%7D,%7B"r":0,"g":195,"b":90%7D,%7B"r":0,"g":172,"b":120%7D,%7B"r":0,"g":149,"b":150%7D,%7B"r":0,"g":126,"b":180%7D,%7B"r":0,"g":103,"b":209%7D,%7B"r":0,"g":79,"b":239%7D,%7B"r":8,"g":63,"b":255%7D,%7B"r":24,"g":55,"b":255%7D,%7B"r":40,"g":47,"b":255%7D,%7B"r":57,"g":38,"b":255%7D,%7B"r":73,"g":30,"b":255%7D,%7B"r":89,"g":22,"b":255%7D,%7B"r":106,"g":14,"b":255%7D,%7B"r":122,"g":6,"b":255%7D,%7B"r":138,"g":0,"b":253%7D,%7B"r":152,"g":0,"b":249%7D,%7B"r":167,"g":0,"b":244%7D,%7B"r":182,"g":0,"b":239%7D,%7B"r":196,"g":0,"b":234%7D,%7B"r":211,"g":0,"b":229%7D,%7B"r":226,"g":0,"b":225%7D,%7B"r":240,"g":0,"b":220%7D,%7B"r":255,"g":0,"b":215%7D,%7B"r":0,"g":0,"b":0%7D%5D%7D&i=50&c=-0.1001841532272949,0.00009339391422746868&w=1.676384839650146&p=-0.21367978066422655,-0.8230225314239187&r=0.03457161303360778';
+  readonly theSecond: string = '?e=Mandelbrot&g=%7B%22mn%22:0.2653958944281525,%22md%22:0.4868035190615836,%22mx%22:1,%22interiorColor%22:%7B%22r%22:0,%22g%22:0,%22b%22:0%7D,%22arr%22:%5B%7B%22s%22:0,%22c%22:%7B%22r%22:0,%22g%22:0,%22b%22:0%7D%7D,%7B%22s%22:0.001466275659824047,%22c%22:%7B%22r%22:0,%22g%22:0,%22b%22:0%7D%7D,%7B%22s%22:0.4897360703812317,%22c%22:%7B%22r%22:250,%22g%22:255,%22b%22:115%7D%7D,%7B%22s%22:1,%22c%22:%7B%22r%22:106,%22g%22:103,%22b%22:255%7D%7D%5D,%22compiledArray%22:%5B%7B%22r%22:0,%22g%22:0,%22b%22:0%7D,%7B%22r%22:0,%22g%22:0,%22b%22:0%7D,%7B%22r%22:0,%22g%22:0,%22b%22:0%7D,%7B%22r%22:0,%22g%22:0,%22b%22:0%7D,%7B%22r%22:0,%22g%22:0,%22b%22:0%7D,%7B%22r%22:0,%22g%22:0,%22b%22:0%7D,%7B%22r%22:0,%22g%22:0,%22b%22:0%7D,%7B%22r%22:0,%22g%22:0,%22b%22:0%7D,%7B%22r%22:0,%22g%22:0,%22b%22:0%7D,%7B%22r%22:0,%22g%22:0,%22b%22:0%7D,%7B%22r%22:0,%22g%22:0,%22b%22:0%7D,%7B%22r%22:0,%22g%22:0,%22b%22:0%7D,%7B%22r%22:0,%22g%22:0,%22b%22:0%7D,%7B%22r%22:0,%22g%22:0,%22b%22:0%7D,%7B%22r%22:0,%22g%22:0,%22b%22:0%7D,%7B%22r%22:0,%22g%22:0,%22b%22:0%7D,%7B%22r%22:0,%22g%22:0,%22b%22:0%7D,%7B%22r%22:0,%22g%22:0,%22b%22:0%7D,%7B%22r%22:0,%22g%22:0,%22b%22:0%7D,%7B%22r%22:0,%22g%22:0,%22b%22:0%7D,%7B%22r%22:0,%22g%22:0,%22b%22:0%7D,%7B%22r%22:0,%22g%22:0,%22b%22:0%7D,%7B%22r%22:0,%22g%22:0,%22b%22:0%7D,%7B%22r%22:0,%22g%22:0,%22b%22:0%7D,%7B%22r%22:0,%22g%22:0,%22b%22:0%7D,%7B%22r%22:0,%22g%22:0,%22b%22:0%7D,%7B%22r%22:0,%22g%22:0,%22b%22:0%7D,%7B%22r%22:0,%22g%22:0,%22b%22:0%7D,%7B%22r%22:0,%22g%22:0,%22b%22:0%7D,%7B%22r%22:0,%22g%22:0,%22b%22:0%7D,%7B%22r%22:0,%22g%22:0,%22b%22:0%7D,%7B%22r%22:0,%22g%22:0,%22b%22:0%7D,%7B%22r%22:0,%22g%22:0,%22b%22:0%7D,%7B%22r%22:0,%22g%22:0,%22b%22:0%7D,%7B%22r%22:0,%22g%22:0,%22b%22:0%7D,%7B%22r%22:0,%22g%22:0,%22b%22:0%7D,%7B%22r%22:0,%22g%22:0,%22b%22:0%7D,%7B%22r%22:0,%22g%22:0,%22b%22:0%7D,%7B%22r%22:0,%22g%22:0,%22b%22:0%7D,%7B%22r%22:0,%22g%22:0,%22b%22:0%7D,%7B%22r%22:0,%22g%22:0,%22b%22:0%7D,%7B%22r%22:0,%22g%22:0,%22b%22:0%7D,%7B%22r%22:0,%22g%22:0,%22b%22:0%7D,%7B%22r%22:0,%22g%22:0,%22b%22:0%7D,%7B%22r%22:0,%22g%22:0,%22b%22:0%7D,%7B%22r%22:0,%22g%22:0,%22b%22:0%7D,%7B%22r%22:0,%22g%22:0,%22b%22:0%7D,%7B%22r%22:0,%22g%22:0,%22b%22:0%7D,%7B%22r%22:0,%22g%22:0,%22b%22:0%7D,%7B%22r%22:0,%22g%22:0,%22b%22:0%7D,%7B%22r%22:0,%22g%22:0,%22b%22:0%7D,%7B%22r%22:0,%22g%22:0,%22b%22:0%7D,%7B%22r%22:0,%22g%22:0,%22b%22:0%7D,%7B%22r%22:0,%22g%22:0,%22b%22:0%7D,%7B%22r%22:0,%22g%22:0,%22b%22:0%7D,%7B%22r%22:0,%22g%22:0,%22b%22:0%7D,%7B%22r%22:0,%22g%22:0,%22b%22:0%7D,%7B%22r%22:0,%22g%22:0,%22b%22:0%7D,%7B%22r%22:0,%22g%22:0,%22b%22:0%7D,%7B%22r%22:0,%22g%22:0,%22b%22:0%7D,%7B%22r%22:0,%22g%22:0,%22b%22:0%7D,%7B%22r%22:0,%22g%22:0,%22b%22:0%7D,%7B%22r%22:0,%22g%22:0,%22b%22:0%7D,%7B%22r%22:0,%22g%22:0,%22b%22:0%7D,%7B%22r%22:0,%22g%22:0,%22b%22:0%7D,%7B%22r%22:0,%22g%22:0,%22b%22:0%7D,%7B%22r%22:0,%22g%22:0,%22b%22:0%7D,%7B%22r%22:0,%22g%22:0,%22b%22:0%7D,%7B%22r%22:0,%22g%22:0,%22b%22:0%7D,%7B%22r%22:0,%22g%22:0,%22b%22:0%7D,%7B%22r%22:0,%22g%22:0,%22b%22:0%7D,%7B%22r%22:0,%22g%22:0,%22b%22:0%7D,%7B%22r%22:0,%22g%22:0,%22b%22:0%7D,%7B%22r%22:0,%22g%22:0,%22b%22:0%7D,%7B%22r%22:0,%22g%22:0,%22b%22:0%7D,%7B%22r%22:0,%22g%22:0,%22b%22:0%7D,%7B%22r%22:0,%22g%22:0,%22b%22:0%7D,%7B%22r%22:0,%22g%22:0,%22b%22:0%7D,%7B%22r%22:0,%22g%22:0,%22b%22:0%7D,%7B%22r%22:0,%22g%22:0,%22b%22:0%7D,%7B%22r%22:0,%22g%22:0,%22b%22:0%7D,%7B%22r%22:0,%22g%22:0,%22b%22:0%7D,%7B%22r%22:0,%22g%22:0,%22b%22:0%7D,%7B%22r%22:0,%22g%22:0,%22b%22:0%7D,%7B%22r%22:0,%22g%22:0,%22b%22:0%7D,%7B%22r%22:0,%22g%22:0,%22b%22:0%7D,%7B%22r%22:0,%22g%22:0,%22b%22:0%7D,%7B%22r%22:0,%22g%22:0,%22b%22:0%7D,%7B%22r%22:0,%22g%22:0,%22b%22:0%7D,%7B%22r%22:0,%22g%22:0,%22b%22:0%7D,%7B%22r%22:0,%22g%22:0,%22b%22:0%7D,%7B%22r%22:0,%22g%22:0,%22b%22:0%7D,%7B%22r%22:0,%22g%22:0,%22b%22:0%7D,%7B%22r%22:0,%22g%22:0,%22b%22:0%7D,%7B%22r%22:0,%22g%22:0,%22b%22:0%7D,%7B%22r%22:0,%22g%22:0,%22b%22:0%7D,%7B%22r%22:0,%22g%22:0,%22b%22:0%7D,%7B%22r%22:0,%22g%22:0,%22b%22:0%7D,%7B%22r%22:0,%22g%22:0,%22b%22:0%7D,%7B%22r%22:0,%22g%22:0,%22b%22:0%7D,%7B%22r%22:0,%22g%22:0,%22b%22:0%7D,%7B%22r%22:0,%22g%22:0,%22b%22:0%7D,%7B%22r%22:0,%22g%22:0,%22b%22:0%7D,%7B%22r%22:0,%22g%22:0,%22b%22:0%7D,%7B%22r%22:0,%22g%22:0,%22b%22:0%7D,%7B%22r%22:0,%22g%22:0,%22b%22:0%7D,%7B%22r%22:0,%22g%22:0,%22b%22:0%7D,%7B%22r%22:0,%22g%22:0,%22b%22:0%7D,%7B%22r%22:0,%22g%22:0,%22b%22:0%7D,%7B%22r%22:0,%22g%22:0,%22b%22:0%7D,%7B%22r%22:0,%22g%22:0,%22b%22:0%7D,%7B%22r%22:0,%22g%22:0,%22b%22:0%7D,%7B%22r%22:0,%22g%22:0,%22b%22:0%7D,%7B%22r%22:0,%22g%22:0,%22b%22:0%7D,%7B%22r%22:0,%22g%22:0,%22b%22:0%7D,%7B%22r%22:0,%22g%22:0,%22b%22:0%7D,%7B%22r%22:0,%22g%22:0,%22b%22:0%7D,%7B%22r%22:0,%22g%22:0,%22b%22:0%7D,%7B%22r%22:0,%22g%22:0,%22b%22:0%7D,%7B%22r%22:0,%22g%22:0,%22b%22:0%7D,%7B%22r%22:0,%22g%22:0,%22b%22:0%7D,%7B%22r%22:0,%22g%22:0,%22b%22:0%7D,%7B%22r%22:0,%22g%22:0,%22b%22:0%7D,%7B%22r%22:0,%22g%22:0,%22b%22:0%7D,%7B%22r%22:0,%22g%22:0,%22b%22:0%7D,%7B%22r%22:0,%22g%22:0,%22b%22:0%7D,%7B%22r%22:0,%22g%22:0,%22b%22:0%7D,%7B%22r%22:0,%22g%22:0,%22b%22:0%7D,%7B%22r%22:0,%22g%22:0,%22b%22:0%7D,%7B%22r%22:0,%22g%22:0,%22b%22:0%7D,%7B%22r%22:0,%22g%22:0,%22b%22:0%7D,%7B%22r%22:0,%22g%22:0,%22b%22:0%7D,%7B%22r%22:0,%22g%22:0,%22b%22:0%7D,%7B%22r%22:1,%22g%22:1,%22b%22:0%7D,%7B%22r%22:3,%22g%22:3,%22b%22:1%7D,%7B%22r%22:5,%22g%22:5,%22b%22:2%7D,%7B%22r%22:8,%22g%22:8,%22b%22:3%7D,%7B%22r%22:10,%22g%22:10,%22b%22:5%7D,%7B%22r%22:12,%22g%22:12,%22b%22:6%7D,%7B%22r%22:14,%22g%22:15,%22b%22:7%7D,%7B%22r%22:17,%22g%22:17,%22b%22:8%7D,%7B%22r%22:19,%22g%22:19,%22b%22:9%7D,%7B%22r%22:21,%22g%22:22,%22b%22:10%7D,%7B%22r%22:24,%22g%22:24,%22b%22:11%7D,%7B%22r%22:26,%22g%22:27,%22b%22:12%7D,%7B%22r%22:28,%22g%22:29,%22b%22:13%7D,%7B%22r%22:31,%22g%22:31,%22b%22:14%7D,%7B%22r%22:33,%22g%22:34,%22b%22:15%7D,%7B%22r%22:35,%22g%22:36,%22b%22:16%7D,%7B%22r%22:38,%22g%22:38,%22b%22:17%7D,%7B%22r%22:40,%22g%22:41,%22b%22:18%7D,%7B%22r%22:42,%22g%22:43,%22b%22:19%7D,%7B%22r%22:45,%22g%22:45,%22b%22:21%7D,%7B%22r%22:47,%22g%22:48,%22b%22:22%7D,%7B%22r%22:49,%22g%22:50,%22b%22:23%7D,%7B%22r%22:52,%22g%22:53,%22b%22:24%7D,%7B%22r%22:54,%22g%22:55,%22b%22:25%7D,%7B%22r%22:56,%22g%22:57,%22b%22:26%7D,%7B%22r%22:58,%22g%22:60,%22b%22:27%7D,%7B%22r%22:61,%22g%22:62,%22b%22:28%7D,%7B%22r%22:63,%22g%22:64,%22b%22:29%7D,%7B%22r%22:65,%22g%22:67,%22b%22:30%7D,%7B%22r%22:68,%22g%22:69,%22b%22:31%7D,%7B%22r%22:70,%22g%22:71,%22b%22:32%7D,%7B%22r%22:72,%22g%22:74,%22b%22:33%7D,%7B%22r%22:75,%22g%22:76,%22b%22:34%7D,%7B%22r%22:77,%22g%22:79,%22b%22:35%7D,%7B%22r%22:79,%22g%22:81,%22b%22:36%7D,%7B%22r%22:82,%22g%22:83,%22b%22:38%7D,%7B%22r%22:84,%22g%22:86,%22b%22:39%7D,%7B%22r%22:86,%22g%22:88,%22b%22:40%7D,%7B%22r%22:89,%22g%22:90,%22b%22:41%7D,%7B%22r%22:91,%22g%22:93,%22b%22:42%7D,%7B%22r%22:93,%22g%22:95,%22b%22:43%7D,%7B%22r%22:96,%22g%22:97,%22b%22:44%7D,%7B%22r%22:98,%22g%22:100,%22b%22:45%7D,%7B%22r%22:100,%22g%22:102,%22b%22:46%7D,%7B%22r%22:103,%22g%22:105,%22b%22:47%7D,%7B%22r%22:105,%22g%22:107,%22b%22:48%7D,%7B%22r%22:107,%22g%22:109,%22b%22:49%7D,%7B%22r%22:109,%22g%22:112,%22b%22:50%7D,%7B%22r%22:112,%22g%22:114,%22b%22:51%7D,%7B%22r%22:114,%22g%22:116,%22b%22:52%7D,%7B%22r%22:116,%22g%22:119,%22b%22:54%7D,%7B%22r%22:119,%22g%22:121,%22b%22:55%7D,%7B%22r%22:121,%22g%22:123,%22b%22:56%7D,%7B%22r%22:123,%22g%22:126,%22b%22:57%7D,%7B%22r%22:126,%22g%22:128,%22b%22:58%7D,%7B%22r%22:128,%22g%22:131,%22b%22:59%7D,%7B%22r%22:130,%22g%22:133,%22b%22:60%7D,%7B%22r%22:133,%22g%22:135,%22b%22:61%7D,%7B%22r%22:135,%22g%22:138,%22b%22:62%7D,%7B%22r%22:137,%22g%22:140,%22b%22:63%7D,%7B%22r%22:140,%22g%22:142,%22b%22:64%7D,%7B%22r%22:142,%22g%22:145,%22b%22:65%7D,%7B%22r%22:144,%22g%22:147,%22b%22:66%7D,%7B%22r%22:147,%22g%22:149,%22b%22:67%7D,%7B%22r%22:149,%22g%22:152,%22b%22:68%7D,%7B%22r%22:151,%22g%22:154,%22b%22:70%7D,%7B%22r%22:153,%22g%22:157,%22b%22:71%7D,%7B%22r%22:156,%22g%22:159,%22b%22:72%7D,%7B%22r%22:158,%22g%22:161,%22b%22:73%7D,%7B%22r%22:160,%22g%22:164,%22b%22:74%7D,%7B%22r%22:163,%22g%22:166,%22b%22:75%7D,%7B%22r%22:165,%22g%22:168,%22b%22:76%7D,%7B%22r%22:167,%22g%22:171,%22b%22:77%7D,%7B%22r%22:170,%22g%22:173,%22b%22:78%7D,%7B%22r%22:172,%22g%22:175,%22b%22:79%7D,%7B%22r%22:174,%22g%22:178,%22b%22:80%7D,%7B%22r%22:177,%22g%22:180,%22b%22:81%7D,%7B%22r%22:179,%22g%22:183,%22b%22:82%7D,%7B%22r%22:181,%22g%22:185,%22b%22:83%7D,%7B%22r%22:184,%22g%22:187,%22b%22:84%7D,%7B%22r%22:186,%22g%22:190,%22b%22:86%7D,%7B%22r%22:188,%22g%22:192,%22b%22:87%7D,%7B%22r%22:191,%22g%22:194,%22b%22:88%7D,%7B%22r%22:193,%22g%22:197,%22b%22:89%7D,%7B%22r%22:195,%22g%22:199,%22b%22:90%7D,%7B%22r%22:198,%22g%22:201,%22b%22:91%7D,%7B%22r%22:200,%22g%22:204,%22b%22:92%7D,%7B%22r%22:202,%22g%22:206,%22b%22:93%7D,%7B%22r%22:204,%22g%22:209,%22b%22:94%7D,%7B%22r%22:207,%22g%22:211,%22b%22:95%7D,%7B%22r%22:209,%22g%22:213,%22b%22:96%7D,%7B%22r%22:211,%22g%22:216,%22b%22:97%7D,%7B%22r%22:214,%22g%22:218,%22b%22:98%7D,%7B%22r%22:216,%22g%22:220,%22b%22:99%7D,%7B%22r%22:218,%22g%22:223,%22b%22:100%7D,%7B%22r%22:221,%22g%22:225,%22b%22:102%7D,%7B%22r%22:223,%22g%22:227,%22b%22:103%7D,%7B%22r%22:225,%22g%22:230,%22b%22:104%7D,%7B%22r%22:228,%22g%22:232,%22b%22:105%7D,%7B%22r%22:230,%22g%22:235,%22b%22:106%7D,%7B%22r%22:232,%22g%22:237,%22b%22:107%7D,%7B%22r%22:235,%22g%22:239,%22b%22:108%7D,%7B%22r%22:237,%22g%22:242,%22b%22:109%7D,%7B%22r%22:239,%22g%22:244,%22b%22:110%7D,%7B%22r%22:242,%22g%22:246,%22b%22:111%7D,%7B%22r%22:244,%22g%22:249,%22b%22:112%7D,%7B%22r%22:246,%22g%22:251,%22b%22:113%7D,%7B%22r%22:249,%22g%22:253,%22b%22:114%7D,%7B%22r%22:250,%22g%22:255,%22b%22:115%7D,%7B%22r%22:248,%22g%22:253,%22b%22:117%7D,%7B%22r%22:247,%22g%22:252,%22b%22:118%7D,%7B%22r%22:247,%22g%22:251,%22b%22:118%7D,%7B%22r%22:246,%22g%22:251,%22b%22:119%7D,%7B%22r%22:245,%22g%22:250,%22b%22:119%7D,%7B%22r%22:245,%22g%22:250,%22b%22:120%7D,%7B%22r%22:244,%22g%22:249,%22b%22:121%7D,%7B%22r%22:244,%22g%22:248,%22b%22:121%7D,%7B%22r%22:243,%22g%22:248,%22b%22:122%7D,%7B%22r%22:243,%22g%22:247,%22b%22:122%7D,%7B%22r%22:242,%22g%22:247,%22b%22:123%7D,%7B%22r%22:242,%22g%22:246,%22b%22:123%7D,%7B%22r%22:241,%22g%22:245,%22b%22:124%7D,%7B%22r%22:240,%22g%22:245,%22b%22:124%7D,%7B%22r%22:240,%22g%22:244,%22b%22:125%7D,%7B%22r%22:239,%22g%22:244,%22b%22:125%7D,%7B%22r%22:239,%22g%22:243,%22b%22:126%7D,%7B%22r%22:238,%22g%22:243,%22b%22:126%7D,%7B%22r%22:238,%22g%22:242,%22b%22:127%7D,%7B%22r%22:237,%22g%22:241,%22b%22:128%7D,%7B%22r%22:237,%22g%22:241,%22b%22:128%7D,%7B%22r%22:236,%22g%22:240,%22b%22:129%7D,%7B%22r%22:235,%22g%22:240,%22b%22:129%7D,%7B%22r%22:235,%22g%22:239,%22b%22:130%7D,%7B%22r%22:234,%22g%22:239,%22b%22:130%7D,%7B%22r%22:234,%22g%22:238,%22b%22:131%7D,%7B%22r%22:233,%22g%22:237,%22b%22:131%7D,%7B%22r%22:233,%22g%22:237,%22b%22:132%7D,%7B%22r%22:232,%22g%22:236,%22b%22:132%7D,%7B%22r%22:232,%22g%22:236,%22b%22:133%7D,%7B%22r%22:231,%22g%22:235,%22b%22:133%7D,%7B%22r%22:231,%22g%22:234,%22b%22:134%7D,%7B%22r%22:230,%22g%22:234,%22b%22:134%7D,%7B%22r%22:229,%22g%22:233,%22b%22:135%7D,%7B%22r%22:229,%22g%22:233,%22b%22:136%7D,%7B%22r%22:228,%22g%22:232,%22b%22:136%7D,%7B%22r%22:228,%22g%22:232,%22b%22:137%7D,%7B%22r%22:227,%22g%22:231,%22b%22:137%7D,%7B%22r%22:227,%22g%22:230,%22b%22:138%7D,%7B%22r%22:226,%22g%22:230,%22b%22:138%7D,%7B%22r%22:226,%22g%22:229,%22b%22:139%7D,%7B%22r%22:225,%22g%22:229,%22b%22:139%7D,%7B%22r%22:224,%22g%22:228,%22b%22:140%7D,%7B%22r%22:224,%22g%22:227,%22b%22:140%7D,%7B%22r%22:223,%22g%22:227,%22b%22:141%7D,%7B%22r%22:223,%22g%22:226,%22b%22:141%7D,%7B%22r%22:222,%22g%22:226,%22b%22:142%7D,%7B%22r%22:222,%22g%22:225,%22b%22:143%7D,%7B%22r%22:221,%22g%22:225,%22b%22:143%7D,%7B%22r%22:221,%22g%22:224,%22b%22:144%7D,%7B%22r%22:220,%22g%22:223,%22b%22:144%7D,%7B%22r%22:220,%22g%22:223,%22b%22:145%7D,%7B%22r%22:219,%22g%22:222,%22b%22:145%7D,%7B%22r%22:218,%22g%22:222,%22b%22:146%7D,%7B%22r%22:218,%22g%22:221,%22b%22:146%7D,%7B%22r%22:217,%22g%22:220,%22b%22:147%7D,%7B%22r%22:217,%22g%22:220,%22b%22:147%7D,%7B%22r%22:216,%22g%22:219,%22b%22:148%7D,%7B%22r%22:216,%22g%22:219,%22b%22:148%7D,%7B%22r%22:215,%22g%22:218,%22b%22:149%7D,%7B%22r%22:215,%22g%22:218,%22b%22:149%7D,%7B%22r%22:214,%22g%22:217,%22b%22:150%7D,%7B%22r%22:213,%22g%22:216,%22b%22:151%7D,%7B%22r%22:213,%22g%22:216,%22b%22:151%7D,%7B%22r%22:212,%22g%22:215,%22b%22:152%7D,%7B%22r%22:212,%22g%22:215,%22b%22:152%7D,%7B%22r%22:211,%22g%22:214,%22b%22:153%7D,%7B%22r%22:211,%22g%22:214,%22b%22:153%7D,%7B%22r%22:210,%22g%22:213,%22b%22:154%7D,%7B%22r%22:210,%22g%22:212,%22b%22:154%7D,%7B%22r%22:209,%22g%22:212,%22b%22:155%7D,%7B%22r%22:208,%22g%22:211,%22b%22:155%7D,%7B%22r%22:208,%22g%22:211,%22b%22:156%7D,%7B%22r%22:207,%22g%22:210,%22b%22:156%7D,%7B%22r%22:207,%22g%22:209,%22b%22:157%7D,%7B%22r%22:206,%22g%22:209,%22b%22:158%7D,%7B%22r%22:206,%22g%22:208,%22b%22:158%7D,%7B%22r%22:205,%22g%22:208,%22b%22:159%7D,%7B%22r%22:205,%22g%22:207,%22b%22:159%7D,%7B%22r%22:204,%22g%22:207,%22b%22:160%7D,%7B%22r%22:204,%22g%22:206,%22b%22:160%7D,%7B%22r%22:203,%22g%22:205,%22b%22:161%7D,%7B%22r%22:202,%22g%22:205,%22b%22:161%7D,%7B%22r%22:202,%22g%22:204,%22b%22:162%7D,%7B%22r%22:201,%22g%22:204,%22b%22:162%7D,%7B%22r%22:201,%22g%22:203,%22b%22:163%7D,%7B%22r%22:200,%22g%22:202,%22b%22:163%7D,%7B%22r%22:200,%22g%22:202,%22b%22:164%7D,%7B%22r%22:199,%22g%22:201,%22b%22:164%7D,%7B%22r%22:199,%22g%22:201,%22b%22:165%7D,%7B%22r%22:198,%22g%22:200,%22b%22:166%7D,%7B%22r%22:197,%22g%22:200,%22b%22:166%7D,%7B%22r%22:197,%22g%22:199,%22b%22:167%7D,%7B%22r%22:196,%22g%22:198,%22b%22:167%7D,%7B%22r%22:196,%22g%22:198,%22b%22:168%7D,%7B%22r%22:195,%22g%22:197,%22b%22:168%7D,%7B%22r%22:195,%22g%22:197,%22b%22:169%7D,%7B%22r%22:194,%22g%22:196,%22b%22:169%7D,%7B%22r%22:194,%22g%22:195,%22b%22:170%7D,%7B%22r%22:193,%22g%22:195,%22b%22:170%7D,%7B%22r%22:193,%22g%22:194,%22b%22:171%7D,%7B%22r%22:192,%22g%22:194,%22b%22:171%7D,%7B%22r%22:191,%22g%22:193,%22b%22:172%7D,%7B%22r%22:191,%22g%22:193,%22b%22:173%7D,%7B%22r%22:190,%22g%22:192,%22b%22:173%7D,%7B%22r%22:190,%22g%22:191,%22b%22:174%7D,%7B%22r%22:189,%22g%22:191,%22b%22:174%7D,%7B%22r%22:189,%22g%22:190,%22b%22:175%7D,%7B%22r%22:188,%22g%22:190,%22b%22:175%7D,%7B%22r%22:188,%22g%22:189,%22b%22:176%7D,%7B%22r%22:187,%22g%22:188,%22b%22:176%7D,%7B%22r%22:186,%22g%22:188,%22b%22:177%7D,%7B%22r%22:186,%22g%22:187,%22b%22:177%7D,%7B%22r%22:185,%22g%22:187,%22b%22:178%7D,%7B%22r%22:185,%22g%22:186,%22b%22:178%7D,%7B%22r%22:184,%22g%22:186,%22b%22:179%7D,%7B%22r%22:184,%22g%22:185,%22b%22:179%7D,%7B%22r%22:183,%22g%22:184,%22b%22:180%7D,%7B%22r%22:183,%22g%22:184,%22b%22:181%7D,%7B%22r%22:182,%22g%22:183,%22b%22:181%7D,%7B%22r%22:181,%22g%22:183,%22b%22:182%7D,%7B%22r%22:181,%22g%22:182,%22b%22:182%7D,%7B%22r%22:180,%22g%22:182,%22b%22:183%7D,%7B%22r%22:180,%22g%22:181,%22b%22:183%7D,%7B%22r%22:179,%22g%22:180,%22b%22:184%7D,%7B%22r%22:179,%22g%22:180,%22b%22:184%7D,%7B%22r%22:178,%22g%22:179,%22b%22:185%7D,%7B%22r%22:178,%22g%22:179,%22b%22:185%7D,%7B%22r%22:177,%22g%22:178,%22b%22:186%7D,%7B%22r%22:177,%22g%22:177,%22b%22:186%7D,%7B%22r%22:176,%22g%22:177,%22b%22:187%7D,%7B%22r%22:175,%22g%22:176,%22b%22:188%7D,%7B%22r%22:175,%22g%22:176,%22b%22:188%7D,%7B%22r%22:174,%22g%22:175,%22b%22:189%7D,%7B%22r%22:174,%22g%22:175,%22b%22:189%7D,%7B%22r%22:173,%22g%22:174,%22b%22:190%7D,%7B%22r%22:173,%22g%22:173,%22b%22:190%7D,%7B%22r%22:172,%22g%22:173,%22b%22:191%7D,%7B%22r%22:172,%22g%22:172,%22b%22:191%7D,%7B%22r%22:171,%22g%22:172,%22b%22:192%7D,%7B%22r%22:170,%22g%22:171,%22b%22:192%7D,%7B%22r%22:170,%22g%22:170,%22b%22:193%7D,%7B%22r%22:169,%22g%22:170,%22b%22:193%7D,%7B%22r%22:169,%22g%22:169,%22b%22:194%7D,%7B%22r%22:168,%22g%22:169,%22b%22:194%7D,%7B%22r%22:168,%22g%22:168,%22b%22:195%7D,%7B%22r%22:167,%22g%22:168,%22b%22:196%7D,%7B%22r%22:167,%22g%22:167,%22b%22:196%7D,%7B%22r%22:166,%22g%22:166,%22b%22:197%7D,%7B%22r%22:166,%22g%22:166,%22b%22:197%7D,%7B%22r%22:165,%22g%22:165,%22b%22:198%7D,%7B%22r%22:164,%22g%22:165,%22b%22:198%7D,%7B%22r%22:164,%22g%22:164,%22b%22:199%7D,%7B%22r%22:163,%22g%22:163,%22b%22:199%7D,%7B%22r%22:163,%22g%22:163,%22b%22:200%7D,%7B%22r%22:162,%22g%22:162,%22b%22:200%7D,%7B%22r%22:162,%22g%22:162,%22b%22:201%7D,%7B%22r%22:161,%22g%22:161,%22b%22:201%7D,%7B%22r%22:161,%22g%22:161,%22b%22:202%7D,%7B%22r%22:160,%22g%22:160,%22b%22:203%7D,%7B%22r%22:159,%22g%22:159,%22b%22:203%7D,%7B%22r%22:159,%22g%22:159,%22b%22:204%7D,%7B%22r%22:158,%22g%22:158,%22b%22:204%7D,%7B%22r%22:158,%22g%22:158,%22b%22:205%7D,%7B%22r%22:157,%22g%22:157,%22b%22:205%7D,%7B%22r%22:157,%22g%22:157,%22b%22:206%7D,%7B%22r%22:156,%22g%22:156,%22b%22:206%7D,%7B%22r%22:156,%22g%22:155,%22b%22:207%7D,%7B%22r%22:155,%22g%22:155,%22b%22:207%7D,%7B%22r%22:154,%22g%22:154,%22b%22:208%7D,%7B%22r%22:154,%22g%22:154,%22b%22:208%7D,%7B%22r%22:153,%22g%22:153,%22b%22:209%7D,%7B%22r%22:153,%22g%22:152,%22b%22:209%7D,%7B%22r%22:152,%22g%22:152,%22b%22:210%7D,%7B%22r%22:152,%22g%22:151,%22b%22:211%7D,%7B%22r%22:151,%22g%22:151,%22b%22:211%7D,%7B%22r%22:151,%22g%22:150,%22b%22:212%7D,%7B%22r%22:150,%22g%22:150,%22b%22:212%7D,%7B%22r%22:150,%22g%22:149,%22b%22:213%7D,%7B%22r%22:149,%22g%22:148,%22b%22:213%7D,%7B%22r%22:148,%22g%22:148,%22b%22:214%7D,%7B%22r%22:148,%22g%22:147,%22b%22:214%7D,%7B%22r%22:147,%22g%22:147,%22b%22:215%7D,%7B%22r%22:147,%22g%22:146,%22b%22:215%7D,%7B%22r%22:146,%22g%22:145,%22b%22:216%7D,%7B%22r%22:146,%22g%22:145,%22b%22:216%7D,%7B%22r%22:145,%22g%22:144,%22b%22:217%7D,%7B%22r%22:145,%22g%22:144,%22b%22:218%7D,%7B%22r%22:144,%22g%22:143,%22b%22:218%7D,%7B%22r%22:143,%22g%22:143,%22b%22:219%7D,%7B%22r%22:143,%22g%22:142,%22b%22:219%7D,%7B%22r%22:142,%22g%22:141,%22b%22:220%7D,%7B%22r%22:142,%22g%22:141,%22b%22:220%7D,%7B%22r%22:141,%22g%22:140,%22b%22:221%7D,%7B%22r%22:141,%22g%22:140,%22b%22:221%7D,%7B%22r%22:140,%22g%22:139,%22b%22:222%7D,%7B%22r%22:140,%22g%22:138,%22b%22:222%7D,%7B%22r%22:139,%22g%22:138,%22b%22:223%7D,%7B%22r%22:139,%22g%22:137,%22b%22:223%7D,%7B%22r%22:138,%22g%22:137,%22b%22:224%7D,%7B%22r%22:137,%22g%22:136,%22b%22:224%7D,%7B%22r%22:137,%22g%22:136,%22b%22:225%7D,%7B%22r%22:136,%22g%22:135,%22b%22:226%7D,%7B%22r%22:136,%22g%22:134,%22b%22:226%7D,%7B%22r%22:135,%22g%22:134,%22b%22:227%7D,%7B%22r%22:135,%22g%22:133,%22b%22:227%7D,%7B%22r%22:134,%22g%22:133,%22b%22:228%7D,%7B%22r%22:134,%22g%22:132,%22b%22:228%7D,%7B%22r%22:133,%22g%22:131,%22b%22:229%7D,%7B%22r%22:132,%22g%22:131,%22b%22:229%7D,%7B%22r%22:132,%22g%22:130,%22b%22:230%7D,%7B%22r%22:131,%22g%22:130,%22b%22:230%7D,%7B%22r%22:131,%22g%22:129,%22b%22:231%7D,%7B%22r%22:130,%22g%22:129,%22b%22:231%7D,%7B%22r%22:130,%22g%22:128,%22b%22:232%7D,%7B%22r%22:129,%22g%22:127,%22b%22:233%7D,%7B%22r%22:129,%22g%22:127,%22b%22:233%7D,%7B%22r%22:128,%22g%22:126,%22b%22:234%7D,%7B%22r%22:127,%22g%22:126,%22b%22:234%7D,%7B%22r%22:127,%22g%22:125,%22b%22:235%7D,%7B%22r%22:126,%22g%22:125,%22b%22:235%7D,%7B%22r%22:126,%22g%22:124,%22b%22:236%7D,%7B%22r%22:125,%22g%22:123,%22b%22:236%7D,%7B%22r%22:125,%22g%22:123,%22b%22:237%7D,%7B%22r%22:124,%22g%22:122,%22b%22:237%7D,%7B%22r%22:124,%22g%22:122,%22b%22:238%7D,%7B%22r%22:123,%22g%22:121,%22b%22:238%7D,%7B%22r%22:123,%22g%22:120,%22b%22:239%7D,%7B%22r%22:122,%22g%22:120,%22b%22:239%7D,%7B%22r%22:121,%22g%22:119,%22b%22:240%7D,%7B%22r%22:121,%22g%22:119,%22b%22:241%7D,%7B%22r%22:120,%22g%22:118,%22b%22:241%7D,%7B%22r%22:120,%22g%22:118,%22b%22:242%7D,%7B%22r%22:119,%22g%22:117,%22b%22:242%7D,%7B%22r%22:119,%22g%22:116,%22b%22:243%7D,%7B%22r%22:118,%22g%22:116,%22b%22:243%7D,%7B%22r%22:118,%22g%22:115,%22b%22:244%7D,%7B%22r%22:117,%22g%22:115,%22b%22:244%7D,%7B%22r%22:116,%22g%22:114,%22b%22:245%7D,%7B%22r%22:116,%22g%22:113,%22b%22:245%7D,%7B%22r%22:115,%22g%22:113,%22b%22:246%7D,%7B%22r%22:115,%22g%22:112,%22b%22:246%7D,%7B%22r%22:114,%22g%22:112,%22b%22:247%7D,%7B%22r%22:114,%22g%22:111,%22b%22:248%7D,%7B%22r%22:113,%22g%22:111,%22b%22:248%7D,%7B%22r%22:113,%22g%22:110,%22b%22:249%7D,%7B%22r%22:112,%22g%22:109,%22b%22:249%7D,%7B%22r%22:112,%22g%22:109,%22b%22:250%7D,%7B%22r%22:111,%22g%22:108,%22b%22:250%7D,%7B%22r%22:110,%22g%22:108,%22b%22:251%7D,%7B%22r%22:110,%22g%22:107,%22b%22:251%7D,%7B%22r%22:109,%22g%22:106,%22b%22:252%7D,%7B%22r%22:109,%22g%22:106,%22b%22:252%7D,%7B%22r%22:108,%22g%22:105,%22b%22:253%7D,%7B%22r%22:108,%22g%22:105,%22b%22:253%7D,%7B%22r%22:107,%22g%22:104,%22b%22:254%7D,%7B%22r%22:107,%22g%22:104,%22b%22:254%7D,%7B%22r%22:106,%22g%22:103,%22b%22:255%7D,%7B%22r%22:0,%22g%22:0,%22b%22:0%7D%5D%7D&i=500&c=-0.6360253677463695,-0.38708669264908013&w=0.005019824996531184&p=0,0&r=3';
+
   private fractal: Fractals.Fractal;
   private iterationsAreChanging: boolean = false;
   private activeSection: ElementRef = this.saveSection;
 
-  public equation: string = "Mandelbrot";
-  public color: string;
-  public iterations: string = "50";
-  public complexCenter: string = "-0.8, 0";
-  public complexWidth: string = "3";
   public complexJuliaPicker: string = "-0.7,0.0";
   public juliaPickerWidth: string = "3";
   public imageToDownload: string = null;
@@ -119,36 +118,67 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner, Fract
     this.ngModelChangeIterations();
   }
 
-  init() {
-    let centerArr = this.complexCenter.split(",");
-    let centerR = parseFloat(centerArr[0]);
-    let centerI = parseFloat(centerArr[1]);
+  init(url: string) {
+    var equation = "Mandelbrot";
+    var complexCenter = "-0.8, 0";
+    var complexWidthStr = "3";
+    var colorStr = this.colorBW;
+    var fractalEq: FractalEquations.equation = new FractalEquations.Mandelbrot;
 
-    let complexWidth = parseFloat(this.complexWidth);
-
-    this.NumIterations = parseInt(this.iterations)
-
-    let juliaPickerWidth = parseFloat(this.juliaPickerWidth);
-
-    let colorCommandString = this.colorBlackBlue;
-    if (this.color != null) {
-      colorCommandString = this.color;
+    let st = decodeURI(url)
+    st = st.substring(st.indexOf("?") + 1);
+    let arr = st.split('&');
+    let result: Array<Array<string>> = new Array();
+    for (let i = 0; i < arr.length; i++) {
+      result.push(arr[i].split('='));
+    }
+    for (let i = 0; i < result.length; i++) {
+      const element = result[i];
+      if (element[0] == "e") {
+        equation = element[1];
+      }
+      if (element[0] == "g") {
+        colorStr = element[1];
+      }
+      if (element[0] == "i") {
+        this.NumIterations = parseInt(element[1])
+      }
+      if (element[0] == "c") {
+        complexCenter = element[1];
+      }
+      if (element[0] == "w") {
+        complexWidthStr = element[1];
+      }
+      if (element[0] == "p") {
+        this.complexJuliaPicker = element[1];
+      }
+      if (element[0] == "r") {
+        this.juliaPickerWidth = element[1];
+        let juliaPickerWidth = parseFloat(this.juliaPickerWidth);
+      }
     }
 
-    let fractalEq: FractalEquations.equation = new FractalEquations.Mandelbrot;
-    if (this.equation == "MandelbrotPow4") {
+
+    var centerArr = complexCenter.split(",");
+    var centerR = parseFloat(centerArr[0]);
+    var centerI = parseFloat(centerArr[1]);
+    var complexWidth = parseFloat(complexWidthStr);
+    this.fractal.getColor().decodeJSON(colorStr);
+    this.fractal.iterations = this.NumIterations;
+
+    if (equation == "MandelbrotPow4") {
       fractalEq = new FractalEquations.MandelbrotPow4;
     }
-    if (this.equation == "MandelbrotPow6") {
+    if (equation == "MandelbrotPow6") {
       fractalEq = new FractalEquations.MandelbrotPow6;
     }
-    if (this.equation == "Tricorn") {
+    if (equation == "Tricorn") {
       fractalEq = new FractalEquations.Tricorn;
     }
-    if (this.equation == "BurningShip") {
+    if (equation == "BurningShip") {
       fractalEq = new FractalEquations.BurningShip;
     }
-    if (this.equation == "Julia") {
+    if (equation == "Julia") {
       fractalEq = new FractalEquations.Julia;
       let jNumStr = this.complexJuliaPicker.split(",");
       (<FractalEquations.Julia>fractalEq).juliaReal = parseFloat(jNumStr[0]);
@@ -156,22 +186,18 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner, Fract
       this.HTMLjuliaPullOut.nativeElement.style.display = "block";
       this.clickJuliaPullOut(true);
     }
+    else {
+      this.HTMLjuliaPullOut.nativeElement.style.display = "none";
+    }
 
     this.fractal.complexPlain.replaceView(centerR, centerI, complexWidth, <HTMLCanvasElement>this.mainFractalView.getCanvas())
     this.fractal.setCalculationFunction(fractalEq);
-    this.fractal.getColor().decodeJSON(colorCommandString);
-    this.fractal.iterations = this.NumIterations;
     this.fractal.render();
   }
 
   /*
   * User triggerable functions \/
   */
-
-
-  windowResized() {
-    this.mainFractalView.sizeChanged();
-  }
 
   onEqChanged(eqString) {
     if (eqString == "Mandelbrot") {
@@ -210,9 +236,15 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner, Fract
   }
 
   onGradientChanged(gradient) {
-    this.fractal.getColor().decodeJSON(gradient);
     this.clickWebView(false);
+    this.fractal.getColor().decodeJSON(gradient);
+    //this.fractal.getColor().compileColor(this.NumIterations);
     this.fractal.getColor().notify(null);
+  }
+
+  onLibrarySelection(str: string) {
+    this.init(str);
+    this.clickWebView(false);
   }
 
   startChangingIterations(i) {
@@ -250,8 +282,18 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner, Fract
   clickSave(event) {
     this.HTMLwebView.nativeElement.setAttribute("class", "web-view open-full");
     this.setWebViewSection(this.saveSection);
-    this.mainFractalView.abortDownload();
     this.HTMLsaveButton.nativeElement.setAttribute("class", "btn");
+    if (this.mainFractalView.abortDownload()) this.toastCtrl.create({
+      message: 'Image save aborted',
+      duration: 1000,
+      position: 'bottom'
+    }).present();
+  }
+
+  clickLibrary() {
+    this.HTMLwebView.nativeElement.setAttribute("class", "web-view open-full");
+    this.setWebViewSection(this.librarySection);
+    window.dispatchEvent(new Event('resize'));
   }
 
   clickEquation() {
@@ -376,7 +418,17 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner, Fract
       this.HTMLjuliaPullOut.nativeElement.classList.remove("close");
       this.HTMLjuliaPullOut.nativeElement.classList.add("open");
       let width = parseFloat(this.juliaPickerWidth);
-      if (!this.HTMLjuliaPicker.hasInit) this.HTMLjuliaPicker.init(this.fractal.getColor(), this.NumIterations, this.complexJuliaPicker, width);
+      let centerJuliaPicker = this.complexJuliaPicker.split(",");
+      let centercenterJuliaPickerR = parseFloat(centerJuliaPicker[0]);
+      let centercenterJuliaPickerI = parseFloat(centerJuliaPicker[1]);
+      if (!this.HTMLjuliaPicker.hasInit) {
+        this.HTMLjuliaPicker.init(this.fractal.getColor(), this.NumIterations, centercenterJuliaPickerR ,centercenterJuliaPickerI, width);
+      }
+      else {
+        this.HTMLjuliaPicker.mainFractalView.getFractal().complexPlain.replaceView(centercenterJuliaPickerR, centercenterJuliaPickerI, width, this.HTMLjuliaPicker.mainFractalView.getCanvas());
+        this.HTMLjuliaPicker.getFractalView().getFractal().iterations = this.NumIterations;
+        this.HTMLjuliaPicker.mainFractalView.getFractal().render();
+      }
       this.HTMLjuliaPicker.isOnScreen = true;
     }
     else {
@@ -561,9 +613,8 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner, Fract
   }
 
   private updateSaveProgress() {
-    this.HTMLsaveText.nativeElement.innerHTML = this.mainFractalView.getDownloadProgress() + "%"
-
     if (this.HTMLsaveButton.nativeElement.classList.contains("disabled")) {
+      this.HTMLsaveText.nativeElement.innerHTML = this.mainFractalView.getDownloadProgress() + "%"      
       let self = this
       setTimeout(() => {
         self.updateSaveProgress()
@@ -592,7 +643,7 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner, Fract
               this.explorer.HTMLalertComponent.textStr = "Image Saved."
               this.explorer.HTMLalertComponent.closeStr = "Close"
               this.explorer.HTMLalertComponent.enableOptions(true, false, false, false)
-              this.explorer.HTMLalertComponent.setCallback(this.explorer.closeAlert.bind(this.explorer))
+              this.explorer.HTMLalertComponent.setCallback(this.explorer.closeDownloadAlert.bind(this.explorer))
               this.explorer.HTMLalert.nativeElement.style.visibility = "visible";
 
               this.explorer.HTMLsaveButton.nativeElement.setAttribute("class", "btn");
@@ -620,7 +671,7 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner, Fract
             this.explorer.HTMLalertComponent.setYesHref(this.explorer.imageToDownload)
             this.explorer.HTMLalertComponent.noStr = "Cancel"
             this.explorer.HTMLalertComponent.enableOptions(true, false, true)
-            this.explorer.HTMLalertComponent.setCallback(this.explorer.closeAlert.bind(this.explorer))
+            this.explorer.HTMLalertComponent.setCallback(this.explorer.closeDownloadAlert.bind(this.explorer))
             this.explorer.HTMLalert.nativeElement.style.visibility = "visible";
 
             this.explorer.HTMLsaveButton.nativeElement.setAttribute("class", "btn");
@@ -634,6 +685,14 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner, Fract
   }
 
   private closeAlert(event) {
+    if (getComputedStyle(this.HTMLalert.nativeElement).visibility == "visible") {
+      this.HTMLalert.nativeElement.style.visibility = "hidden";
+      return;
+    }
+  }
+
+  private closeDownloadAlert(event) {
+    this.mainFractalView.abortDownload();
     if (getComputedStyle(this.HTMLalert.nativeElement).visibility == "visible") {
       this.HTMLalert.nativeElement.style.visibility = "hidden";
       return;

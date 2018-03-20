@@ -1,5 +1,5 @@
 <div class="fractal-lime">
-  <div #explorer id="explorer" (window:resize)="windowResized()">
+  <div #explorer id="explorer">
 
     <input #jscolor id="jscolor" (change)="HTMLgradient.setColorActive($event)" class="jscolor {width:250,  height:250}" value="000000">
     <input #jscolor2 id="jscolor2" (change)="setInteriorColor($event)" class="jscolor {width:250,  height:250}" value="000000">
@@ -73,9 +73,7 @@
       <div class="web-view-outer" (swipe)="swipeWebView($event)">
         <h1>Options</h1>
 
-        <p>
-
-
+        <div class="menu">
           <a #saveButton (click)="clickSave($event)" class="btn">
             <ion-icon name="ios-image"></ion-icon>
             <span #saveText> Save</span>
@@ -96,8 +94,7 @@
           <a (click)="clickShare($event)" class="btn">
             <ion-icon name="share"></ion-icon> Share
           </a>
-
-        </p>
+        </div>
 
       </div>
 
@@ -137,6 +134,24 @@
             </li>
           </ul>
         </section>
+
+        <section #LibrarySection class="hide">
+            <div class="header">
+              <ion-icon (click)="clickWebView(true)" name="md-close-circle"></ion-icon>
+              <h1>Library</h1>
+            </div>
+  
+            <ul>
+              <li (click)="onLibrarySelection(theFirst)">
+                <ion-icon name="ios-cog"></ion-icon>
+                <div class="fractalTumb"><app-fractalView url={{theFirst}}></app-fractalView></div>
+              </li>
+              <li (click)="onLibrarySelection(theSecond)">
+                <ion-icon name="ios-cog"></ion-icon>
+                <div class="fractalTumb"><app-fractalView url={{theSecond}}></app-fractalView></div>
+              </li>              
+            </ul>
+          </section>
 
         <section #equationSection class="hide">
           <div class="header">

@@ -1,13 +1,13 @@
-import { Component, ViewChild, ElementRef, Output, EventEmitter } from "@angular/core";
+import { Component, Input, ViewChild, ElementRef, Output, EventEmitter } from "@angular/core";
 
 import { Fractals } from "../../fractal/fractal.module";
 import { FractalEquations } from "../../fractal/fractalEquations.module";
+import { FractalColor } from "../../fractal/fractalColouring";
 
 
 @Component({
   selector: "app-fractalView",
-  templateUrl: "./fractalView.component.html",
-  //styleUrls: ["./fractalView.component.scss"]
+  templateUrl: "./fractalView.component.html"
 })
 export class FractalViewComponent implements Fractals.ChangeObserver {
   @ViewChild('fractalCanvas') HTMLcanvas: ElementRef;
@@ -17,12 +17,85 @@ export class FractalViewComponent implements Fractals.ChangeObserver {
   private zoomGestureHappening: boolean = false;
   private lastMouseDown = (new Date).getTime();
 
+  readonly colorBW: string = '{"mn":0,"md":0.5,"mx":1,"arr":[{"s":0,"c":{"r":0,"g":0,"b":0}},{"s":1,"c":{"r":255,"g":255,"b":255}}]}'
+
+
   constructor() { }
 
 
   /*
   * Public 
   */
+
+  @Input()
+  set url(url: string) {
+    var equation = "Mandelbrot";
+    var numIterations = 50;
+    var complexCenter = "-0.8, 0";
+    var complexWidthStr = "3";
+    var complexJuliaPicker = "0,0"
+    var colorStr = this.colorBW;
+    var fractalEq: FractalEquations.equation = new FractalEquations.Mandelbrot;
+
+
+    let st = decodeURI(url)
+    st = st.substring(st.indexOf("?") + 1);
+    let arr = st.split('&');
+    let result: Array<Array<string>> = new Array();
+    for (let i = 0; i < arr.length; i++) {
+      result.push(arr[i].split('='));
+    }
+    for (let i = 0; i < result.length; i++) {
+      const element = result[i];
+      if (element[0] == "e") {
+        equation = element[1];
+      }
+      if (element[0] == "g") {
+        colorStr = element[1];
+      }
+      if (element[0] == "i") {
+        numIterations = parseInt(element[1])
+      }
+      if (element[0] == "c") {
+        complexCenter = element[1];
+      }
+      if (element[0] == "w") {
+        complexWidthStr = element[1];
+      }
+      if (element[0] == "p") {
+        complexJuliaPicker = element[1];
+      }
+    }
+
+    var centerArr = complexCenter.split(",");
+    var centerR = parseFloat(centerArr[0]);
+    var centerI = parseFloat(centerArr[1]);
+    var complexWidth = parseFloat(complexWidthStr);
+    if (equation == "MandelbrotPow4") {
+      fractalEq = new FractalEquations.MandelbrotPow4;
+    }
+    if (equation == "MandelbrotPow6") {
+      fractalEq = new FractalEquations.MandelbrotPow6;
+    }
+    if (equation == "Tricorn") {
+      fractalEq = new FractalEquations.Tricorn;
+    }
+    if (equation == "BurningShip") {
+      fractalEq = new FractalEquations.BurningShip;
+    }
+    if (equation == "Julia") {
+      fractalEq = new FractalEquations.Julia;
+      let jNumStr = complexJuliaPicker.split(",");
+      (<FractalEquations.Julia>fractalEq).juliaReal = parseFloat(jNumStr[0]);
+      (<FractalEquations.Julia>fractalEq).juliaImaginary = parseFloat(jNumStr[1]);
+    }
+
+    let gradient = new FractalColor.LinearGradient();
+    gradient.decodeJSON(colorStr)
+
+    this.fractal = new Fractals.Fractal(new Fractals.ComplexPlain(centerR, centerI, complexWidth, this.HTMLcanvas.nativeElement), fractalEq, gradient);
+    this.fractal.iterations = numIterations;
+  }
 
   public setFractal(fractal: Fractals.Fractal) {
     this.fractal = fractal;
@@ -45,6 +118,8 @@ export class FractalViewComponent implements Fractals.ChangeObserver {
   public sizeChanged() {
     let canvas = <HTMLCanvasElement>this.HTMLcanvas.nativeElement;
     let ctx = <CanvasRenderingContext2D>canvas.getContext("2d");
+    if (canvas.offsetWidth==0||canvas.offsetHeight==0) return;
+    if (canvas.offsetWidth==ctx.canvas.width||canvas.offsetHeight==ctx.canvas.height) return;
     ctx.canvas.width = canvas.offsetWidth;
     ctx.canvas.height = canvas.offsetHeight;
     let cp = this.fractal.complexPlain;
@@ -85,13 +160,17 @@ export class FractalViewComponent implements Fractals.ChangeObserver {
   }
 
   getDownloadProgress(): number {
-    let num = 100- (100 * (this.downloadingFractal.currentScanLine / this.downloadingFractal.complexPlain.getViewCanvas().height));
+    let num = 100 - (100 * (this.downloadingFractal.currentScanLine / this.downloadingFractal.complexPlain.getViewCanvas().height));
     return Math.trunc(num)
   }
 
-  abortDownload() {
+  abortDownload():boolean {
     if (this.downloadingFractal != null) {
       this.downloadingFractal.stopRendering();
+      this.downloadingFractal = null;
+      return true;
+    }else {
+      return false;
     }
   }
 
