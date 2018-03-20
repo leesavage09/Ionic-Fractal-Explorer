@@ -141,16 +141,27 @@
               <h1>Library</h1>
             </div>
   
-            <ul>
-              <li (click)="onLibrarySelection(theFirst)">
-                <ion-icon name="ios-cog"></ion-icon>
-                <div class="fractalTumb"><app-fractalView url={{theFirst}}></app-fractalView></div>
-              </li>
-              <li (click)="onLibrarySelection(theSecond)">
-                <ion-icon name="ios-cog"></ion-icon>
-                <div class="fractalTumb"><app-fractalView url={{theSecond}}></app-fractalView></div>
-              </li>              
-            </ul>
+              <div class="cards" (click)="onLibrarySelection($event,lib1)">
+                <div class="fractalTumb"><app-fractalView url={{lib1}}></app-fractalView></div>
+              </div>
+              <div class="cards" (click)="onLibrarySelection($event,lib2)">
+                <div class="fractalTumb"><app-fractalView url={{lib2}}></app-fractalView></div>
+              </div>  
+              <div class="cards" (click)="onLibrarySelection($event,lib3)">
+                <div class="fractalTumb"><app-fractalView url={{lib3}}></app-fractalView></div>
+              </div>  
+              <div class="cards" (click)="onLibrarySelection($event,lib4)">
+                <div class="fractalTumb"><app-fractalView url={{lib4}}></app-fractalView></div>
+              </div>  
+              <div class="cards" (click)="onLibrarySelection($event,lib5)">
+                <div class="fractalTumb"><app-fractalView url={{lib5}}></app-fractalView></div>
+              </div>  
+              <div class="cards" (click)="onLibrarySelection($event,lib6)">
+                <div class="fractalTumb"><app-fractalView url={{lib6}}></app-fractalView></div>
+              </div>  
+              <div class="cards" (click)="onLibrarySelection($event,lib7)">
+                <div class="fractalTumb"><app-fractalView url={{lib7}}></app-fractalView></div>
+              </div>  
           </section>
 
         <section #equationSection class="hide">
@@ -244,6 +255,25 @@
               </div>
             </li>
           </ul>
+        </section>
+
+        <section #FavoritesSection class="hide">
+          <div class="header">
+            <ion-icon (click)="clickWebView(true)" name="md-close-circle"></ion-icon>
+            <h1>Favorites</h1>
+          </div>
+
+          <a class="btn" (click)="addToFavorites()" >Save Current</a>
+
+          <div *ngFor="let fav of favorites">
+            <div class="cards" (click)="onLibrarySelection($event,fav)">
+              <div class="fractalTumb"><app-fractalView url={{fav}}></app-fractalView></div>
+
+              <ion-icon (click)="deleteFavorite($event,fav)" name="md-close-circle"></ion-icon>
+            </div>
+          </div>
+            
+            
         </section>
 
       </div>

@@ -6,6 +6,7 @@ import { SocialSharing } from '@ionic-native/social-sharing';
 import { PhotoLibrary } from '@ionic-native/photo-library';
 import { AndroidFullScreen } from '@ionic-native/android-full-screen';
 import { IonicSwipeAllModule } from 'ionic-swipe-all';
+import { IonicStorageModule } from '@ionic/storage';
 
 import { MyApp } from './app.component';
 
@@ -34,7 +35,8 @@ import { AlertComponent } from '../components/alert/alert.component';
   imports: [
     BrowserModule,
     IonicModule.forRoot(MyApp),
-    IonicSwipeAllModule
+    IonicSwipeAllModule,
+    IonicStorageModule.forRoot()
   ],
   bootstrap: [IonicApp],
   entryComponents: [

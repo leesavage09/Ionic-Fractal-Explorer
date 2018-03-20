@@ -95,6 +95,7 @@ export class FractalViewComponent implements Fractals.ChangeObserver {
 
     this.fractal = new Fractals.Fractal(new Fractals.ComplexPlain(centerR, centerI, complexWidth, this.HTMLcanvas.nativeElement), fractalEq, gradient);
     this.fractal.iterations = numIterations;
+    this.sizeChanged();
   }
 
   public setFractal(fractal: Fractals.Fractal) {
@@ -118,8 +119,19 @@ export class FractalViewComponent implements Fractals.ChangeObserver {
   public sizeChanged() {
     let canvas = <HTMLCanvasElement>this.HTMLcanvas.nativeElement;
     let ctx = <CanvasRenderingContext2D>canvas.getContext("2d");
-    if (canvas.offsetWidth==0||canvas.offsetHeight==0) return;
-    if (canvas.offsetWidth==ctx.canvas.width||canvas.offsetHeight==ctx.canvas.height) return;
+    if (!canvas.offsetParent) {
+     // console.log("of screen")
+      return; // its not onscreen
+    }
+    if (canvas.offsetWidth == 0 || canvas.offsetHeight == 0) {
+    //  console.log("size 0")
+      return;
+    }
+    if (canvas.offsetWidth == ctx.canvas.width && canvas.offsetHeight == ctx.canvas.height) {
+    //  console.log("size unchanged2",canvas.offsetWidth ,ctx.canvas.width)
+      return;
+    }
+    //console.log("Resizing3");
     ctx.canvas.width = canvas.offsetWidth;
     ctx.canvas.height = canvas.offsetHeight;
     let cp = this.fractal.complexPlain;
@@ -164,12 +176,12 @@ export class FractalViewComponent implements Fractals.ChangeObserver {
     return Math.trunc(num)
   }
 
-  abortDownload():boolean {
+  abortDownload(): boolean {
     if (this.downloadingFractal != null) {
       this.downloadingFractal.stopRendering();
       this.downloadingFractal = null;
       return true;
-    }else {
+    } else {
       return false;
     }
   }

@@ -126,4 +126,5 @@
     <plugin name="cordova-plugin-fullscreen" spec="^1.2.0" />
     <engine name="android" spec="~7.0.0" />
     <plugin name="com-darryncampbell-cordova-plugin-intent" spec="^1.0.0" />
+    <plugin name="cordova-sqlite-storage" spec="^2.2.1" />
 </widget>

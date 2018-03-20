@@ -60,7 +60,7 @@ export namespace Fractals {
 			this.render();
 		}
 
-		public render(fullRes: boolean = false): void {
+		public render(fullRes: boolean = false): void {			
 			this.stopRendering();
 			if (this.complexPlain.getSquare().width < 5.2291950245225395e-15) {
 				this.notifiMaxZoomListeners();
