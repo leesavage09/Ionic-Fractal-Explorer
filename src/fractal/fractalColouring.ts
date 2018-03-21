@@ -10,7 +10,7 @@ export namespace FractalColor {
 		private md: number = 0.5;
 		private mx: number = 1;
 		private subscribers: Array<LinearGradientObserver> = new Array();
-		private interiorColor: RGBcolor = new RGBcolor(0,0,0);
+		private i: RGBcolor = new RGBcolor(0,0,0);
 	
 		constructor(arr: Array<LinearGradientStop> = null) {
 			if (arr != null) {
@@ -19,11 +19,11 @@ export namespace FractalColor {
 		}
 
 		public setInteriorColor(color:RGBcolor){
-			this.interiorColor = color;
+			this.i = color;
 		}
 
 		public getInteriorColor(){
-			return this.interiorColor;
+			return this.i;
 		}
 
 		public replaceAllStops(arr: Array<LinearGradientStop>) {
@@ -45,6 +45,7 @@ export namespace FractalColor {
 			this.mn = obj.mn
 			this.md = obj.md
 			this.mx = obj.mx
+			this.i = obj.i ? obj.i : new RGBcolor(0,0,0);
 		}
 
 		public encodeJSON(): string {
@@ -110,7 +111,7 @@ export namespace FractalColor {
 			if (!compiledArray) throw new Error("This color has not yet been compiled");
 			let trunc = Math.floor(n);
 			if (compiledArray.length < trunc + 1) throw new Error ("array comiled to length="+compiledArray.length+" trying to access element="+(trunc+1)+" recompliation is nessasary");
-			if (n == compiledArray.length - 1) return this.interiorColor;
+			if (n == compiledArray.length - 1) return this.i;
 			if (n < 0) return new RGBcolor(0, 0, 0);
 			else {
 				let r = Math.round(General.mapInOut(n, trunc, trunc + 1, compiledArray[trunc].r, compiledArray[trunc + 1].r))

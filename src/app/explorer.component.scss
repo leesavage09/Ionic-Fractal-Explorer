@@ -86,13 +86,9 @@ $font-size-small: 18px !default;
     border-color: $colour-tool;
     border-radius: $corner-radius;
 
-    &:hover {
+    .platform-core &:hover {
         color: $color-mouseover;
         opacity: 1;
-    }
-
-    &:focus {
-        color: $colour-tool;
     }
 }
 
@@ -182,7 +178,7 @@ $font-size-small: 18px !default;
             }
 
             #gradientpanel {
-                height: 44px;
+                height: 88px;
             }
 
             #histogrampanel {
@@ -198,7 +194,7 @@ $font-size-small: 18px !default;
                     height: $button-size;
                     width: $button-size;
                     position: absolute;
-                    top: 44px + $padding;
+                    top: 88px + $padding;
                     right: $padding;
                     cursor: cell;
                 }
@@ -391,7 +387,7 @@ $font-size-small: 18px !default;
                 overflow: hidden;
                 text-overflow: ellipsis;
 
-                &:hover {
+                .platform-core &:hover {
                     background-color: $colour-tool;
                     border-bottom-color: white;
                     color: black;
@@ -460,7 +456,7 @@ $font-size-small: 18px !default;
                         font-size: $font-size * 2;
                         line-height: $font-size * 1.5;
 
-                        &:hover {
+                        .platform-core &:hover {
                             color: $color-ok;
                         }
                     }
@@ -520,7 +516,7 @@ $font-size-small: 18px !default;
                     box-shadow: $shadow;
                     position: relative;
 
-                    &:hover {
+                    .platform-core &:hover {
                         background-color: $color-ok;
 
                         ion-icon {
@@ -545,7 +541,7 @@ $font-size-small: 18px !default;
                         color: $color-web-btn-bg;
                         border-bottom-left-radius: $corner-radius;
 
-                        &:hover {
+                        .platform-core &:hover {
                             color: $color-danger;
                         }
 
@@ -563,7 +559,7 @@ $font-size-small: 18px !default;
                     border-color: $color-web-btn-txt;
                     box-shadow: $shadow;
 
-                    &:hover {
+                    .platform-core &:hover {
                         background-color: $color-ok;
                         color: $color-web-btn-txt;
                     }
@@ -627,10 +623,6 @@ $font-size-small: 18px !default;
         input[type=number] {
             -moz-appearance: textfield;
             font-size: $font-size-small;
-        }
-
-        input:focus, select:focus {
-            outline: none;
         }
 
         .btn {

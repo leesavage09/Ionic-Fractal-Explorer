@@ -9,6 +9,7 @@
     "build": "ionic-app-scripts build",
     "lint": "ionic-app-scripts lint",
     "ionic:build": "ionic-app-scripts build",
+    "ionic:buildProd": "ionic build -- --prod",
     "ionic:serve": "ionic-app-scripts serve --address 0.0.0.0 -p 4200",
     "USB:android": "ionic cordova run android --device",
     "build:apk": "ionic cordova build --release android"
@@ -32,6 +33,7 @@
     "angular-font-awesome": "^3.1.2",
     "com-darryncampbell-cordova-plugin-intent": "^1.0.0",
     "cordova-android": "7.0.0",
+    "cordova-browser": "^5.0.3",
     "cordova-plugin-compat": "^1.2.0",
     "cordova-plugin-device": "^2.0.1",
     "cordova-plugin-file": "^4.3.2",
@@ -76,7 +78,8 @@
       "cordova-sqlite-storage": {}
     },
     "platforms": [
-      "android"
+      "android",
+      "browser"
     ]
   }
 }

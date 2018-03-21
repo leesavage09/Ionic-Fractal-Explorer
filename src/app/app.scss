@@ -30,7 +30,7 @@
     $color-tool-bg: rgba(4, 21, 63, 0.75);
     $color-tool-bg-solid: rgb(4, 21, 63);
     $color-mouseover: rgb(100, 255, 100);
-    $color-text: #488aff;
+    $color-text: rgba(255, 255, 255, 0.9);//$color-text: #488aff;
     $color-web-bg: rgb(50, 60, 65);
     $color-web-btn-bg: rgb(4, 21, 63);
     $color-web-btn-txt: rgb(255, 255, 255);
@@ -38,4 +38,4 @@
     $color-danger: rgb(216, 25, 25);
 
     @import "explorer.component.scss";
-}   
+}  

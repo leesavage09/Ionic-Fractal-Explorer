@@ -51,12 +51,6 @@ export class JuliaPickerComponent {
   * Events
   */
 
-  viewChanged() {
-    if (this.getMaxX() != 0 && this.getMaxY() != 0) {
-      this.numberChanged.emit(new ComplexNumber(this.getRealNumber(0), this.getImaginaryNumber(0)));
-    }
-  }
-
   touchStart(event) {
     event.screenX = event.targetTouches[0].screenX
     event.screenY = event.targetTouches[0].screenY

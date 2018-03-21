@@ -127,7 +127,7 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner, Fract
     this.ngModelChangeIterations();
 
     this.storage.get("favorites").then((val) => {
-      this.favorites = val;
+      if (val != null) this.favorites = val;
     });
   }
 
@@ -237,8 +237,13 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner, Fract
 
     if (eqString == "Julia") {
       this.fractal.complexPlain.replaceView(0, 0, 4.6, <HTMLCanvasElement>this.mainFractalView.getCanvas())
-      this.fractal.setCalculationFunction(new FractalEquations.Julia);
-      this.HTMLjuliaPullOut.nativeElement.style.display = "block"
+      var julia = new FractalEquations.Julia;
+      julia.juliaReal = -0.7;
+      julia.juliaImaginary = 0.0;
+      this.fractal.setCalculationFunction(julia);
+      this.HTMLjuliaPullOut.nativeElement.style.display = "block";
+      this.complexJuliaPicker = "-0.7,0.0";
+      this.juliaPickerWidth = "3";
       this.clickJuliaPullOut(true);
       this.HTMLjuliaPicker.getFractalView().sizeChanged();
     }
@@ -360,6 +365,7 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner, Fract
     var content = this.getShareURL();
 
     if (this.platform.is("android") && this.platform.is("cordova")) {
+      console.log("android share triggered");
       this.socialSharing.share("", "", null, content)
     } else {
       var textArea, copy, range, selection;
@@ -550,7 +556,7 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner, Fract
   }
 
   clickSetInteriorColor(event) {
-    if (this.HTMLjscolor2.nativeElement.jscolor != undefined) this.HTMLjscolor2.nativeElement.jscolor.fromRGB(50, 50, 50);
+    if (this.HTMLjscolor2.nativeElement.jscolor != undefined) this.HTMLjscolor2.nativeElement.jscolor.fromRGB(this.fractal.getColor().getInteriorColor());
     this.HTMLjscolor2.nativeElement.jscolor.show();
   }
 
@@ -663,24 +669,32 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner, Fract
         base: <Fractals.ChangeObserver>{
           explorer: this,
           changed(fractal: Fractals.Fractal) {
+            console.log("save callback")
             fractal.unsubscribe(element.base)
             this.explorer.imageToDownload = fractal.complexPlain.getViewCanvas().toDataURL("image/png");
             this.explorer.photoLibrary.requestAuthorization().then(() => {
               console.log("photo libray premission granted")
-              var album = 'Fractal Explorer';
-              this.explorer.photoLibrary.saveImage(this.explorer.imageToDownload, album, function (libraryItem) { }, function (err) { });
-
-              this.explorer.HTMLalertComponent.titleStr = "All Done"
-              this.explorer.HTMLalertComponent.textStr = "Image Saved."
-              this.explorer.HTMLalertComponent.closeStr = "Close"
-              this.explorer.HTMLalertComponent.enableOptions(true, false, false, false)
-              this.explorer.HTMLalertComponent.setCallback(this.explorer.closeDownloadAlert.bind(this.explorer))
-              this.explorer.HTMLalert.nativeElement.style.visibility = "visible";
-
-              this.explorer.HTMLsaveButton.nativeElement.setAttribute("class", "btn");
             }).catch(err => {
               console.log('permissions weren\'t granted ' + err)
+              return;
             });
+            var album = 'Fractal Explorer';
+            var res = this.explorer.photoLibrary.saveImage(this.explorer.imageToDownload, album, function (libraryItem) { 
+              console.log("libraryItem",libraryItem);
+            }, function (err) {
+              console.log("err",err);
+             });
+
+             console.log("res",res);
+
+            this.explorer.HTMLalertComponent.titleStr = "All Done"
+            this.explorer.HTMLalertComponent.textStr = "Image Saved."
+            this.explorer.HTMLalertComponent.closeStr = "Close"
+            this.explorer.HTMLalertComponent.enableOptions(true, false, false, false)
+            this.explorer.HTMLalertComponent.setCallback(this.explorer.closeDownloadAlert.bind(this.explorer))
+            this.explorer.HTMLalert.nativeElement.style.visibility = "visible";
+
+            this.explorer.HTMLsaveButton.nativeElement.setAttribute("class", "btn");
           }
         }
       }

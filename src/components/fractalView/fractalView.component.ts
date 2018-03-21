@@ -167,6 +167,7 @@ export class FractalViewComponent implements Fractals.ChangeObserver {
     this.downloadingFractal.getColor().unsubscribe(this.downloadingFractal);
 
 
+    console.log("subscribed for save callback")
     this.downloadingFractal.subscribe(callback)
     this.downloadingFractal.render(true);
   }
