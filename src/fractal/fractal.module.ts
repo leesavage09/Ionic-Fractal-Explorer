@@ -7,7 +7,7 @@ export namespace Fractals {
 
 	export class Fractal implements FractalColor.LinearGradientObserver {
 		iterations: number = 85;
-		escapeRadius: number = 10;
+		escapeRadius: number = 4;
 		private color: FractalColor.LinearGradient;
 		complexPlain: ComplexPlain;
 		img: ImageData;
@@ -16,11 +16,83 @@ export namespace Fractals {
 		public updateTimeout: number = 50;
 		private lastUpdate: number = (new Date).getTime();
 		private animator: FractalNavigationAnimator;
-		private maxZoomListner: MaxZoomListner;
+		private maxZoomListner: FractalEventListner;
 		private histogram: FractalHistogram.Histogram = new FractalHistogram.Histogram()
 		private subscribers: Array<ChangeObserver> = new Array();
-		private compiledColor: Array<FractalColor.RGBcolor>;
+		private compiledColor: Array<FractalColor.RGBcolor>; //Array< Array<number> >;
 		public currentScanLine = 0;
+		public webGL: boolean = true;
+		public webGLcanvas: HTMLCanvasElement;
+		private webGLcontext;
+		private webGLprogram;
+		private virtexShader = `
+								precision lowp float;
+								attribute vec2 a_Position;
+								void main() {
+								gl_Position = vec4(a_Position.x, a_Position.y, 0.0, 1.0);
+								}`;
+		private fragmentShader = `
+									precision highp float;
+									uniform vec2 u_zoomCenter;
+									uniform vec2 u_zoomSize;
+									uniform int u_maxIterations;
+									uniform vec2 u_res;
+									uniform vec3 u_arr[100];
+									uniform int u_arr_len;
+									const float log2 = log(2.0);
+									
+									vec2 f(vec2 x, vec2 c) {
+										return mat2(x,-x.y,x.x)*x + c;
+									}
+									vec3 palette(float t) {
+										return vec3(t, t, t);
+									}
+
+									vec3 smoothColorFromCompiledColor(float n) {
+										int trunc = int(ceil(n));
+
+										int last = u_arr_len - 1;
+										
+										 if (trunc==u_arr_len) {
+											 return vec3(0.0,1.0,0.0);
+										 }
+										 else {
+											return vec3(1.0,0.0,0.0);
+										 }
+										// 	let r = Math.round(General.mapInOut(n, trunc -1, trunc, compiledArray[trunc-1].r, compiledArray[trunc].r))
+										// 	let g = Math.round(General.mapInOut(n, trunc - 1, trunc, compiledArray[trunc-1].g, compiledArray[trunc].g))
+										// 	let b = Math.round(General.mapInOut(n, trunc - 1, trunc, compiledArray[trunc-1].b, compiledArray[trunc].b))
+										// 	return new RGBcolor(r, g, b);
+										
+									}
+
+									void main() {
+										vec2 screencords = vec2(gl_FragCoord.x-u_res.x/2.0,0.0-gl_FragCoord.y+u_res.y/2.0);
+										vec2 uv = screencords / u_res;
+										vec2 c = u_zoomCenter + uv * u_zoomSize;
+										vec2 x = vec2(0.0);
+										bool escaped = false; 
+										int n = 0;
+										for (int i = 0; i < 100000; ++i) {
+											n = i;
+											if (n < u_maxIterations && (x.x * x.x + x.y * x.y) <= 4.0) {
+												x = f(x, c);
+											}else {
+												break;
+											}
+							
+										}
+									
+										float f_i = float(n);
+									
+										if (n >= u_maxIterations) n = u_maxIterations;
+										else {
+											float log_zn = log(x.x * x.x + x.y * x.y) / 2.0;
+											float nu = log(log_zn / log2) / log2;
+											f_i = f_i + 1.0 - nu;
+										}		
+										gl_FragColor = vec4(palette( f_i/float(u_maxIterations) ),1.0);
+									}`;
 		constructor(complexPlain: ComplexPlain, fractalCalculationFunction: FractalEquations.equation, color: FractalColor.LinearGradient) {
 			this.complexPlain = complexPlain;
 			this.calculationFunction = fractalCalculationFunction;
@@ -60,10 +132,112 @@ export namespace Fractals {
 			this.render();
 		}
 
-		public render(fullRes: boolean = false): void {			
+		private webGLinits() {
+			/* obtain a webgl rendering context */
+			this.webGLcontext = this.webGLcanvas.getContext("webgl", { preserveDrawingBuffer: true });
+
+			if (!this.webGLcontext) throw new Error("cant get webGL context :(");
+
+			/* compile and link shaders */
+			var vertex_shader = this.webGLcontext.createShader(this.webGLcontext.VERTEX_SHADER);
+			var fragment_shader = this.webGLcontext.createShader(this.webGLcontext.FRAGMENT_SHADER);
+			this.webGLcontext.shaderSource(vertex_shader, this.virtexShader);
+			this.webGLcontext.shaderSource(fragment_shader, this.fragmentShader);
+			this.webGLcontext.compileShader(vertex_shader);
+			if (this.webGLcontext.getShaderInfoLog(vertex_shader)) console.log(this.webGLcontext.getShaderInfoLog(vertex_shader));
+			this.webGLcontext.compileShader(fragment_shader);
+			if (this.webGLcontext.getShaderInfoLog(fragment_shader)) console.log(this.webGLcontext.getShaderInfoLog(fragment_shader));
+			this.webGLprogram = this.webGLcontext.createProgram();
+			this.webGLcontext.attachShader(this.webGLprogram, vertex_shader);
+			this.webGLcontext.attachShader(this.webGLprogram, fragment_shader);
+			this.webGLcontext.linkProgram(this.webGLprogram);
+			this.webGLcontext.useProgram(this.webGLprogram);
+
+			/* create a vertex buffer for a square */
+			var vertices = new Float32Array([
+				-1, -1, -1, 1, 1, 1,
+				-1, -1, 1, -1, 1, 1,
+			]);
+			var vertex_buf = this.webGLcontext.createBuffer(); //this.webGLcontext.ARRAY_BUFFER
+			this.webGLcontext.bindBuffer(this.webGLcontext.ARRAY_BUFFER, vertex_buf);
+			this.webGLcontext.bufferData(this.webGLcontext.ARRAY_BUFFER, new Float32Array(vertices), this.webGLcontext.STATIC_DRAW);
+
+			/* set up the position attribute */
+			var position_attrib_location = this.webGLcontext.getAttribLocation(this.webGLprogram, "a_Position");
+			this.webGLcontext.enableVertexAttribArray(position_attrib_location);
+			this.webGLcontext.vertexAttribPointer(position_attrib_location, 2, this.webGLcontext.FLOAT, false, 0, 0);
+
+		}
+
+		public renderWebGLFull() {
+			this.webGLcanvas.width = this.webGLcanvas.clientWidth;
+			this.webGLcanvas.height = this.webGLcanvas.clientHeight;
+			this.renderWebGL();
+		}
+
+		public renderWebGLLOW() {
+			this.webGLcanvas.width = Math.round(this.webGLcanvas.clientWidth * 0.2);
+			this.webGLcanvas.height = Math.round(this.webGLcanvas.clientHeight * 0.2);
+			this.renderWebGL();
+		}
+
+		public renderWebGL() {
+			if (!this.webGLcontext && !this.webGLprogram) this.webGLinits();
+			var self = this;
+
+			/* these hold the state of zoom operation */
+			var zoom_center = [self.complexPlain.getSquare().center.r, self.complexPlain.getSquare().center.i];
+			var zoom_size = [self.complexPlain.getSquare().width, self.complexPlain.getSquare().height];
+
+			let pixWidth = zoom_size[0] / self.webGLcanvas.width;
+			let pixHeight = zoom_size[1] / self.webGLcanvas.height;
+			if (pixWidth < 1.0e-7 || pixHeight < 1.0e-7) {
+				self.webGL = false;
+				if (self.maxZoomListner != null) self.maxZoomListner.CPURendering();
+				self.render();
+				self.webGLcanvas.style.visibility = "hidden";
+				return;
+			}
+			/* find uniform locations */
+			var zoom_center_uniform = self.webGLcontext.getUniformLocation(self.webGLprogram, "u_zoomCenter");
+			var zoom_size_uniform = self.webGLcontext.getUniformLocation(self.webGLprogram, "u_zoomSize");
+			var max_iterations_uniform = self.webGLcontext.getUniformLocation(self.webGLprogram, "u_maxIterations");
+			var u_res = self.webGLcontext.getUniformLocation(self.webGLprogram, "u_res");
+			var u_arr = self.webGLcontext.getUniformLocation(self.webGLprogram, "u_arr");
+			var u_arr_len = self.webGLcontext.getUniformLocation(self.webGLprogram, "u_arr_len");
+
+			/* bind inputs & render frame */
+			self.webGLcontext.uniform2fv(zoom_center_uniform, zoom_center);
+			self.webGLcontext.uniform2fv(zoom_size_uniform, zoom_size);
+			self.webGLcontext.uniform1i(max_iterations_uniform, self.iterations);
+			self.webGLcontext.uniform2f(u_res, self.webGLcanvas.width, self.webGLcanvas.height);
+			self.webGLcontext.uniform1fv(u_arr, [[0.0,0.0,0.0],[1.0,0.0,0.0]]);
+			self.webGLcontext.uniform1i(u_arr_len, 2);
+
+			self.webGLcontext.viewport(0, 0, self.webGLcanvas.width, self.webGLcanvas.height);
+			self.webGLcontext.clearColor(0.0, 0.0, 0.0, 0.0);
+			self.webGLcontext.clear(self.webGLcontext.COLOR_BUFFER_BIT);
+			self.webGLcontext.drawArrays(self.webGLcontext.TRIANGLES, 0, 3);
+		}
+
+		public render(fullRes: boolean = false): void {
+			if (this.webGL) {
+				this.renderWebGLFull();
+				//return;
+			}
+			// let pixWidth = this.complexPlain.getSquare().width / this.complexPlain.getViewCanvas().width;
+			// let pixHeight = this.complexPlain.getSquare().height / this.complexPlain.getViewCanvas().height;
+			// if (pixWidth > 1.0e-7 || pixHeight > 1.0e-7) {
+			// 	this.webGL = true;
+			// 	if (this.maxZoomListner != null) this.maxZoomListner.WEBGLRendering();
+			// 	this.renderWebGLFull();
+			// 	this.webGLcanvas.style.visibility = "visible";
+			// 	return;
+			// }
+
 			this.stopRendering();
 			if (this.complexPlain.getSquare().width < 5.2291950245225395e-15) {
-				this.notifiMaxZoomListeners();
+				if (this.maxZoomListner != null) this.maxZoomListner.maxZoomReached();
 			}
 			if (!fullRes) this.complexPlain.makeAlternativeResolutionCanvas(0.2);
 			this.histogram.startHistogram(this.iterations);
@@ -91,11 +265,13 @@ export namespace Fractals {
 			for (var x = 0; x <= width; x++) {
 				var Cr = this.complexPlain.getRealNumber(x);
 				let n = this.calculationFunction.calculate(Cr, Ci, this.iterations, this.escapeRadius);
-				//if (n > this.iterations) throw Error("n out of bounds " + n + ">" + this.iterations)
+				if (n > this.iterations) throw Error("n out of bounds " + n + ">" + this.iterations)
+				if (n <= 0 ) n = 0.1 ;//throw Error("n out of bounds " + n + "< 0")
 
 				this.histogram.incrementData(Math.floor(n))
-				let col = this.color.smoothColorFromCompiledColor(n,this.compiledColor);
 
+				let col = this.color.smoothColorFromCompiledColor(n, this.compiledColor);
+ 
 				this.img.data[(x * 4) + 0] = col.r;
 				this.img.data[(x * 4) + 1] = col.g;
 				this.img.data[(x * 4) + 2] = col.b;
@@ -104,7 +280,7 @@ export namespace Fractals {
 			this.complexPlain.updateCanvas(y);
 
 			var self = this;
-			if (y>1) {
+			if (y > 0) {
 				var now = (new Date).getTime();
 				if ((now - this.lastUpdate) >= this.updateTimeout) {
 					this.lastUpdate = now;
@@ -145,23 +321,19 @@ export namespace Fractals {
 			return this.renderVersion;
 		}
 
-		public setMaxZoomListener(l: MaxZoomListner) {
+		public setMaxZoomListener(l: FractalEventListner) {
 			this.maxZoomListner = l;
 		}
 
 		public deleteMaxZoomListener() {
 			this.maxZoomListner = null;
 		}
-
-		private notifiMaxZoomListeners() {
-			if (this.maxZoomListner != null) {
-				this.maxZoomListner.maxZoomReached();
-			}
-		}
 	}
 
-	export interface MaxZoomListner {
+	export interface FractalEventListner {
 		maxZoomReached();
+		WEBGLRendering();
+		CPURendering();
 	}
 
 	/*
@@ -307,7 +479,9 @@ export namespace Fractals {
 			this.bufferedCanvas = document.createElement('canvas');
 			this.bufferedCanvas.width = this.fractal.complexPlain.getViewCanvas().width;
 			this.bufferedCanvas.height = this.fractal.complexPlain.getViewCanvas().height;
+			//if (!this.fractal.webGL) {
 			this.bufferedCanvas.getContext('2d').drawImage(this.fractal.complexPlain.getViewCanvas(), 0, 0);
+			//}
 		}
 
 		/*
@@ -335,11 +509,7 @@ export namespace Fractals {
 			this.lastmousey = y;
 			this.lastSpeedTime = (new Date).getTime();
 
-			dx = x - this.mouseStartDragPos.x;
-			dy = y - this.mouseStartDragPos.y;
-			let canvas = this.fractal.complexPlain.getViewCanvas();
-			canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
-			canvas.getContext('2d').drawImage(this.bufferedCanvas, dx, dy);
+			this.drawOffsetView();
 		}
 
 		dragEnd(x: number, y: number, animate: boolean = true): void {
@@ -441,11 +611,9 @@ export namespace Fractals {
 			this.lastmousex = this.lastmousex + this.speedX;
 			this.lastmousey = this.lastmousey + this.speedY;
 
-			let dx = this.lastmousex - this.mouseStartDragPos.x;
-			let dy = this.lastmousey - this.mouseStartDragPos.y;
-			let canvas = this.fractal.complexPlain.getViewCanvas();
-			canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
-			canvas.getContext('2d').drawImage(this.bufferedCanvas, dx, dy);
+			this.drawOffsetView();
+
+
 
 			let tempScale = EasingFunctions.easeOutQuart(scale)
 
@@ -487,7 +655,7 @@ export namespace Fractals {
 				let that = this;
 				setTimeout(function () {
 					that.fractal.renderIfVersionIsNew(version);
-				}, 300)
+				}, 0)
 				this.zoomAnimationIsRunning = false;
 			}
 		}
@@ -525,13 +693,40 @@ export namespace Fractals {
 		}
 
 		private drawScaledView(quadScale, screenX, screenY) {
-			let width = this.bufferedCanvas.width * quadScale;
-			let height = this.bufferedCanvas.height * quadScale;
-			let cx = screenX - (screenX * quadScale);
-			let cy = screenY - (screenY * quadScale);
-			let viewCanvas = this.fractal.complexPlain.getViewCanvas();
-			viewCanvas.getContext('2d').clearRect(0, 0, viewCanvas.width, viewCanvas.height);
-			viewCanvas.getContext('2d').drawImage(this.bufferedCanvas, cx, cy, width, height);
+			if (this.fractal.webGL) {
+				let viewCanvas = this.fractal.complexPlain.getViewCanvas();
+				let newCenter = this.fractal.complexPlain.getSquare().center;
+				let newWidth = this.fractal.complexPlain.getSquare().width;
+				this.scaleFractalView(quadScale, screenX, screenY)
+				this.fractal.renderWebGLLOW();
+				this.fractal.complexPlain.replaceView(newCenter.r, newCenter.i, newWidth, viewCanvas);
+			}
+			else {
+				let width = this.bufferedCanvas.width * quadScale;
+				let height = this.bufferedCanvas.height * quadScale;
+				let cx = screenX - (screenX * quadScale);
+				let cy = screenY - (screenY * quadScale);
+				let viewCanvas = this.fractal.complexPlain.getViewCanvas();
+				viewCanvas.getContext('2d').clearRect(0, 0, viewCanvas.width, viewCanvas.height);
+				viewCanvas.getContext('2d').drawImage(this.bufferedCanvas, cx, cy, width, height);
+			}
+		}
+
+		private drawOffsetView() {
+			if (this.fractal.webGL) {
+				let moveX = this.lastmousex - this.mouseStartDragPos.x;
+				let moveY = this.lastmousey - this.mouseStartDragPos.y;
+				this.moveFractalView(moveX, moveY);
+				this.mouseStartDragPos.x = this.lastmousex;
+				this.mouseStartDragPos.y = this.lastmousey;
+				this.fractal.renderWebGLLOW();
+			} else {
+				let dx = this.lastmousex - this.mouseStartDragPos.x;
+				let dy = this.lastmousey - this.mouseStartDragPos.y;
+				let canvas = this.fractal.complexPlain.getViewCanvas();
+				canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
+				canvas.getContext('2d').drawImage(this.bufferedCanvas, dx, dy);
+			}
 		}
 
 		/*
@@ -554,6 +749,86 @@ export namespace Fractals {
 			this.fractal.complexPlain.replaceView(newCenter.r, newCenter.i, newWidth, viewCanvas);
 		}
 	}
+
+
+	// class fpsTimer {
+	// 	private static times = [];
+	// 	private static fps;
+	// 	private static running = false;
+
+
+	// 	private static lastCall = performance.now();
+	// 	private static frames = 0;
+
+	// 	public static getAvrgFPS() {
+
+	// 		if (!fpsTimer.running) {
+	// 			fpsTimer.refreshLoop();
+	// 			fpsTimer.running = true;
+	// 		}
+	// 		var thisCall = performance.now();
+	// 		var dt = (thisCall - fpsTimer.lastCall)/1000;
+
+	// 		var res =  fpsTimer.frames/dt;
+
+	// 		fpsTimer.lastCall = thisCall;
+	// 		fpsTimer.frames = 0;
+
+	// 		return res;
+	// 	}
+
+	// 	public static getFPS() {
+	// 		if (!fpsTimer.running) {
+	// 			fpsTimer.refreshLoop();
+	// 			fpsTimer.running = true;
+	// 		}
+	// 		return fpsTimer.fps;
+	// 	}
+
+	// 	public static refreshLoop() {
+	// 		window.requestAnimationFrame(function () {
+	// 			const now = performance.now();
+	// 			while (fpsTimer.times.length > 0 && fpsTimer.times[0] <= now - 1000) {
+	// 				fpsTimer.times.shift();
+	// 			}
+	// 			fpsTimer.times.push(now);
+	// 			fpsTimer.fps = fpsTimer.times.length;
+	// 			fpsTimer.frames = fpsTimer.frames + 1;
+	// 			fpsTimer.refreshLoop();
+	// 		});
+	// 	}
+
+	// }
+
+	// class fpsTimer {
+	// 	public static fps: number = 0;
+
+	// 	private static running: boolean = false;
+	// 	private static then: number = 0;
+	// 	private static numFrames: number = 0;
+
+
+
+
+	// 	public static getFPS() {
+	// 		if (!fpsTimer.running) fpsTimer.runTimer();
+	// 		fpsTimer.numFrames = 0
+	// 		return fpsTimer.fps;
+	// 	}
+
+	// 	private static runTimer() {
+	// 		var now = Date.now() / 1000;
+	// 		var elapsedTime = now - fpsTimer.then;
+	// 		fpsTimer.then = now;
+
+	// 		fpsTimer.fps = 1 / elapsedTime;
+	// 		fpsTimer.numFrames = fpsTimer.numFrames + 1;
+	// 		//console.log("fps",fpsTimer.fps)
+
+	// 		window.requestAnimationFrame(fpsTimer.runTimer);
+	// 	};
+
+	// }
 
 	/*
 	class PointAnimator {

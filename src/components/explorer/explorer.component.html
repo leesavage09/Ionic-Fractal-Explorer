@@ -1,6 +1,9 @@
 <div class="fractal-lime">
   <div #explorer id="explorer">
 
+
+      <app-fractalView class="fractal-view" #fractalView></app-fractalView>
+
     <input #jscolor id="jscolor" (change)="HTMLgradient.setColorActive($event)" class="jscolor {width:250,  height:250}" value="000000">
     <input #jscolor2 id="jscolor2" (change)="setInteriorColor($event)" class="jscolor {width:250,  height:250}" value="000000">
     <span #itSpan id="hide">this is a test</span>
@@ -62,7 +65,6 @@
       </div>
     </div>
 
-    <app-fractalView class="fractal-view" #fractalView></app-fractalView>
 
     <div #webView class="web-view">
 

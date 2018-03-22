@@ -207,7 +207,7 @@ export class GradientBuilderComponent implements OnInit, FractalColor.LinearGrad
     let img = slider.getContext("2d").getImageData(0, 0, slider.width, 1);
     for (var i = 0; i < slider.width; ++i) {
       let percent = i / slider.width;
-      let rgb = this.gradient.getColorAt(percent, { min: 0, mid: 0.5, max: 1 }, 1, 0);
+      let rgb = this.gradient.getColorAt(percent, { min: 0, mid: 0.5, max: 1 });
       img.data[(i * 4) + 0] = rgb.r;
       img.data[(i * 4) + 1] = rgb.g;
       img.data[(i * 4) + 2] = rgb.b;

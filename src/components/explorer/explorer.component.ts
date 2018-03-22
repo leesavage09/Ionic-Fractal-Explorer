@@ -20,7 +20,7 @@ import { AlertComponent } from "../alert/alert.component";
   selector: "ExplorerComponent",
   templateUrl: "./explorer.component.html"
 })
-export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner, FractalColor.LinearGradientObserver {
+export class ExplorerComponent implements OnInit, Fractals.FractalEventListner, FractalColor.LinearGradientObserver {
   @ViewChild('fractalView') readonly mainFractalView: FractalViewComponent;
   @ViewChild('juliaPicker') readonly HTMLjuliaPicker: JuliaPickerComponent;
   @ViewChild('juliaPullOut') readonly HTMLjuliaPullOut: ElementRef;
@@ -129,6 +129,17 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner, Fract
     this.storage.get("favorites").then((val) => {
       if (val != null) this.favorites = val;
     });
+
+
+
+
+
+    this.toastCtrl.create({
+      message: 'Switched To GPU rendering',
+      duration: 1000,
+      position: 'middle',
+      cssClass:"toast",
+    }).present();
   }
 
   init(url: string) {
@@ -282,7 +293,14 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner, Fract
     }
     this.fractal.iterations = this.NumIterations;
     this.HTMLjuliaPicker.setIterations(this.NumIterations);
-    this.fractal.render();
+    if (this.fractal.webGL) {
+      this.fractal.renderWebGLLOW();
+        //console.log("remove this debug code!")
+        this.fractal.render();
+    }else {
+      this.fractal.render();
+    }
+    
 
     this.itSpan.nativeElement.innerHTML = this.NumIterations;
     var width = getComputedStyle(this.itSpan.nativeElement).width;
@@ -304,7 +322,8 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner, Fract
     if (this.mainFractalView.abortDownload()) this.toastCtrl.create({
       message: 'Image save aborted',
       duration: 1000,
-      position: 'bottom'
+      position: 'middle',
+      cssClass: "toast"
     }).present();
   }
 
@@ -587,6 +606,24 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner, Fract
     this.HTMLalert.nativeElement.style.visibility = "visible";
   }
 
+  WEBGLRendering(){
+    this.toastCtrl.create({
+      message: 'Switched To GPU rendering',
+      duration: 1000,
+      position: 'middle',
+      cssClass: "toast"
+    }).present();
+  }
+
+  CPURendering(){
+    this.toastCtrl.create({
+      message: 'Switched To CPU rendering',
+      duration: 1000,
+      position: 'middle',
+      cssClass: "toast"
+    }).present();
+  }
+
   juliaNumberChanged(center: ComplexNumber) {
     let fun = this.fractal.getCalculationFunction();
     if (fun instanceof FractalEquations.Julia) {
@@ -605,7 +642,10 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner, Fract
     this.iterationsAreChanging = true;
     this.fractal.stopRendering();
     setTimeout(function () {
-      if (!self.iterationsAreChanging) return;
+      if (!self.iterationsAreChanging) {
+        if (self.fractal.webGL) self.fractal.renderWebGLFull();
+        return;
+      }
 
       self.updateNumIterations(i);
 

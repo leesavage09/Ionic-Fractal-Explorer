@@ -11,6 +11,7 @@ import { FractalColor } from "../../fractal/fractalColouring";
 })
 export class FractalViewComponent implements Fractals.ChangeObserver {
   @ViewChild('fractalCanvas') HTMLcanvas: ElementRef;
+  @ViewChild('webGLCanvas') webGLCanvas: ElementRef;
   @Output() viewChanged = new EventEmitter();
   private fractal: Fractals.Fractal;
   private downloadingFractal: Fractals.Fractal;
@@ -100,6 +101,7 @@ export class FractalViewComponent implements Fractals.ChangeObserver {
 
   public setFractal(fractal: Fractals.Fractal) {
     this.fractal = fractal;
+    this.fractal.webGLcanvas = this.webGLCanvas.nativeElement;
     this.fractal.subscribe(this);
     this.sizeChanged()
   }
@@ -247,6 +249,10 @@ export class FractalViewComponent implements Fractals.ChangeObserver {
     if (this.zoomGestureHappening) {
       this.zoomGestureHappening = false;
       this.fractal.getAnimator().zoomByScaleEnd();
+      if (event.touches.length === 1) {
+        this.mousedown(event);
+        console.log("test swtching from zoom to drag by lifting one finger before you delete me");
+      }
     }
     else {
       event = this.addTocuchOffsets(event);

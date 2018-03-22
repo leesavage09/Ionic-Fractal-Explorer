@@ -108,27 +108,28 @@ export namespace FractalColor {
 
 
 		public smoothColorFromCompiledColor(n: number,compiledArray: Array<RGBcolor>) {
-			if (!compiledArray) throw new Error("This color has not yet been compiled");
-			let trunc = Math.floor(n);
-			if (compiledArray.length < trunc + 1) throw new Error ("array comiled to length="+compiledArray.length+" trying to access element="+(trunc+1)+" recompliation is nessasary");
-			if (n == compiledArray.length - 1) return this.i;
-			if (n < 0) return new RGBcolor(0, 0, 0);
+			let trunc = Math.ceil(n);
+			//if (!compiledArray) throw new Error("This color has not yet been compiled");
+			//if (compiledArray.length < trunc) throw new Error ("array comiled to length="+compiledArray.length+" trying to access element="+(trunc)+" recompliation is nessasary");
+			//if (n < 0 || n > compiledArray.length) throw new Error("n cant be less than 0, or more than compiledArray.length="+compiledArray.length);
+
+
+			if (trunc==compiledArray.length) return compiledArray[compiledArray.length-1];
 			else {
-				let r = Math.round(General.mapInOut(n, trunc, trunc + 1, compiledArray[trunc].r, compiledArray[trunc + 1].r))
-				let g = Math.round(General.mapInOut(n, trunc, trunc + 1, compiledArray[trunc].g, compiledArray[trunc + 1].g))
-				let b = Math.round(General.mapInOut(n, trunc, trunc + 1, compiledArray[trunc].b, compiledArray[trunc + 1].b))
+				let r = Math.round(General.mapInOut(n, trunc -1, trunc, compiledArray[trunc-1].r, compiledArray[trunc].r))
+				let g = Math.round(General.mapInOut(n, trunc - 1, trunc, compiledArray[trunc-1].g, compiledArray[trunc].g))
+				let b = Math.round(General.mapInOut(n, trunc - 1, trunc, compiledArray[trunc-1].b, compiledArray[trunc].b))
 				return new RGBcolor(r, g, b);
 			}
 		}
 
 		public compileColor(maxValue: number): Array<RGBcolor> {
-			var array = new Array(maxValue + 1)
-			let currentColorVal = 0;
+			var array = new Array(maxValue)
 			for (let i = 0; i < array.length; i++) {
-				let colorValue = General.mapInOut(currentColorVal, 0, maxValue - 1, 0, 1);
-				array[i] = i == maxValue ? new RGBcolor(0, 0, 0) : this.getColorAt(colorValue);
-				currentColorVal++;
+				let colorValue = General.mapInOut(i, 0, maxValue - 1, 0, 1);
+				array[i] = this.getColorAt(colorValue); 
 			}
+			console.log("b",array);
 			return array;
 		}
 
@@ -137,8 +138,9 @@ export namespace FractalColor {
 		/*
 		* Returns the colour in the gradiant for a val bettween 0 and 1
 		*/
-		public getColorAt(val: number, levels: { min: number, mid: number, max: number } = null, frequency: number = null, phase: number = null): RGBcolor {
-			if (this.arr.length < 1) return { r: 0, g: 0, b: 0 };
+		public getColorAt(val: number, levels: { min: number, mid: number, max: number } = null): RGBcolor {
+			if (this.arr.length < 1) throw new Error("this.arr.length < 1");
+			if (val==1) return this.i;
 
 
 			if (levels == null) levels = { min: this.mn, mid: this.md, max: this.mx }
