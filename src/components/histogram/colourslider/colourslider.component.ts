@@ -49,9 +49,11 @@ export class ColoursliderComponent implements OnInit, FractalColor.LinearGradien
     this.updateImg();
   }
 
-  linearGradientChanged() {
+  linearGradientChanging() {
     this.updateImg();
   }
+
+  linearGradientChanged() {}
 
   // start(event) {
   //   this.trackingMove = true;

@@ -39,37 +39,26 @@ export namespace Fractals {
 									uniform vec2 u_res;
 									uniform vec3 u_arr[100];
 									uniform int u_arr_len;
+									uniform sampler2D tex;
+
 									const float log2 = log(2.0);
 									
 									vec2 f(vec2 x, vec2 c) {
 										return mat2(x,-x.y,x.x)*x + c;
 									}
-									vec3 palette(float t) {
-										return vec3(t, t, t);
-									}
 
-									vec3 smoothColorFromCompiledColor(float n) {
-										int trunc = int(ceil(n));
-
-										int last = u_arr_len - 1;
-										
-										 if (trunc==u_arr_len) {
-											 return vec3(0.0,1.0,0.0);
-										 }
-										 else {
-											return vec3(1.0,0.0,0.0);
-										 }
-										// 	let r = Math.round(General.mapInOut(n, trunc -1, trunc, compiledArray[trunc-1].r, compiledArray[trunc].r))
-										// 	let g = Math.round(General.mapInOut(n, trunc - 1, trunc, compiledArray[trunc-1].g, compiledArray[trunc].g))
-										// 	let b = Math.round(General.mapInOut(n, trunc - 1, trunc, compiledArray[trunc-1].b, compiledArray[trunc].b))
-										// 	return new RGBcolor(r, g, b);
-										
+									float mapInOut(float input_value, float input_start, float input_end, float output_start, float output_end) {
+										float input_range = input_end - input_start;
+										float output_range = output_end - output_start;
+										float o = (input_value - input_start) * output_range / input_range + output_start;
+										return o;
 									}
 
 									void main() {
 										vec2 screencords = vec2(gl_FragCoord.x-u_res.x/2.0,0.0-gl_FragCoord.y+u_res.y/2.0);
 										vec2 uv = screencords / u_res;
 										vec2 c = u_zoomCenter + uv * u_zoomSize;
+
 										vec2 x = vec2(0.0);
 										bool escaped = false; 
 										int n = 0;
@@ -82,16 +71,26 @@ export namespace Fractals {
 											}
 							
 										}
-									
+										
 										float f_i = float(n);
-									
-										if (n >= u_maxIterations) n = u_maxIterations;
-										else {
-											float log_zn = log(x.x * x.x + x.y * x.y) / 2.0;
-											float nu = log(log_zn / log2) / log2;
-											f_i = f_i + 1.0 - nu;
-										}		
-										gl_FragColor = vec4(palette( f_i/float(u_maxIterations) ),1.0);
+										if (f_i >= float(u_maxIterations)) {											
+											gl_FragColor = texture2D(tex, vec2(511.0/512.0,0.5));
+											return; 	
+										}
+
+										float log_zn = log(x.x * x.x + x.y * x.y) / 2.0;
+										float nu = log(log_zn / log2) / log2;
+										f_i = f_i + 1.0 - nu;
+										if (f_i < 0.0) f_i = 0.0; 
+										
+										float ce = ceil(f_i);
+										float bucketLOW =  mapInOut(ce-1.0,0.0,float(u_maxIterations),0.0,511.0) / 512.0;
+										float bucketHI =   mapInOut(ce,    0.0,float(u_maxIterations),0.0,511.0) / 512.0;
+										float r = mapInOut(f_i, ce-1.0, ce, texture2D(tex, vec2(bucketLOW,0.5)).r, texture2D(tex, vec2(bucketHI,0.5)).r );											
+										float g = mapInOut(f_i, ce-1.0, ce, texture2D(tex, vec2(bucketLOW,0.5)).g, texture2D(tex, vec2(bucketHI,0.5)).g );											
+										float b = mapInOut(f_i, ce-1.0, ce, texture2D(tex, vec2(bucketLOW,0.5)).b, texture2D(tex, vec2(bucketHI,0.5)).b );											
+										gl_FragColor = vec4(r,g,b,1.0);
+										return;
 									}`;
 		constructor(complexPlain: ComplexPlain, fractalCalculationFunction: FractalEquations.equation, color: FractalColor.LinearGradient) {
 			this.complexPlain = complexPlain;
@@ -128,8 +127,19 @@ export namespace Fractals {
 			return this.calculationFunction;
 		}
 
-		public linearGradientChanged() {
-			this.render();
+		public linearGradientChanging() {
+			if (this.webGL) {
+				this.renderWebGLLOW();
+			}
+			else {
+				this.render();
+			}
+		}
+
+		linearGradientChanged() {
+			if (this.webGL) {
+				this.renderWebGLFull();
+			}
 		}
 
 		private webGLinits() {
@@ -167,8 +177,17 @@ export namespace Fractals {
 			this.webGLcontext.enableVertexAttribArray(position_attrib_location);
 			this.webGLcontext.vertexAttribPointer(position_attrib_location, 2, this.webGLcontext.FLOAT, false, 0, 0);
 
-		}
+			/* create texture */
+			// if (!this.webGLcontext.getExtension("OES_texture_float")) { // <<-- enables RGBA float values, handy!
+			// 	alert("cant pass in floats, use 8-bit values instead.");
+			// }
+			this.webGLcontext.activeTexture(this.webGLcontext.TEXTURE0);
+			this.webGLcontext.bindTexture(this.webGLcontext.TEXTURE_2D, this.webGLcontext.createTexture());
+			this.webGLcontext.texParameteri(this.webGLcontext.TEXTURE_2D, this.webGLcontext.TEXTURE_MAG_FILTER, this.webGLcontext.NEAREST);
+			this.webGLcontext.texParameteri(this.webGLcontext.TEXTURE_2D, this.webGLcontext.TEXTURE_MIN_FILTER, this.webGLcontext.NEAREST);
 
+		}
+		
 		public renderWebGLFull() {
 			this.webGLcanvas.width = this.webGLcanvas.clientWidth;
 			this.webGLcanvas.height = this.webGLcanvas.clientHeight;
@@ -184,6 +203,27 @@ export namespace Fractals {
 		public renderWebGL() {
 			if (!this.webGLcontext && !this.webGLprogram) this.webGLinits();
 			var self = this;
+
+			//setup color texture
+			let colourArray = new Float32Array(512 * 3);
+			for (var i = 0; i < 511; ++i) {
+				let percent = i / 511;
+				let rgb = this.color.getColorAt(percent);
+				colourArray[(i * 3) + 0] = General.mapInOut(rgb.r, 0, 255, 0, 1);
+				colourArray[(i * 3) + 1] = General.mapInOut(rgb.g, 0, 255, 0, 1);
+				colourArray[(i * 3) + 2] = General.mapInOut(rgb.b, 0, 255, 0, 1);
+			}
+			let rgb = this.color.getColorAt(1.0);
+			colourArray[(511 * 3) + 0] = General.mapInOut(rgb.r, 0, 255, 0, 1);
+			colourArray[(511 * 3) + 1] = General.mapInOut(rgb.g, 0, 255, 0, 1);
+			colourArray[(511 * 3) + 2] = General.mapInOut(rgb.b, 0, 255, 0, 1);
+
+			//add texture
+			this.webGLcontext.texImage2D(this.webGLcontext.TEXTURE_2D, 0, this.webGLcontext.RGB,
+				512, 1, 0,
+				this.webGLcontext.RGB, this.webGLcontext.FLOAT, colourArray);
+			var z = this.webGLcontext.getUniformLocation(this.webGLprogram, "tex");
+			this.webGLcontext.uniform1i(z, this.webGLcontext.TEXTURE0);
 
 			/* these hold the state of zoom operation */
 			var zoom_center = [self.complexPlain.getSquare().center.r, self.complexPlain.getSquare().center.i];
@@ -211,29 +251,27 @@ export namespace Fractals {
 			self.webGLcontext.uniform2fv(zoom_size_uniform, zoom_size);
 			self.webGLcontext.uniform1i(max_iterations_uniform, self.iterations);
 			self.webGLcontext.uniform2f(u_res, self.webGLcanvas.width, self.webGLcanvas.height);
-			self.webGLcontext.uniform1fv(u_arr, [[0.0,0.0,0.0],[1.0,0.0,0.0]]);
-			self.webGLcontext.uniform1i(u_arr_len, 2);
 
 			self.webGLcontext.viewport(0, 0, self.webGLcanvas.width, self.webGLcanvas.height);
 			self.webGLcontext.clearColor(0.0, 0.0, 0.0, 0.0);
 			self.webGLcontext.clear(self.webGLcontext.COLOR_BUFFER_BIT);
-			self.webGLcontext.drawArrays(self.webGLcontext.TRIANGLES, 0, 3);
+			self.webGLcontext.drawArrays(self.webGLcontext.TRIANGLES, 0, 6);
 		}
 
 		public render(fullRes: boolean = false): void {
 			if (this.webGL) {
 				this.renderWebGLFull();
-				//return;
+				return;
 			}
-			// let pixWidth = this.complexPlain.getSquare().width / this.complexPlain.getViewCanvas().width;
-			// let pixHeight = this.complexPlain.getSquare().height / this.complexPlain.getViewCanvas().height;
-			// if (pixWidth > 1.0e-7 || pixHeight > 1.0e-7) {
-			// 	this.webGL = true;
-			// 	if (this.maxZoomListner != null) this.maxZoomListner.WEBGLRendering();
-			// 	this.renderWebGLFull();
-			// 	this.webGLcanvas.style.visibility = "visible";
-			// 	return;
-			// }
+			let pixWidth = this.complexPlain.getSquare().width / this.complexPlain.getViewCanvas().width;
+			let pixHeight = this.complexPlain.getSquare().height / this.complexPlain.getViewCanvas().height;
+			if (pixWidth > 1.0e-7 || pixHeight > 1.0e-7) {
+				this.webGL = true;
+				if (this.maxZoomListner != null) this.maxZoomListner.WEBGLRendering();
+				this.renderWebGLFull();
+				this.webGLcanvas.style.visibility = "visible";
+				return;
+			}
 
 			this.stopRendering();
 			if (this.complexPlain.getSquare().width < 5.2291950245225395e-15) {
@@ -266,12 +304,12 @@ export namespace Fractals {
 				var Cr = this.complexPlain.getRealNumber(x);
 				let n = this.calculationFunction.calculate(Cr, Ci, this.iterations, this.escapeRadius);
 				if (n > this.iterations) throw Error("n out of bounds " + n + ">" + this.iterations)
-				if (n <= 0 ) n = 0.1 ;//throw Error("n out of bounds " + n + "< 0")
+				if (n <= 0) n = 0.1;//throw Error("n out of bounds " + n + "< 0")
 
 				this.histogram.incrementData(Math.floor(n))
 
 				let col = this.color.smoothColorFromCompiledColor(n, this.compiledColor);
- 
+
 				this.img.data[(x * 4) + 0] = col.r;
 				this.img.data[(x * 4) + 1] = col.g;
 				this.img.data[(x * 4) + 2] = col.b;

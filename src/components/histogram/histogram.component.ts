@@ -95,7 +95,8 @@ export class HistogramComponent implements OnInit, FractalHistogram.HistogramObs
 
   mouseup(event) {
     if (this.movingMarker) this.movingMarker.style.borderRadius = "0px";
-    this.movingMarker = null;    
+    this.movingMarker = null;   
+    if (this.fractal) this.fractal.getColor().notifyChanged(null);
   }
 
   touchMove(event) {
@@ -165,7 +166,7 @@ export class HistogramComponent implements OnInit, FractalHistogram.HistogramObs
     this.fractal.getColor().setMin(this.getMinVal())
     this.fractal.getColor().setMid(this.getMidVal())
     this.fractal.getColor().setMax(this.getMaxVal())
-    this.fractal.getColor().notify(null);
+    this.fractal.getColor().notifyChanging(null);
   }
 
   private getMinVal() {

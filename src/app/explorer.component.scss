@@ -32,13 +32,12 @@ $font-weight: bold !default;
 $font-size: 24px !default;
 $font-size-small: 18px !default;
 
-
 $corner-radius: 12px;
 $colour-tool: rgb(0, 180, 0);
 $color-tool-bg: rgba(4, 21, 63, 0.75);
 $color-tool-bg-solid: rgb(4, 21, 63);
 $color-mouseover: rgb(100, 255, 100);
-$color-text: rgba(255, 255, 255, 0.9);//$color-text: #488aff;
+$color-text: rgba(255, 255, 255, 0.9); //$color-text: #488aff;
 $color-web-bg: rgb(50, 60, 65);
 $color-web-btn-bg: rgb(4, 21, 63);
 $color-web-btn-txt: rgb(255, 255, 255);
@@ -140,6 +139,10 @@ $color-danger: rgb(216, 25, 25);
     transform: perspective(1px) translateY(50%);
     margin: auto;
     z-index: 99;
+}
+
+.toast-container {
+    pointer-events: none;
 }
 
 .toast {

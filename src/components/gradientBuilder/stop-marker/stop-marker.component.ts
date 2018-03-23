@@ -7,7 +7,7 @@ import { FractalColor } from "../../../fractal/fractalColouring";
 @Component({
   selector: 'app-stop-marker',
   templateUrl: './stop-marker.component.html',
-//  styleUrls: ['./stop-marker.component.scss']
+  //  styleUrls: ['./stop-marker.component.scss']
 })
 export class StopMarkerComponent {
   @ViewChild('marker') stopMarker: ElementRef;
@@ -19,15 +19,15 @@ export class StopMarkerComponent {
   private lastMouseX: number
   private moveStarted: boolean = false
   private color: FractalColor.RGBcolor = { r: Math.round(Math.random() * 255), g: Math.round(Math.random() * 255), b: Math.round(Math.random() * 255) };
-  private colorPicker:ElementRef
+  private colorPicker: ElementRef
   constructor() { }
 
-  
+
   ngOnInit() {
     this.setColor(this.color);
   }
 
-  public setColorPicker(colorPicker:ElementRef){
+  public setColorPicker(colorPicker: ElementRef) {
     this.colorPicker = colorPicker;
   }
 
@@ -50,21 +50,21 @@ export class StopMarkerComponent {
     this.lastCSSLeft = this.getCSSLeft();
     this.parent.setSelectedMarker(this, event.screenX);
     this.parent.setActiveMarker(this);
-    this.styleActive(true);    
+    this.styleActive(true);
     this.colorPicker.nativeElement.jscolor.show();
   }
 
   mouseup(event): void {
-    if (this.moveStarted) {
-      this.moveStarted = false
-      this.mouseupWindow(event)      
-    }
+    this.mouseupWindow(event);
   }
 
   mouseupWindow(event) {
-    event.stopPropagation();
-    this.parent.dropMarker();
-    this.styleActive(false);
+    if (this.moveStarted) {
+      event.stopPropagation();
+      this.moveStarted = false;
+      this.parent.dropMarker();
+      this.styleActive(false);
+    }
   }
 
   windowResized() {
@@ -81,7 +81,7 @@ export class StopMarkerComponent {
   }
 
   setStopValue(stop: number) {
-    let cssLeft = General.mapInOut(stop, 0, 1, this.getMinCSSLeft(), this.getMaxCSSLeft());  
+    let cssLeft = General.mapInOut(stop, 0, 1, this.getMinCSSLeft(), this.getMaxCSSLeft());
     this.setCSSLeft(cssLeft);
   }
 
@@ -161,7 +161,7 @@ export class StopMarkerComponent {
   getCSSWidth(): number {
     let left = getComputedStyle(this.stopMarker.nativeElement).borderLeftWidth;
     let right = getComputedStyle(this.stopMarker.nativeElement).borderRightWidth;
-    let border =  parseInt(left)+parseInt(right);
+    let border = parseInt(left) + parseInt(right);
     let width = parseInt(getComputedStyle(this.stopMarker.nativeElement).width.replace("px", ""));
     return border + width
   }

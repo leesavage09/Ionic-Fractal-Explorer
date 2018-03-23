@@ -65,13 +65,21 @@ export namespace FractalColor {
 			this.subscribers.splice(this.subscribers.lastIndexOf(observer), 1);
 		}
 
-		public notify(excludeObserver: LinearGradientObserver) {
+		public notifyChanging(excludeObserver: LinearGradientObserver) {
+			for (let i = 0; i < this.subscribers.length; i++) {
+				if (excludeObserver != this.subscribers[i]) {
+					this.subscribers[i].linearGradientChanging();
+				}
+			}
+		}
+
+		public notifyChanged(excludeObserver: LinearGradientObserver) {
 			for (let i = 0; i < this.subscribers.length; i++) {
 				if (excludeObserver != this.subscribers[i]) {
 					this.subscribers[i].linearGradientChanged();
 				}
 			}
-		}
+		}		
 
 		public setMin(n: number) {
 			this.mn = n;
@@ -108,17 +116,12 @@ export namespace FractalColor {
 
 
 		public smoothColorFromCompiledColor(n: number,compiledArray: Array<RGBcolor>) {
-			let trunc = Math.ceil(n);
-			//if (!compiledArray) throw new Error("This color has not yet been compiled");
-			//if (compiledArray.length < trunc) throw new Error ("array comiled to length="+compiledArray.length+" trying to access element="+(trunc)+" recompliation is nessasary");
-			//if (n < 0 || n > compiledArray.length) throw new Error("n cant be less than 0, or more than compiledArray.length="+compiledArray.length);
-
-
-			if (trunc==compiledArray.length) return compiledArray[compiledArray.length-1];
+			let ce = Math.ceil(n);
+			if (ce==compiledArray.length) return compiledArray[compiledArray.length-1];
 			else {
-				let r = Math.round(General.mapInOut(n, trunc -1, trunc, compiledArray[trunc-1].r, compiledArray[trunc].r))
-				let g = Math.round(General.mapInOut(n, trunc - 1, trunc, compiledArray[trunc-1].g, compiledArray[trunc].g))
-				let b = Math.round(General.mapInOut(n, trunc - 1, trunc, compiledArray[trunc-1].b, compiledArray[trunc].b))
+				let r = Math.round(General.mapInOut(n, ce -1, ce, compiledArray[ce-1].r, compiledArray[ce].r))
+				let g = Math.round(General.mapInOut(n, ce - 1, ce, compiledArray[ce-1].g, compiledArray[ce].g))
+				let b = Math.round(General.mapInOut(n, ce - 1, ce, compiledArray[ce-1].b, compiledArray[ce].b))
 				return new RGBcolor(r, g, b);
 			}
 		}
@@ -129,7 +132,6 @@ export namespace FractalColor {
 				let colorValue = General.mapInOut(i, 0, maxValue - 1, 0, 1);
 				array[i] = this.getColorAt(colorValue); 
 			}
-			console.log("b",array);
 			return array;
 		}
 
@@ -183,7 +185,8 @@ export namespace FractalColor {
 	}
 
 	export interface LinearGradientObserver {
-		linearGradientChanged(): void
+		linearGradientChanging(): void
+		linearGradientChanged():void
 	}
 
 	export class LinearGradientStop {
@@ -254,7 +257,8 @@ export namespace FractalHistogram {
 		}
 
 		public getData() {
-			return this.histogram.slice(1, this.histogram.length - 1);
+			if (this.histogram) return this.histogram.slice(1, this.histogram.length - 1);
+			else return [];
 		}
 
 		public incrementData(i: number) {

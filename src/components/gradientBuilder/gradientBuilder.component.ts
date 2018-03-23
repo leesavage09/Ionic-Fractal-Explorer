@@ -41,9 +41,11 @@ export class GradientBuilderComponent implements OnInit, FractalColor.LinearGrad
   * Events
   */
 
-  linearGradientChanged() {
+  linearGradientChanging() {
     this.drawGradient();
   }
+
+  linearGradientChanged() {}
 
   windowResized() {
     if (this.gradient == undefined) return;
@@ -58,7 +60,7 @@ export class GradientBuilderComponent implements OnInit, FractalColor.LinearGrad
   createStopMarker(event) {
     event.stopPropagation();
     this.addStopMarker(null, event.offsetX, null)
-    this.gradient.notify(this);
+    this.gradient.notifyChanged(this);
     this.colorPicker.nativeElement.jscolor.show();
   }
 
@@ -85,7 +87,7 @@ export class GradientBuilderComponent implements OnInit, FractalColor.LinearGrad
         this.unpopMarker();
         this.selectedMarker.offsetCSSLeft(event.screenX);
         this.draw();
-        this.gradient.notify(this);
+        this.gradient.notifyChanging(this);
       }
 
     }
@@ -95,7 +97,6 @@ export class GradientBuilderComponent implements OnInit, FractalColor.LinearGrad
     let rgb = FractalColor.hexToRGB(this.colorPicker.nativeElement.jscolor.toHEXString())
     this.activeMarker.setColor(rgb);
     this.draw();
-    this.gradient.notify(this);
   }
 
 
@@ -113,6 +114,8 @@ export class GradientBuilderComponent implements OnInit, FractalColor.LinearGrad
     }
     this.selectedMarker = undefined;
     this.selectedMarkerIsPoped = false;
+
+    this.gradient.notifyChanged(this);
   }
 
   addStopMarker(stop: number, cssLeft: number, color: FractalColor.RGBcolor, draw: boolean = true) {
@@ -164,7 +167,7 @@ export class GradientBuilderComponent implements OnInit, FractalColor.LinearGrad
       this.selectedMarker.setCSSclass("dropping")
       this.allMarkers.splice(this.allMarkers.lastIndexOf(this.selectedMarker), 1);
       this.draw();
-      this.gradient.notify(this)
+      this.gradient.notifyChanging(this)
     this.colorPicker.nativeElement.jscolor.hide();
     }
   }
@@ -176,7 +179,7 @@ export class GradientBuilderComponent implements OnInit, FractalColor.LinearGrad
       this.selectedMarker.resetCSSTop();
       this.allMarkers.push(this.selectedMarker);
       this.draw();
-      this.gradient.notify(this);
+      this.gradient.notifyChanging(this);
     this.colorPicker.nativeElement.jscolor.show();
     }
   }

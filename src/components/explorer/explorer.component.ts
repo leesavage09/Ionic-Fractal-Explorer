@@ -122,7 +122,7 @@ export class ExplorerComponent implements OnInit, Fractals.FractalEventListner, 
     this.mainFractalView.setFractal(this.fractal);
     this.fractal.render();
     this.fractal.getColor().subscribe(this);
-    this.linearGradientChanged();
+    this.linearGradientChanging();
 
     this.ngModelChangeIterations();
 
@@ -268,7 +268,7 @@ export class ExplorerComponent implements OnInit, Fractals.FractalEventListner, 
   onGradientChanged(gradient) {
     this.clickWebView(false);
     this.fractal.getColor().decodeJSON(gradient);
-    this.fractal.getColor().notify(null);
+    this.fractal.getColor().notifyChanged(null);
   }
 
   onLibrarySelection(event, str: string) {
@@ -295,8 +295,6 @@ export class ExplorerComponent implements OnInit, Fractals.FractalEventListner, 
     this.HTMLjuliaPicker.setIterations(this.NumIterations);
     if (this.fractal.webGL) {
       this.fractal.renderWebGLLOW();
-        //console.log("remove this debug code!")
-        this.fractal.render();
     }else {
       this.fractal.render();
     }
@@ -582,17 +580,19 @@ export class ExplorerComponent implements OnInit, Fractals.FractalEventListner, 
   setInteriorColor(event) {
     let rgb = FractalColor.hexToRGB(this.HTMLjscolor2.nativeElement.jscolor.toHEXString());
     this.fractal.getColor().setInteriorColor(rgb);
-    this.fractal.getColor().notify(null);
+    this.fractal.getColor().notifyChanged(null);
   }
 
   /*
   * Callbacks
   */
 
-  linearGradientChanged() {
+  linearGradientChanging() {
     var rgb = this.fractal.getColor().getInteriorColor();
     this.intColor.nativeElement.style.backgroundColor = "rgb(" + rgb.r + "," + rgb.g + "," + rgb.b + ")"
   }
+
+  linearGradientChanged() {}
 
   maxZoomReached() {
     this.HTMLalertComponent.titleStr = "Alert"
