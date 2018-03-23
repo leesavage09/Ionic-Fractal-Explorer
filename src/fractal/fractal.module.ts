@@ -7,7 +7,7 @@ export namespace Fractals {
 
 	export class Fractal implements FractalColor.LinearGradientObserver {
 		iterations: number = 85;
-		escapeRadius: number = 4;
+		escapeRadius: number = 8;
 		private color: FractalColor.LinearGradient;
 		complexPlain: ComplexPlain;
 		img: ImageData;
@@ -32,7 +32,7 @@ export namespace Fractals {
 								gl_Position = vec4(a_Position.x, a_Position.y, 0.0, 1.0);
 								}`;
 		private fragmentShader = `
-									precision highp float;
+									precision highp float;									
 									uniform vec2 u_zoomCenter;
 									uniform vec2 u_zoomSize;
 									uniform int u_maxIterations;
@@ -60,18 +60,17 @@ export namespace Fractals {
 										vec2 c = u_zoomCenter + uv * u_zoomSize;
 
 										vec2 x = vec2(0.0);
-										bool escaped = false; 
 										int n = 0;
-										for (int i = 0; i < 100000; ++i) {
-											n = i;
-											if (n < u_maxIterations && (x.x * x.x + x.y * x.y) <= 4.0) {
+										for (int i = 0; i < 10000; ++i) {
+											if (n < u_maxIterations && (x.x * x.x + x.y * x.y) <= 8.0) {
 												x = f(x, c);
 											}else {
+												n = i;
 												break;
 											}
 							
 										}
-										
+
 										float f_i = float(n);
 										if (f_i >= float(u_maxIterations)) {											
 											gl_FragColor = texture2D(tex, vec2(511.0/512.0,0.5));
@@ -139,6 +138,8 @@ export namespace Fractals {
 		linearGradientChanged() {
 			if (this.webGL) {
 				this.renderWebGLFull();
+			}else {
+				this.render();
 			}
 		}
 
@@ -205,23 +206,23 @@ export namespace Fractals {
 			var self = this;
 
 			//setup color texture
-			let colourArray = new Float32Array(512 * 3);
+			let colourArray = new Uint8Array(512 * 3);
 			for (var i = 0; i < 511; ++i) {
 				let percent = i / 511;
 				let rgb = this.color.getColorAt(percent);
-				colourArray[(i * 3) + 0] = General.mapInOut(rgb.r, 0, 255, 0, 1);
-				colourArray[(i * 3) + 1] = General.mapInOut(rgb.g, 0, 255, 0, 1);
-				colourArray[(i * 3) + 2] = General.mapInOut(rgb.b, 0, 255, 0, 1);
+				colourArray[(i * 3) + 0] = rgb.r;
+				colourArray[(i * 3) + 1] = rgb.g;
+				colourArray[(i * 3) + 2] = rgb.b;
 			}
 			let rgb = this.color.getColorAt(1.0);
-			colourArray[(511 * 3) + 0] = General.mapInOut(rgb.r, 0, 255, 0, 1);
-			colourArray[(511 * 3) + 1] = General.mapInOut(rgb.g, 0, 255, 0, 1);
-			colourArray[(511 * 3) + 2] = General.mapInOut(rgb.b, 0, 255, 0, 1);
+			colourArray[(511 * 3) + 0] = rgb.r;
+			colourArray[(511 * 3) + 1] = rgb.g;
+			colourArray[(511 * 3) + 2] = rgb.b;
 
 			//add texture
 			this.webGLcontext.texImage2D(this.webGLcontext.TEXTURE_2D, 0, this.webGLcontext.RGB,
 				512, 1, 0,
-				this.webGLcontext.RGB, this.webGLcontext.FLOAT, colourArray);
+				this.webGLcontext.RGB, this.webGLcontext.UNSIGNED_BYTE, colourArray);
 			var z = this.webGLcontext.getUniformLocation(this.webGLprogram, "tex");
 			this.webGLcontext.uniform1i(z, this.webGLcontext.TEXTURE0);
 

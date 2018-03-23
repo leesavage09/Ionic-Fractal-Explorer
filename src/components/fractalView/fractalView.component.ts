@@ -249,10 +249,10 @@ export class FractalViewComponent implements Fractals.ChangeObserver {
     if (this.zoomGestureHappening) {
       this.zoomGestureHappening = false;
       this.fractal.getAnimator().zoomByScaleEnd();
-      if (event.touches.length === 1) {
-        this.mousedown(event);
-        console.log("test swtching from zoom to drag by lifting one finger before you delete me");
-      }
+      // if (event.touches.length === 1) {
+      //   this.mousedown(event);
+      //   console.log("test swtching from zoom to drag by lifting one finger before you delete me");
+      // }
     }
     else {
       event = this.addTocuchOffsets(event);
