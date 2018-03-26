@@ -226,11 +226,12 @@ export namespace FractalEquations {
 	export class Julia implements FractalEquations.equation {
 		public juliaReal: number = 0;
 		public juliaImaginary: number = 0;
+		public static eq_name:string = "Julia";
 		copy(): equation {
 			return new Julia()
 		}
 		getName():string{
-			return "Julia";
+			return Julia.eq_name;
 		}
 		calculate(Cr: number, Ci: number, i: number, e: number): number {
 			var Zr = Cr;

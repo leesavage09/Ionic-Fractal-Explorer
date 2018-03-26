@@ -189,6 +189,8 @@ export class ExplorerComponent implements OnInit, Fractals.FractalEventListner, 
     var centerI = parseFloat(centerArr[1]);
     var complexWidth = parseFloat(complexWidthStr);
     this.fractal.getColor().decodeJSON(colorStr);
+    let rgb = this.fractal.getColor().getInteriorColor();
+    this.intColor.nativeElement.style.backgroundColor = "rgb(" + rgb.r + "," + rgb.g + "," + rgb.b + ")";
     this.fractal.iterations = this.NumIterations;
 
     if (equation == "MandelbrotPow4") {
@@ -206,10 +208,18 @@ export class ExplorerComponent implements OnInit, Fractals.FractalEventListner, 
     if (equation == "Julia") {
       fractalEq = new FractalEquations.Julia;
       let jNumStr = this.complexJuliaPicker.split(",");
-      (<FractalEquations.Julia>fractalEq).juliaReal = parseFloat(jNumStr[0]);
-      (<FractalEquations.Julia>fractalEq).juliaImaginary = parseFloat(jNumStr[1]);
+      let centercenterJuliaPickerR = parseFloat(jNumStr[0]);
+      let centercenterJuliaPickerI = parseFloat(jNumStr[1]);
+      let width = parseFloat(this.juliaPickerWidth);
+
+      (<FractalEquations.Julia>fractalEq).juliaReal = centercenterJuliaPickerR;
+      (<FractalEquations.Julia>fractalEq).juliaImaginary = centercenterJuliaPickerI;
+
       this.HTMLjuliaPullOut.nativeElement.style.display = "block";
       this.clickJuliaPullOut(true);
+
+      this.HTMLjuliaPicker.getFractalView().getFractal().complexPlain.replaceView(centercenterJuliaPickerR,centercenterJuliaPickerI,width, this.HTMLjuliaPicker.getFractalView().getCanvas());
+      this.HTMLjuliaPicker.getFractalView().getFractal().render();
     }
     else {
       this.HTMLjuliaPullOut.nativeElement.style.display = "none";
@@ -247,7 +257,7 @@ export class ExplorerComponent implements OnInit, Fractals.FractalEventListner, 
     }
 
     if (eqString == "Julia") {
-      this.fractal.complexPlain.replaceView(0, 0, 4.6, <HTMLCanvasElement>this.mainFractalView.getCanvas())
+      this.fractal.complexPlain.replaceView(0, 0, 3.0, <HTMLCanvasElement>this.mainFractalView.getCanvas())
       var julia = new FractalEquations.Julia;
       julia.juliaReal = -0.7;
       julia.juliaImaginary = 0.0;
@@ -256,7 +266,13 @@ export class ExplorerComponent implements OnInit, Fractals.FractalEventListner, 
       this.complexJuliaPicker = "-0.7,0.0";
       this.juliaPickerWidth = "3";
       this.clickJuliaPullOut(true);
-      this.HTMLjuliaPicker.getFractalView().sizeChanged();
+
+      let width = parseFloat(this.juliaPickerWidth);
+      let centerJuliaPicker = this.complexJuliaPicker.split(",");
+      let centercenterJuliaPickerR = parseFloat(centerJuliaPicker[0]);
+      let centercenterJuliaPickerI = parseFloat(centerJuliaPicker[1]);
+      this.HTMLjuliaPicker.getFractalView().getFractal().complexPlain.replaceView(centercenterJuliaPickerR,centercenterJuliaPickerI,width, this.HTMLjuliaPicker.getFractalView().getCanvas());
+      this.HTMLjuliaPicker.getFractalView().getFractal().render();
     }
     else {
       this.HTMLjuliaPullOut.nativeElement.style.display = "none"
@@ -294,7 +310,7 @@ export class ExplorerComponent implements OnInit, Fractals.FractalEventListner, 
     this.fractal.iterations = this.NumIterations;
     this.HTMLjuliaPicker.setIterations(this.NumIterations);
     if (this.fractal.webGL) {
-      this.fractal.renderWebGLLOW();
+      this.fractal.renderWebGLLow(true);
     }else {
       this.fractal.render();
     }
@@ -470,17 +486,12 @@ export class ExplorerComponent implements OnInit, Fractals.FractalEventListner, 
     if (openView) {
       this.HTMLjuliaPullOut.nativeElement.classList.remove("close");
       this.HTMLjuliaPullOut.nativeElement.classList.add("open");
-      let width = parseFloat(this.juliaPickerWidth);
-      let centerJuliaPicker = this.complexJuliaPicker.split(",");
-      let centercenterJuliaPickerR = parseFloat(centerJuliaPicker[0]);
-      let centercenterJuliaPickerI = parseFloat(centerJuliaPicker[1]);
       if (!this.HTMLjuliaPicker.hasInit) {
+        let width = parseFloat(this.juliaPickerWidth);
+        let centerJuliaPicker = this.complexJuliaPicker.split(",");
+        let centercenterJuliaPickerR = parseFloat(centerJuliaPicker[0]);
+        let centercenterJuliaPickerI = parseFloat(centerJuliaPicker[1]);
         this.HTMLjuliaPicker.init(this.fractal.getColor(), this.NumIterations, centercenterJuliaPickerR, centercenterJuliaPickerI, width);
-      }
-      else {
-        this.HTMLjuliaPicker.mainFractalView.getFractal().complexPlain.replaceView(centercenterJuliaPickerR, centercenterJuliaPickerI, width, this.HTMLjuliaPicker.mainFractalView.getCanvas());
-        this.HTMLjuliaPicker.getFractalView().getFractal().iterations = this.NumIterations;
-        this.HTMLjuliaPicker.mainFractalView.getFractal().render();
       }
       this.HTMLjuliaPicker.isOnScreen = true;
     }
@@ -494,7 +505,7 @@ export class ExplorerComponent implements OnInit, Fractals.FractalEventListner, 
   clickColorPullDown(openView: boolean = null) {
     if (openView == null) {
       var openView = this.HTMLcolorPullDown.nativeElement.className.indexOf("close") > -1
-    }
+    } 
     if (openView) {
       this.HTMLgradient.setGradient(this.fractal.getColor());
       this.HTMLhistogram.setFractal(this.fractal);
@@ -574,12 +585,13 @@ export class ExplorerComponent implements OnInit, Fractals.FractalEventListner, 
 
   clickSetInteriorColor(event) {
     if (this.HTMLjscolor2.nativeElement.jscolor != undefined) this.HTMLjscolor2.nativeElement.jscolor.fromRGB(this.fractal.getColor().getInteriorColor());
-    this.HTMLjscolor2.nativeElement.jscolor.show();
+    this.HTMLjscolor2.nativeElement.jscolor.show();    
   }
 
   setInteriorColor(event) {
     let rgb = FractalColor.hexToRGB(this.HTMLjscolor2.nativeElement.jscolor.toHEXString());
     this.fractal.getColor().setInteriorColor(rgb);
+    this.intColor.nativeElement.style.backgroundColor = "rgb(" + rgb.r + "," + rgb.g + "," + rgb.b + ")";
     this.fractal.getColor().notifyChanged(null);
   }
 
@@ -606,7 +618,7 @@ export class ExplorerComponent implements OnInit, Fractals.FractalEventListner, 
     this.HTMLalert.nativeElement.style.visibility = "visible";
   }
 
-  WEBGLRendering(){
+  switchWebGLRendering(){
     this.toastCtrl.create({
       message: 'Switched To GPU rendering',
       duration: 1000,
@@ -615,7 +627,7 @@ export class ExplorerComponent implements OnInit, Fractals.FractalEventListner, 
     }).present();
   }
 
-  CPURendering(){
+  switchCPUrendering(){
     this.toastCtrl.create({
       message: 'Switched To CPU rendering',
       duration: 1000,
@@ -624,12 +636,17 @@ export class ExplorerComponent implements OnInit, Fractals.FractalEventListner, 
     }).present();
   }
 
-  juliaNumberChanged(center: ComplexNumber) {
+  juliaNumberChanged(center: ComplexNumber,res:String) {
     let fun = this.fractal.getCalculationFunction();
     if (fun instanceof FractalEquations.Julia) {
       (<FractalEquations.Julia>fun).juliaReal = center.r;
       (<FractalEquations.Julia>fun).juliaImaginary = center.i;
-      this.fractal.render();
+      if (this.fractal.webGL) {
+        if (res=='full') this.fractal.renderWebGLFull()
+        else this.fractal.renderWebGLLow()
+      }else {
+        this.fractal.renderCPU();
+      }
     }
   }
 
@@ -706,7 +723,7 @@ export class ExplorerComponent implements OnInit, Fractals.FractalEventListner, 
   private saveJpg(width: number, height: number) {
     if (this.platform.is("cordova")) {
       var element = {
-        base: <Fractals.ChangeObserver>{
+        base: <Fractals.FractalChangeObserver>{
           explorer: this,
           changed(fractal: Fractals.Fractal) {
             console.log("save callback")
@@ -744,7 +761,7 @@ export class ExplorerComponent implements OnInit, Fractals.FractalEventListner, 
     }
     else {
       var element = {
-        base: <Fractals.ChangeObserver>{
+        base: <Fractals.FractalChangeObserver>{
           explorer: this,
           changed(fractal: Fractals.Fractal) {
             fractal.unsubscribe(element.base)

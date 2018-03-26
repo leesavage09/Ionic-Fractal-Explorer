@@ -26,7 +26,7 @@
 
     <div #juliaPullOut class="juliaPullOut open">
       <div class="juliaPicker">
-        <app-juliaPicker #juliaPicker (numberChanged)="juliaNumberChanged($event)"></app-juliaPicker>
+        <app-juliaPicker #juliaPicker (numberChanged)="juliaNumberChanged($event,'full')" (numberChanging)="juliaNumberChanged($event,'low')"></app-juliaPicker>
       </div>
       <div id="juliaPullOut-btn" (click)="clickJuliaPullOut()" (swipe)="swipeJuliaPullOut($event)">
         <ion-icon name="ios-locate-outline"></ion-icon>

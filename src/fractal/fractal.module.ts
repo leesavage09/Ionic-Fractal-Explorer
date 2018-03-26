@@ -16,81 +16,24 @@ export namespace Fractals {
 		public updateTimeout: number = 50;
 		private lastUpdate: number = (new Date).getTime();
 		private animator: FractalNavigationAnimator;
-		private maxZoomListner: FractalEventListner;
+		private fractalEventListner: FractalEventListner;
 		private histogram: FractalHistogram.Histogram = new FractalHistogram.Histogram()
-		private subscribers: Array<ChangeObserver> = new Array();
+		private subscribers: Array<FractalChangeObserver> = new Array();
 		private compiledColor: Array<FractalColor.RGBcolor>; //Array< Array<number> >;
 		public currentScanLine = 0;
-		public webGL: boolean = true;
+		public webGL: boolean = false;
 		public webGLcanvas: HTMLCanvasElement;
 		private webGLcontext;
 		private webGLprogram;
+		private fractal_fragment = "Tricorn";
 		private virtexShader = `
 								precision lowp float;
 								attribute vec2 a_Position;
 								void main() {
 								gl_Position = vec4(a_Position.x, a_Position.y, 0.0, 1.0);
 								}`;
-		private fragmentShader = `
-									precision highp float;									
-									uniform vec2 u_zoomCenter;
-									uniform vec2 u_zoomSize;
-									uniform int u_maxIterations;
-									uniform vec2 u_res;
-									uniform vec3 u_arr[100];
-									uniform int u_arr_len;
-									uniform sampler2D tex;
-
-									const float log2 = log(2.0);
-									
-									vec2 f(vec2 x, vec2 c) {
-										return mat2(x,-x.y,x.x)*x + c;
-									}
-
-									float mapInOut(float input_value, float input_start, float input_end, float output_start, float output_end) {
-										float input_range = input_end - input_start;
-										float output_range = output_end - output_start;
-										float o = (input_value - input_start) * output_range / input_range + output_start;
-										return o;
-									}
-
-									void main() {
-										vec2 screencords = vec2(gl_FragCoord.x-u_res.x/2.0,0.0-gl_FragCoord.y+u_res.y/2.0);
-										vec2 uv = screencords / u_res;
-										vec2 c = u_zoomCenter + uv * u_zoomSize;
-
-										vec2 x = vec2(0.0);
-										int n = 0;
-										for (int i = 0; i < 10000; ++i) {
-											if (n < u_maxIterations && (x.x * x.x + x.y * x.y) <= 8.0) {
-												x = f(x, c);
-											}else {
-												n = i;
-												break;
-											}
-							
-										}
-
-										float f_i = float(n);
-										if (f_i >= float(u_maxIterations)) {											
-											gl_FragColor = texture2D(tex, vec2(511.0/512.0,0.5));
-											return; 	
-										}
-
-										float log_zn = log(x.x * x.x + x.y * x.y) / 2.0;
-										float nu = log(log_zn / log2) / log2;
-										f_i = f_i + 1.0 - nu;
-										if (f_i < 0.0) f_i = 0.0; 
-										
-										float ce = ceil(f_i);
-										float bucketLOW =  mapInOut(ce-1.0,0.0,float(u_maxIterations),0.0,511.0) / 512.0;
-										float bucketHI =   mapInOut(ce,    0.0,float(u_maxIterations),0.0,511.0) / 512.0;
-										float r = mapInOut(f_i, ce-1.0, ce, texture2D(tex, vec2(bucketLOW,0.5)).r, texture2D(tex, vec2(bucketHI,0.5)).r );											
-										float g = mapInOut(f_i, ce-1.0, ce, texture2D(tex, vec2(bucketLOW,0.5)).g, texture2D(tex, vec2(bucketHI,0.5)).g );											
-										float b = mapInOut(f_i, ce-1.0, ce, texture2D(tex, vec2(bucketLOW,0.5)).b, texture2D(tex, vec2(bucketHI,0.5)).b );											
-										gl_FragColor = vec4(r,g,b,1.0);
-										return;
-									}`;
+		private webGLperformanceRes = 1;
+		private hiResCPU = true;
 		constructor(complexPlain: ComplexPlain, fractalCalculationFunction: FractalEquations.equation, color: FractalColor.LinearGradient) {
 			this.complexPlain = complexPlain;
 			this.calculationFunction = fractalCalculationFunction;
@@ -98,11 +41,11 @@ export namespace Fractals {
 			this.color.subscribe(this);
 		}
 
-		public subscribe(observer: ChangeObserver) {
+		public subscribe(observer: FractalChangeObserver) {
 			this.subscribers.push(observer);
 		}
 
-		public unsubscribe(observer: ChangeObserver) {
+		public unsubscribe(observer: FractalChangeObserver) {
 			this.subscribers.splice(this.subscribers.lastIndexOf(observer), 1);
 		}
 
@@ -128,22 +71,221 @@ export namespace Fractals {
 
 		public linearGradientChanging() {
 			if (this.webGL) {
-				this.renderWebGLLOW();
+				var self = this;
+				window.requestAnimationFrame(function () { self.renderWebGLLow(false); });
+
 			}
 			else {
 				this.render();
 			}
 		}
 
-		linearGradientChanged() {
+		public linearGradientChanged() {
 			if (this.webGL) {
-				this.renderWebGLFull();
-			}else {
+				var self = this;
+				window.requestAnimationFrame(function () { self.renderWebGLFull(false); });
+			} else {
 				this.render();
 			}
 		}
 
-		private webGLinits() {
+		private getFragmentShader() {
+			return `
+			precision highp float;									
+			uniform vec2 u_zoomCenter;
+			uniform vec2 u_zoomSize;
+			uniform int u_maxIterations;
+			uniform vec2 u_res;
+			uniform vec2 julia_c;
+			uniform sampler2D tex;
+
+			const float log2 = log(2.0);
+			
+			float Mandelbrot(vec2 c) {
+				vec2 z = vec2(0.0);
+				int n = 0;
+				for (int i = 0; i < 10000; ++i) {
+					if (i > u_maxIterations || (z.x * z.x + z.y * z.y) >= 8.0) {
+						n = i;
+						break;
+					}
+					z = mat2(z,-z.y,z.x)*z + c;
+				}
+
+				float f_i = float(n);
+				if (f_i >= float(u_maxIterations)) {						 
+					return float(u_maxIterations);
+				}
+
+				float log_zn = log(z.x * z.x + z.y * z.y) / 2.0;
+				float nu = log(log_zn / log2) / log2;
+				f_i = f_i + 1.0 - nu;
+				if (f_i < 0.0) f_i = 0.0; 
+
+				return f_i;
+			}
+
+			float Tricorn(vec2 c) {
+				vec2 z = vec2(0.0);
+				int n = 0;
+				for (int i = 0; i < 10000; ++i) {
+					if (i > u_maxIterations || (z.x * z.x + z.y * z.y) >= 8.0) {
+						n = i;
+						break;
+					}
+					z.x = 0.0 - z.x;
+					z = mat2(z,-z.y,z.x)*z + c;
+				}
+
+				float f_i = float(n);
+				if (f_i >= float(u_maxIterations)) {						 
+					return float(u_maxIterations);
+				}
+
+				float log_zn = log(z.x * z.x + z.y * z.y) / 2.0;
+				float nu = log(log_zn / log2) / log2;
+				f_i = f_i + 1.0 - nu;
+				if (f_i < 0.0) f_i = 0.0; 
+
+				return f_i;
+			}
+
+			float BurningShip(vec2 c) {
+				vec2 z = vec2(0.0);
+				int n = 0;
+				for (int i = 0; i < 10000; ++i) {
+					if (i > u_maxIterations || (z.x * z.x + z.y * z.y) >= 8.0) {
+						n = i;
+						break;
+					}
+					z = mat2(z,-z.y,z.x)*z + c;
+					z.x = abs(z.x);
+					z.y = abs(z.y);
+				}
+
+				float f_i = float(n);
+				if (f_i >= float(u_maxIterations)) {						 
+					return float(u_maxIterations);
+				}
+
+				float log_zn = log(z.x * z.x + z.y * z.y) / 2.0;
+				float nu = log(log_zn / log2) / log2;
+				f_i = f_i + 1.0 - nu;
+				if (f_i < 0.0) f_i = 0.0; 
+
+				return f_i;
+			}
+
+			float MandelbrotPow4(vec2 c) {
+				vec2 z = vec2(0.0);
+				int n = 0;
+				for (int i = 0; i < 10000; ++i) {
+					if (i > u_maxIterations || (z.x * z.x + z.y * z.y) >= 8.0) {
+						n = i;
+						break;
+					}
+					z = mat2(z,-z.y,z.x)*z;
+					z = mat2(z,-z.y,z.x)*z;
+					z =  z + c;
+				}
+
+				float f_i = float(n);
+				if (f_i >= float(u_maxIterations)) {						 
+					return float(u_maxIterations);
+				}
+
+				float log_zn = log(z.x * z.x + z.y * z.y) / 2.0;
+				float nu = log(log_zn / log2) / log2;
+				f_i = f_i + 1.0 - nu;
+				if (f_i < 0.0) f_i = 0.0; 
+
+				return f_i;
+			}
+
+			float MandelbrotPow6(vec2 c) {
+				vec2 z = vec2(0.0);
+				int n = 0;
+				for (int i = 0; i < 10000; ++i) {
+					if (i > u_maxIterations || (z.x * z.x + z.y * z.y) >= 8.0) {
+						n = i;
+						break;
+					}
+					z = mat2(z,-z.y,z.x)*z;
+					z = mat2(z,-z.y,z.x)*z;
+					z = mat2(z,-z.y,z.x)*z;
+					z =  z + c;
+				}
+
+				float f_i = float(n);
+				if (f_i >= float(u_maxIterations)) {						 
+					return float(u_maxIterations);
+				}
+
+				float log_zn = log(z.x * z.x + z.y * z.y) / 2.0;
+				float nu = log(log_zn / log2) / log2;
+				f_i = f_i + 1.0 - nu;
+				if (f_i < 0.0) f_i = 0.0; 
+
+				return f_i;
+			}
+
+			float Julia(vec2 c) {
+				vec2 z = c;
+				c = julia_c;
+				int n = 0;
+				for (int i = 0; i < 10000; ++i) {
+					if (i > u_maxIterations || (z.x * z.x + z.y * z.y) >= 8.0) {
+						n = i;
+						break;
+					}
+					z = mat2(z,-z.y,z.x)*z + c;
+				}
+
+				float f_i = float(n);
+				if (f_i >= float(u_maxIterations)) {						 
+					return float(u_maxIterations);
+				}
+
+				float log_zn = log(z.x * z.x + z.y * z.y) / 2.0;
+				float nu = log(log_zn / log2) / log2;
+				f_i = f_i + 1.0 - nu;
+				if (f_i < 0.0) f_i = 0.0; 
+
+				return f_i;
+			}
+
+			float mapInOut(float input_value, float input_start, float input_end, float output_start, float output_end) {
+				float input_range = input_end - input_start;
+				float output_range = output_end - output_start;
+				float o = (input_value - input_start) * output_range / input_range + output_start;
+				return o;
+			}
+
+			void main() {
+				vec2 screencords = vec2(gl_FragCoord.x-u_res.x/2.0,0.0-gl_FragCoord.y+u_res.y/2.0);
+				vec2 uv = screencords / u_res;
+				vec2 c = u_zoomCenter + uv * u_zoomSize;
+
+				float f_i = `+ this.fractal_fragment + `(c);
+				 
+
+				if (f_i >= float(u_maxIterations)) {											
+					gl_FragColor = texture2D(tex, vec2(511.0/512.0,0.5));  
+					return ;
+				}
+				
+				float ce = ceil(f_i);
+				float bucketLOW =  mapInOut(ce-1.0,0.0,float(u_maxIterations),0.0,511.0) / 512.0;
+				float bucketHI =   mapInOut(ce,    0.0,float(u_maxIterations),0.0,511.0) / 512.0;
+				float r = mapInOut(f_i, ce-1.0, ce, texture2D(tex, vec2(bucketLOW,0.5)).r, texture2D(tex, vec2(bucketHI,0.5)).r );											
+				float g = mapInOut(f_i, ce-1.0, ce, texture2D(tex, vec2(bucketLOW,0.5)).g, texture2D(tex, vec2(bucketHI,0.5)).g );											
+				float b = mapInOut(f_i, ce-1.0, ce, texture2D(tex, vec2(bucketLOW,0.5)).b, texture2D(tex, vec2(bucketHI,0.5)).b );											
+				gl_FragColor = vec4(r,g,b,1.0);
+				return;
+			}`;
+		}
+
+		private webGLcompile() {
 			/* obtain a webgl rendering context */
 			this.webGLcontext = this.webGLcanvas.getContext("webgl", { preserveDrawingBuffer: true });
 
@@ -153,7 +295,7 @@ export namespace Fractals {
 			var vertex_shader = this.webGLcontext.createShader(this.webGLcontext.VERTEX_SHADER);
 			var fragment_shader = this.webGLcontext.createShader(this.webGLcontext.FRAGMENT_SHADER);
 			this.webGLcontext.shaderSource(vertex_shader, this.virtexShader);
-			this.webGLcontext.shaderSource(fragment_shader, this.fragmentShader);
+			this.webGLcontext.shaderSource(fragment_shader, this.getFragmentShader());
 			this.webGLcontext.compileShader(vertex_shader);
 			if (this.webGLcontext.getShaderInfoLog(vertex_shader)) console.log(this.webGLcontext.getShaderInfoLog(vertex_shader));
 			this.webGLcontext.compileShader(fragment_shader);
@@ -179,30 +321,51 @@ export namespace Fractals {
 			this.webGLcontext.vertexAttribPointer(position_attrib_location, 2, this.webGLcontext.FLOAT, false, 0, 0);
 
 			/* create texture */
-			// if (!this.webGLcontext.getExtension("OES_texture_float")) { // <<-- enables RGBA float values, handy!
-			// 	alert("cant pass in floats, use 8-bit values instead.");
-			// }
 			this.webGLcontext.activeTexture(this.webGLcontext.TEXTURE0);
 			this.webGLcontext.bindTexture(this.webGLcontext.TEXTURE_2D, this.webGLcontext.createTexture());
 			this.webGLcontext.texParameteri(this.webGLcontext.TEXTURE_2D, this.webGLcontext.TEXTURE_MAG_FILTER, this.webGLcontext.NEAREST);
 			this.webGLcontext.texParameteri(this.webGLcontext.TEXTURE_2D, this.webGLcontext.TEXTURE_MIN_FILTER, this.webGLcontext.NEAREST);
 
 		}
-		
-		public renderWebGLFull() {
+
+		public renderWebGLFull(calculateHistogram = true) {
 			this.webGLcanvas.width = this.webGLcanvas.clientWidth;
 			this.webGLcanvas.height = this.webGLcanvas.clientHeight;
 			this.renderWebGL();
+			if (calculateHistogram) this.renderCPU(true, false);
 		}
 
-		public renderWebGLLOW() {
-			this.webGLcanvas.width = Math.round(this.webGLcanvas.clientWidth * 0.2);
-			this.webGLcanvas.height = Math.round(this.webGLcanvas.clientHeight * 0.2);
-			this.renderWebGL();
+		public renderWebGLLow(calculateHistogram = false) {
+			var self = this;
+			let then = performance.now();
+			self.webGLcanvas.width = Math.round(self.webGLcanvas.clientWidth * self.webGLperformanceRes);
+			self.webGLcanvas.height = Math.round(self.webGLcanvas.clientHeight * self.webGLperformanceRes);
+			self.renderWebGL();
+			if (calculateHistogram) this.renderCPU(true, false);
+			window.requestAnimationFrame(function () {
+				let now = performance.now();
+				let dt = now - then;
+				if (dt > 33) {
+					self.webGLperformanceRes = self.webGLperformanceRes * 0.5;
+				}
+				if (dt < 10) {
+					self.webGLperformanceRes = self.webGLperformanceRes * 1.25;
+				}
+				if (self.webGLperformanceRes > 1.0) self.webGLperformanceRes = 1.0;
+				else if (self.webGLperformanceRes < 0.05) self.webGLperformanceRes = 0.05
+			});
 		}
 
-		public renderWebGL() {
-			if (!this.webGLcontext && !this.webGLprogram) this.webGLinits();
+		private renderWebGL() {
+			if (this.fractal_fragment != this.calculationFunction.getName()) {
+				this.fractal_fragment = this.calculationFunction.getName();
+				this.webGLcompile();
+			}
+			if (!this.webGLcontext && !this.webGLprogram) this.webGLcompile();
+			let julia_c_value = { r: 0.0, i: 0.0 };
+			if (this.fractal_fragment == FractalEquations.Julia.eq_name) {
+				julia_c_value = { r: (<FractalEquations.Julia>this.calculationFunction).juliaReal, i: (<FractalEquations.Julia>this.calculationFunction).juliaImaginary };
+			}
 			var self = this;
 
 			//setup color texture
@@ -230,55 +393,62 @@ export namespace Fractals {
 			var zoom_center = [self.complexPlain.getSquare().center.r, self.complexPlain.getSquare().center.i];
 			var zoom_size = [self.complexPlain.getSquare().width, self.complexPlain.getSquare().height];
 
-			let pixWidth = zoom_size[0] / self.webGLcanvas.width;
-			let pixHeight = zoom_size[1] / self.webGLcanvas.height;
-			if (pixWidth < 1.0e-7 || pixHeight < 1.0e-7) {
-				self.webGL = false;
-				if (self.maxZoomListner != null) self.maxZoomListner.CPURendering();
-				self.render();
-				self.webGLcanvas.style.visibility = "hidden";
-				return;
-			}
 			/* find uniform locations */
 			var zoom_center_uniform = self.webGLcontext.getUniformLocation(self.webGLprogram, "u_zoomCenter");
 			var zoom_size_uniform = self.webGLcontext.getUniformLocation(self.webGLprogram, "u_zoomSize");
 			var max_iterations_uniform = self.webGLcontext.getUniformLocation(self.webGLprogram, "u_maxIterations");
 			var u_res = self.webGLcontext.getUniformLocation(self.webGLprogram, "u_res");
-			var u_arr = self.webGLcontext.getUniformLocation(self.webGLprogram, "u_arr");
-			var u_arr_len = self.webGLcontext.getUniformLocation(self.webGLprogram, "u_arr_len");
+			var julia_c = self.webGLcontext.getUniformLocation(self.webGLprogram, "julia_c");
+
 
 			/* bind inputs & render frame */
 			self.webGLcontext.uniform2fv(zoom_center_uniform, zoom_center);
 			self.webGLcontext.uniform2fv(zoom_size_uniform, zoom_size);
 			self.webGLcontext.uniform1i(max_iterations_uniform, self.iterations);
 			self.webGLcontext.uniform2f(u_res, self.webGLcanvas.width, self.webGLcanvas.height);
+			self.webGLcontext.uniform2f(julia_c, julia_c_value.r, julia_c_value.i);
 
 			self.webGLcontext.viewport(0, 0, self.webGLcanvas.width, self.webGLcanvas.height);
-			self.webGLcontext.clearColor(0.0, 0.0, 0.0, 0.0);
+			//self.webGLcontext.clearColor(1.0, 0.0, 0.0, 1.0);
 			self.webGLcontext.clear(self.webGLcontext.COLOR_BUFFER_BIT);
 			self.webGLcontext.drawArrays(self.webGLcontext.TRIANGLES, 0, 6);
 		}
 
-		public render(fullRes: boolean = false): void {
-			if (this.webGL) {
-				this.renderWebGLFull();
-				return;
-			}
+		public render(): void {
 			let pixWidth = this.complexPlain.getSquare().width / this.complexPlain.getViewCanvas().width;
 			let pixHeight = this.complexPlain.getSquare().height / this.complexPlain.getViewCanvas().height;
-			if (pixWidth > 1.0e-7 || pixHeight > 1.0e-7) {
-				this.webGL = true;
-				if (this.maxZoomListner != null) this.maxZoomListner.WEBGLRendering();
+ 
+			if (this.webGL) {
+				if (pixWidth < 1.0e-7 || pixHeight < 1.0e-7) {
+					this.webGL = false;
+					if (this.fractalEventListner != null) this.fractalEventListner.switchCPUrendering();
+					this.webGLcanvas.style.visibility = "hidden";
+					this.renderCPU();
+					return;
+				}
 				this.renderWebGLFull();
-				this.webGLcanvas.style.visibility = "visible";
-				return;
+			}
+			else {
+				if (pixWidth > 1.0e-7 || pixHeight > 1.0e-7) {
+					this.webGL = true;
+					if (this.fractalEventListner != null) this.fractalEventListner.switchWebGLRendering();
+					this.webGLcanvas.style.visibility = "visible";
+					this.renderWebGLFull();
+					return;
+				}
+				this.renderCPU();
+			}
+		}
+
+		public renderCPU(lowRes: boolean = true, hiRes: boolean = true) {
+			this.hiResCPU = hiRes;
+			this.stopRendering();
+
+			if (this.complexPlain.getSquare().width < 5.2291950245225395e-15) {
+				if (this.fractalEventListner != null) this.fractalEventListner.maxZoomReached();
 			}
 
-			this.stopRendering();
-			if (this.complexPlain.getSquare().width < 5.2291950245225395e-15) {
-				if (this.maxZoomListner != null) this.maxZoomListner.maxZoomReached();
-			}
-			if (!fullRes) this.complexPlain.makeAlternativeResolutionCanvas(0.2);
+			if (lowRes) this.complexPlain.makeAlternativeResolutionCanvas(0.2);
 			this.histogram.startHistogram(this.iterations);
 			this.compiledColor = this.color.compileColor(this.iterations);
 			var self = this;
@@ -294,6 +464,7 @@ export namespace Fractals {
 		public getHistogram() {
 			return this.histogram
 		}
+
 		private scanLine(y: number, version: number): void {
 			if (this.renderVersion != version) return;
 			this.currentScanLine = y;
@@ -331,7 +502,7 @@ export namespace Fractals {
 					this.scanLine(y - 1, version);
 				}
 			}
-			else if (!this.complexPlain.drawableAndViewAreEqual()) {
+			else if (!this.complexPlain.drawableAndViewAreEqual() && this.hiResCPU) {
 				this.histogram.notify(null);
 				this.complexPlain.makeAlternativeResolutionCanvas(1);
 				this.lastUpdate = (new Date).getTime();
@@ -361,18 +532,18 @@ export namespace Fractals {
 		}
 
 		public setMaxZoomListener(l: FractalEventListner) {
-			this.maxZoomListner = l;
+			this.fractalEventListner = l;
 		}
 
 		public deleteMaxZoomListener() {
-			this.maxZoomListner = null;
+			this.fractalEventListner = null;
 		}
 	}
 
 	export interface FractalEventListner {
 		maxZoomReached();
-		WEBGLRendering();
-		CPURendering();
+		switchWebGLRendering();
+		switchCPUrendering();
 	}
 
 	/*
@@ -475,11 +646,9 @@ export namespace Fractals {
 	}
 
 
-	export interface ChangeObserver {
+	export interface FractalChangeObserver {
 		changed(fractal: Fractal);
 	}
-
-
 
 	export class FractalNavigationAnimator {
 		fractal: Fractal;
@@ -507,6 +676,7 @@ export namespace Fractals {
 		focusX: number;
 		focusY: number;
 		touchStartDelta: number = null;
+		private oldCenter: ComplexNumber = null;
 		constructor(fractal: Fractal) {
 			this.fractal = fractal;
 		}
@@ -518,9 +688,9 @@ export namespace Fractals {
 			this.bufferedCanvas = document.createElement('canvas');
 			this.bufferedCanvas.width = this.fractal.complexPlain.getViewCanvas().width;
 			this.bufferedCanvas.height = this.fractal.complexPlain.getViewCanvas().height;
-			//if (!this.fractal.webGL) {
-			this.bufferedCanvas.getContext('2d').drawImage(this.fractal.complexPlain.getViewCanvas(), 0, 0);
-			//}
+			if (!this.fractal.webGL) {
+				this.bufferedCanvas.getContext('2d').drawImage(this.fractal.complexPlain.getViewCanvas(), 0, 0);
+			}
 		}
 
 		/*
@@ -533,6 +703,7 @@ export namespace Fractals {
 			this.fractal.stopRendering();
 			this.initBufferedImage();
 			this.mouseStartDragPos = { x: x, y: y };
+			if (this.fractal.webGL) this.oldCenter = this.fractal.complexPlain.getSquare().center;
 		}
 
 		dragMove(x: number, y: number): void {
@@ -548,7 +719,8 @@ export namespace Fractals {
 			this.lastmousey = y;
 			this.lastSpeedTime = (new Date).getTime();
 
-			this.drawOffsetView();
+			var self = this;
+			window.requestAnimationFrame(function () { self.drawOffsetView(); });
 		}
 
 		dragEnd(x: number, y: number, animate: boolean = true): void {
@@ -563,10 +735,10 @@ export namespace Fractals {
 				window.requestAnimationFrame(function () { that.dragDrifting() });
 				return;
 			}
-
 			this.moveFractalView(x - this.mouseStartDragPos.x, y - this.mouseStartDragPos.y);
-			if (animate) this.fractal.render();
 			this.mouseStartDragPos = null;
+			this.oldCenter = null;
+			if (animate) this.fractal.render();
 		}
 
 
@@ -737,7 +909,7 @@ export namespace Fractals {
 				let newCenter = this.fractal.complexPlain.getSquare().center;
 				let newWidth = this.fractal.complexPlain.getSquare().width;
 				this.scaleFractalView(quadScale, screenX, screenY)
-				this.fractal.renderWebGLLOW();
+				this.fractal.renderWebGLLow();
 				this.fractal.complexPlain.replaceView(newCenter.r, newCenter.i, newWidth, viewCanvas);
 			}
 			else {
@@ -752,16 +924,13 @@ export namespace Fractals {
 		}
 
 		private drawOffsetView() {
+			if (this.mouseStartDragPos == null) return;
+			let dx = this.lastmousex - this.mouseStartDragPos.x;
+			let dy = this.lastmousey - this.mouseStartDragPos.y;
 			if (this.fractal.webGL) {
-				let moveX = this.lastmousex - this.mouseStartDragPos.x;
-				let moveY = this.lastmousey - this.mouseStartDragPos.y;
-				this.moveFractalView(moveX, moveY);
-				this.mouseStartDragPos.x = this.lastmousex;
-				this.mouseStartDragPos.y = this.lastmousey;
-				this.fractal.renderWebGLLOW();
+				this.moveFractalView(dx, dy);
+				this.fractal.renderWebGLLow();
 			} else {
-				let dx = this.lastmousex - this.mouseStartDragPos.x;
-				let dy = this.lastmousey - this.mouseStartDragPos.y;
 				let canvas = this.fractal.complexPlain.getViewCanvas();
 				canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
 				canvas.getContext('2d').drawImage(this.bufferedCanvas, dx, dy);
@@ -772,7 +941,9 @@ export namespace Fractals {
 		* Update the fractal with new postion
 		*/
 		private moveFractalView(deltaX, deltaY) {
-			let oldPos = this.fractal.complexPlain.getMouse(this.fractal.complexPlain.getSquare().center);
+			var oldCenter = this.oldCenter;
+			if (oldCenter == null) oldCenter = this.fractal.complexPlain.getSquare().center;
+			let oldPos = this.fractal.complexPlain.getMouse(oldCenter);
 			let newCenter = this.fractal.complexPlain.getComplexNumberFromMouse(oldPos.x - deltaX, oldPos.y - deltaY);
 			this.fractal.complexPlain.replaceView(newCenter.r, newCenter.i, this.fractal.complexPlain.getSquare().width, this.fractal.complexPlain.getViewCanvas());
 		}
@@ -788,86 +959,6 @@ export namespace Fractals {
 			this.fractal.complexPlain.replaceView(newCenter.r, newCenter.i, newWidth, viewCanvas);
 		}
 	}
-
-
-	// class fpsTimer {
-	// 	private static times = [];
-	// 	private static fps;
-	// 	private static running = false;
-
-
-	// 	private static lastCall = performance.now();
-	// 	private static frames = 0;
-
-	// 	public static getAvrgFPS() {
-
-	// 		if (!fpsTimer.running) {
-	// 			fpsTimer.refreshLoop();
-	// 			fpsTimer.running = true;
-	// 		}
-	// 		var thisCall = performance.now();
-	// 		var dt = (thisCall - fpsTimer.lastCall)/1000;
-
-	// 		var res =  fpsTimer.frames/dt;
-
-	// 		fpsTimer.lastCall = thisCall;
-	// 		fpsTimer.frames = 0;
-
-	// 		return res;
-	// 	}
-
-	// 	public static getFPS() {
-	// 		if (!fpsTimer.running) {
-	// 			fpsTimer.refreshLoop();
-	// 			fpsTimer.running = true;
-	// 		}
-	// 		return fpsTimer.fps;
-	// 	}
-
-	// 	public static refreshLoop() {
-	// 		window.requestAnimationFrame(function () {
-	// 			const now = performance.now();
-	// 			while (fpsTimer.times.length > 0 && fpsTimer.times[0] <= now - 1000) {
-	// 				fpsTimer.times.shift();
-	// 			}
-	// 			fpsTimer.times.push(now);
-	// 			fpsTimer.fps = fpsTimer.times.length;
-	// 			fpsTimer.frames = fpsTimer.frames + 1;
-	// 			fpsTimer.refreshLoop();
-	// 		});
-	// 	}
-
-	// }
-
-	// class fpsTimer {
-	// 	public static fps: number = 0;
-
-	// 	private static running: boolean = false;
-	// 	private static then: number = 0;
-	// 	private static numFrames: number = 0;
-
-
-
-
-	// 	public static getFPS() {
-	// 		if (!fpsTimer.running) fpsTimer.runTimer();
-	// 		fpsTimer.numFrames = 0
-	// 		return fpsTimer.fps;
-	// 	}
-
-	// 	private static runTimer() {
-	// 		var now = Date.now() / 1000;
-	// 		var elapsedTime = now - fpsTimer.then;
-	// 		fpsTimer.then = now;
-
-	// 		fpsTimer.fps = 1 / elapsedTime;
-	// 		fpsTimer.numFrames = fpsTimer.numFrames + 1;
-	// 		//console.log("fps",fpsTimer.fps)
-
-	// 		window.requestAnimationFrame(fpsTimer.runTimer);
-	// 	};
-
-	// }
 
 	/*
 	class PointAnimator {

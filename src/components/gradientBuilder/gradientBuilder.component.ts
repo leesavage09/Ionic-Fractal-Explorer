@@ -45,7 +45,7 @@ export class GradientBuilderComponent implements OnInit, FractalColor.LinearGrad
     this.drawGradient();
   }
 
-  linearGradientChanged() {}
+  linearGradientChanged() { }
 
   windowResized() {
     if (this.gradient == undefined) return;
@@ -54,7 +54,7 @@ export class GradientBuilderComponent implements OnInit, FractalColor.LinearGrad
     this.allMarkers.forEach(marker => {
       marker.windowResized();
     });
-    this.drawGradient();
+    this.drawGradient(false);
   }
 
   createStopMarker(event) {
@@ -87,7 +87,6 @@ export class GradientBuilderComponent implements OnInit, FractalColor.LinearGrad
         this.unpopMarker();
         this.selectedMarker.offsetCSSLeft(event.screenX);
         this.draw();
-        this.gradient.notifyChanging(this);
       }
 
     }
@@ -167,8 +166,7 @@ export class GradientBuilderComponent implements OnInit, FractalColor.LinearGrad
       this.selectedMarker.setCSSclass("dropping")
       this.allMarkers.splice(this.allMarkers.lastIndexOf(this.selectedMarker), 1);
       this.draw();
-      this.gradient.notifyChanging(this)
-    this.colorPicker.nativeElement.jscolor.hide();
+      this.colorPicker.nativeElement.jscolor.hide();
     }
   }
 
@@ -179,8 +177,7 @@ export class GradientBuilderComponent implements OnInit, FractalColor.LinearGrad
       this.selectedMarker.resetCSSTop();
       this.allMarkers.push(this.selectedMarker);
       this.draw();
-      this.gradient.notifyChanging(this);
-    this.colorPicker.nativeElement.jscolor.show();
+      this.colorPicker.nativeElement.jscolor.show();
     }
   }
 
@@ -199,7 +196,7 @@ export class GradientBuilderComponent implements OnInit, FractalColor.LinearGrad
     return y;
   }
 
-  private draw() {
+  private draw(triggerNotification: boolean = true) {
     let gradient = new Array();
     this.allMarkers.forEach(marker => {
       gradient.push({ s: marker.getStopValue(), c: marker.getColor() });
@@ -220,9 +217,10 @@ export class GradientBuilderComponent implements OnInit, FractalColor.LinearGrad
       slider.getContext("2d").putImageData(img, 0, i);
     }
 
+    if (triggerNotification) this.gradient.notifyChanging(this);
   }
 
-  private drawGradient() {
+  private drawGradient(triggerNotification: boolean = true) {
     this.deleteAllMarkers()
 
     let arr: Array<FractalColor.LinearGradientStop> = this.gradient.getStops()
@@ -230,7 +228,7 @@ export class GradientBuilderComponent implements OnInit, FractalColor.LinearGrad
       const stop = arr[i];
       this.addStopMarker(stop.s, null, stop.c, false);
     }
-    this.draw();
+    this.draw(triggerNotification);
   }
 
 }

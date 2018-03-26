@@ -51,19 +51,26 @@ export class StopMarkerComponent {
     this.parent.setSelectedMarker(this, event.screenX);
     this.parent.setActiveMarker(this);
     this.styleActive(true);
-    this.colorPicker.nativeElement.jscolor.show();
+    (<any>document.getElementById("jscolor2")).jscolor.hide();
   }
 
   mouseup(event): void {
-    this.mouseupWindow(event);
+    this.styleActive(false);
+    this.parent.dropMarker();
+    if (this.moveStarted) {
+      this.moveStarted = false;
+    }
+    else {
+      this.colorPicker.nativeElement.jscolor.show();
+    }
   }
 
   mouseupWindow(event) {
     if (this.moveStarted) {
       event.stopPropagation();
       this.moveStarted = false;
-      this.parent.dropMarker();
       this.styleActive(false);
+      this.parent.dropMarker();
     }
   }
 

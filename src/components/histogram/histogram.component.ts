@@ -94,9 +94,11 @@ export class HistogramComponent implements OnInit, FractalHistogram.HistogramObs
   }
 
   mouseup(event) {
-    if (this.movingMarker) this.movingMarker.style.borderRadius = "0px";
-    this.movingMarker = null;   
-    if (this.fractal) this.fractal.getColor().notifyChanged(null);
+    if (this.movingMarker) {
+      this.movingMarker.style.borderRadius = "0px";
+      this.movingMarker = null;
+      if (this.fractal) this.fractal.getColor().notifyChanged(null);
+    }
   }
 
   touchMove(event) {
@@ -135,7 +137,7 @@ export class HistogramComponent implements OnInit, FractalHistogram.HistogramObs
     const ctx = <CanvasRenderingContext2D>this.histogramCanvas.nativeElement.getContext("2d");
     const numBin = this.data.length - 1
     var total = 0;
-    for (var i = 0; i <= this.data.length-1; i++) {
+    for (var i = 0; i <= this.data.length - 1; i++) {
       total += this.data[i];
     }
     var avg = total / this.data.length;
@@ -150,8 +152,8 @@ export class HistogramComponent implements OnInit, FractalHistogram.HistogramObs
       for (var x = 0; x < ctx.canvas.width; ++x) {
         let binNum = Math.trunc(x / widthBin)
 
-        if ((y / hightCount) < this.data[binNum]) c = {r:255,g:255,b:255,a:255};
-        else c = {r:41,g:21,b:63,a:64};
+        if ((y / hightCount) < this.data[binNum]) c = { r: 255, g: 255, b: 255, a: 255 };
+        else c = { r: 41, g: 21, b: 63, a: 64 };
 
         img.data[(x * 4) + 0] = c.r;
         img.data[(x * 4) + 1] = c.g;
@@ -203,9 +205,9 @@ export class HistogramComponent implements OnInit, FractalHistogram.HistogramObs
   private getCSSWidth(marker: HTMLElement): number {
     let left = getComputedStyle(marker).borderLeftWidth;
     let right = getComputedStyle(marker).borderRightWidth;
-    let border =  parseInt(left)+parseInt(right);
+    let border = parseInt(left) + parseInt(right);
     let width = parseInt(getComputedStyle(marker).width.replace("px", ""));
-    return border + width    
+    return border + width
   }
 
   private getCSSLeft(marker: HTMLElement): number {

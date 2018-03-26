@@ -8,25 +8,23 @@ import { FractalViewComponent } from '../fractalView/fractalView.component';
 
 @Component({
   selector: 'app-juliaPicker',
-  templateUrl: './juliaPicker.component.html',
-  // styleUrls: ['./juliaPicker.component.scss']
+  templateUrl: './juliaPicker.component.html'
 })
-export class JuliaPickerComponent {
+export class JuliaPickerComponent implements Fractals.FractalChangeObserver {
   private juliaFractal: Fractals.Fractal = null;
   @ViewChild('juliadiv') juliadiv: ElementRef;
   @ViewChild('mainFractalView') mainFractalView: FractalViewComponent;
   @ViewChild('picker') picker: ElementRef;
   @Output() numberChanged = new EventEmitter<ComplexNumber>();
+  @Output() numberChanging = new EventEmitter<ComplexNumber>();
   private movingMarker: boolean = false;
-  private startX: number;
-  private startY: number;
   public hasInit: boolean = false
   public isOnScreen: boolean = true;
   constructor() {
   }
 
-
   init(color: FractalColor.LinearGradient, iterations: number, pickerLocR: number, pickerLocI: number, viewWidth: number) {
+    if (this.hasInit) throw new Error("Julia picker has already init");
     let canvas = <HTMLCanvasElement>this.mainFractalView.getCanvas();
     let ctx = <CanvasRenderingContext2D>canvas.getContext("2d");
 
@@ -36,6 +34,7 @@ export class JuliaPickerComponent {
 
     this.juliaFractal = new Fractals.Fractal(new Fractals.ComplexPlain(pickerLocR, pickerLocI, viewWidth, canvas), new FractalEquations.Mandelbrot, color);
     this.juliaFractal.iterations = iterations;
+    this.juliaFractal.subscribe(this);
     this.mainFractalView.setFractal(this.juliaFractal)
     this.mainFractalView.getFractal().render();
 
@@ -52,15 +51,11 @@ export class JuliaPickerComponent {
   */
 
   touchStart(event) {
-    event.screenX = event.targetTouches[0].screenX
-    event.screenY = event.targetTouches[0].screenY
     this.mousedown(event);
   }
 
   mousedown(event) {
     this.movingMarker = true;
-    this.startX = event.screenX
-    this.startY = event.screenY
   }
 
   touchEnd(event) {
@@ -72,16 +67,16 @@ export class JuliaPickerComponent {
   }
 
   touchMove(event) {
-    event.screenX = event.targetTouches[0].screenX
-    event.screenY = event.targetTouches[0].screenY
     this.mousemove(event);
   }
 
   mousemove(event) {
     if (this.movingMarker == false) return;
-    let offsetX = event.screenX - this.startX
-    let offsetY = event.screenY - this.startY
-    this.numberChanged.emit(new ComplexNumber(this.getRealNumber(offsetX), this.getImaginaryNumber(offsetY)));
+    this.numberChanging.emit(this.juliaFractal.complexPlain.getSquare().center);
+  }
+
+  changed() {
+    this.numberChanged.emit(this.juliaFractal.complexPlain.getSquare().center);
   }
 
   /*
@@ -97,17 +92,10 @@ export class JuliaPickerComponent {
     }
   }
 
-  
+
   /*
   * Private Methods
   */
-
-  private getRealNumber(offset) {
-    return this.juliaFractal.complexPlain.getRealNumber(this.getPickerX() - offset)
-  }
-  private getImaginaryNumber(offset) {
-    return this.juliaFractal.complexPlain.getImaginaryNumber(this.getPickerY() - offset)
-  }
 
   private getMaxX() {
     return parseInt(getComputedStyle(this.juliadiv.nativeElement).width.replace("px", ""));

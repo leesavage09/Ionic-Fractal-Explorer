@@ -9,7 +9,7 @@ import { FractalColor } from "../../fractal/fractalColouring";
   selector: "app-fractalView",
   templateUrl: "./fractalView.component.html"
 })
-export class FractalViewComponent implements Fractals.ChangeObserver {
+export class FractalViewComponent implements Fractals.FractalChangeObserver {
   @ViewChild('fractalCanvas') HTMLcanvas: ElementRef;
   @ViewChild('webGLCanvas') webGLCanvas: ElementRef;
   @Output() viewChanged = new EventEmitter();
@@ -122,15 +122,15 @@ export class FractalViewComponent implements Fractals.ChangeObserver {
     let canvas = <HTMLCanvasElement>this.HTMLcanvas.nativeElement;
     let ctx = <CanvasRenderingContext2D>canvas.getContext("2d");
     if (!canvas.offsetParent) {
-     // console.log("of screen")
+      // console.log("of screen")
       return; // its not onscreen
     }
     if (canvas.offsetWidth == 0 || canvas.offsetHeight == 0) {
-    //  console.log("size 0")
+      //  console.log("size 0")
       return;
     }
     if (canvas.offsetWidth == ctx.canvas.width && canvas.offsetHeight == ctx.canvas.height) {
-    //  console.log("size unchanged2",canvas.offsetWidth ,ctx.canvas.width)
+      //  console.log("size unchanged2",canvas.offsetWidth ,ctx.canvas.width)
       return;
     }
     //console.log("Resizing3");
@@ -141,7 +141,7 @@ export class FractalViewComponent implements Fractals.ChangeObserver {
     this.fractal.render();
   }
 
-  public downloadImage(width: number, height: number, callback: Fractals.ChangeObserver) {
+  public downloadImage(width: number, height: number, callback: Fractals.FractalChangeObserver) {
     let oldCp = this.fractal.complexPlain;
 
     let canvas = <HTMLCanvasElement>document.createElement('canvas');
@@ -171,7 +171,7 @@ export class FractalViewComponent implements Fractals.ChangeObserver {
 
     console.log("subscribed for save callback")
     this.downloadingFractal.subscribe(callback)
-    this.downloadingFractal.render(true);
+    this.downloadingFractal.renderCPU(false, true);
   }
 
   getDownloadProgress(): number {
@@ -249,10 +249,11 @@ export class FractalViewComponent implements Fractals.ChangeObserver {
     if (this.zoomGestureHappening) {
       this.zoomGestureHappening = false;
       this.fractal.getAnimator().zoomByScaleEnd();
-      // if (event.touches.length === 1) {
-      //   this.mousedown(event);
-      //   console.log("test swtching from zoom to drag by lifting one finger before you delete me");
-      // }
+      if (event.touches.length === 1) {
+        event = this.addTocuchOffsets(event);
+        this.mousedown(event);
+        console.log("test swtching from zoom to drag by lifting one finger before you delete me");
+      }
     }
     else {
       event = this.addTocuchOffsets(event);
