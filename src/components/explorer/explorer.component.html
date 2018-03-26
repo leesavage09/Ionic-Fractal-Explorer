@@ -2,7 +2,7 @@
   <div #explorer id="explorer">
 
 
-      <app-fractalView class="fractal-view" #fractalView></app-fractalView>
+    <app-fractalView class="fractal-view" #fractalView></app-fractalView>
 
     <input #jscolor id="jscolor" (change)="HTMLgradient.setColorActive($event)" class="jscolor {width:250,  height:250}" value="000000">
     <input #jscolor2 id="jscolor2" (change)="setInteriorColor($event)" class="jscolor {width:250,  height:250}" value="000000">
@@ -138,33 +138,17 @@
         </section>
 
         <section #LibrarySection class="hide">
-            <div class="header">
-              <ion-icon (click)="clickWebView(true)" name="md-close-circle"></ion-icon>
-              <h1>Library</h1>
+          <div class="header">
+            <ion-icon (click)="clickWebView(true)" name="md-close-circle"></ion-icon>
+            <h1>Library</h1>
+          </div>
+
+          <div *ngFor="let lib of libFav">
+            <div class="cards" (click)="onLibrarySelection($event,lib)">
+              <img class="fractalTumb" src="{{lib.base64}}" width="512px" height="288px">
             </div>
-  
-              <div class="cards" (click)="onLibrarySelection($event,lib1)">
-                <div class="fractalTumb"><app-fractalView url={{lib1}}></app-fractalView></div>
-              </div>
-              <div class="cards" (click)="onLibrarySelection($event,lib2)">
-                <div class="fractalTumb"><app-fractalView url={{lib2}}></app-fractalView></div>
-              </div>  
-              <div class="cards" (click)="onLibrarySelection($event,lib3)">
-                <div class="fractalTumb"><app-fractalView url={{lib3}}></app-fractalView></div>
-              </div>  
-              <div class="cards" (click)="onLibrarySelection($event,lib4)">
-                <div class="fractalTumb"><app-fractalView url={{lib4}}></app-fractalView></div>
-              </div>  
-              <div class="cards" (click)="onLibrarySelection($event,lib5)">
-                <div class="fractalTumb"><app-fractalView url={{lib5}}></app-fractalView></div>
-              </div>  
-              <div class="cards" (click)="onLibrarySelection($event,lib6)">
-                <div class="fractalTumb"><app-fractalView url={{lib6}}></app-fractalView></div>
-              </div>  
-              <div class="cards" (click)="onLibrarySelection($event,lib7)">
-                <div class="fractalTumb"><app-fractalView url={{lib7}}></app-fractalView></div>
-              </div>  
-          </section>
+          </div>
+        </section>
 
         <section #equationSection class="hide">
           <div class="header">
@@ -265,17 +249,16 @@
             <h1>Favorites</h1>
           </div>
 
-          <a class="btn" (click)="addToFavorites()" >Save Current</a>
+          <a class="btn" (click)="addToFavorites()">Save Current</a>
 
           <div *ngFor="let fav of favorites">
             <div class="cards" (click)="onLibrarySelection($event,fav)">
-              <div class="fractalTumb"><app-fractalView url={{fav}}></app-fractalView></div>
-
+              <img class="fractalTumb" src="{{fav.base64}}" width="512px" height="288px">
               <ion-icon (click)="deleteFavorite($event,fav)" name="md-close-circle"></ion-icon>
             </div>
           </div>
-            
-            
+
+
         </section>
 
       </div>

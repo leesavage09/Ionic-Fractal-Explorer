@@ -118,6 +118,27 @@ export class FractalViewComponent implements Fractals.FractalChangeObserver {
     return this.HTMLcanvas.nativeElement;
   }
 
+  public getBase64Image(width:number,height:number):string {
+    let bufferedCanvas = document.createElement('canvas');
+    bufferedCanvas.width = width;
+    bufferedCanvas.height = height;
+
+    var canvas = this.HTMLcanvas.nativeElement;
+    if (this.fractal.webGL) canvas = this.webGLCanvas.nativeElement;
+    if (canvas.height < (canvas.width / 16) * 9) {
+      let adjustedWidth = height * canvas.width / canvas.height;
+      let cropWidth = (adjustedWidth - width) / 2;
+      bufferedCanvas.getContext('2d').drawImage(canvas, -cropWidth, 0, adjustedWidth, height);
+    }
+    else {
+      let adjustedHeight = width * canvas.height / canvas.width;
+      let cropHeight = (adjustedHeight - height) / 2;
+      bufferedCanvas.getContext('2d').drawImage(canvas, 0, -cropHeight, width, adjustedHeight);
+    }
+
+    return bufferedCanvas.toDataURL("image/jpeg");
+  }
+
   public sizeChanged() {
     let canvas = <HTMLCanvasElement>this.HTMLcanvas.nativeElement;
     let ctx = <CanvasRenderingContext2D>canvas.getContext("2d");
