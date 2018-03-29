@@ -11,7 +11,8 @@
     "ionic:build": "ionic-app-scripts build",
     "ionic:buildProd": "ionic build -- --prod",
     "ionic:serve": "ionic-app-scripts serve --address 0.0.0.0 -p 4200",
-    "USB:android": "ionic cordova run android --device",
+    "ionic:run-android": "ionic cordova run android --device",
+    "ionic:emulate-android": "ionic cordova emulate android",
     "build:apk": "ionic cordova build --release android"
   },
   "dependencies": {

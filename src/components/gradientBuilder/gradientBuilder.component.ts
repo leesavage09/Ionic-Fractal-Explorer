@@ -178,7 +178,6 @@ export class GradientBuilderComponent implements OnInit, FractalColor.LinearGrad
       this.selectedMarker.resetCSSTop();
       this.allMarkers.push(this.selectedMarker);
       this.draw();
-      this.colorPicker.nativeElement.jscolor.show();
     }
   }
 

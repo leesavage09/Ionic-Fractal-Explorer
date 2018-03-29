@@ -21,7 +21,8 @@ export namespace Fractals {
 		private subscribers: Array<FractalChangeObserver> = new Array();
 		private compiledColor: Array<FractalColor.RGBcolor>; //Array< Array<number> >;
 		public currentScanLine = 0;
-		public webGL: boolean = false;
+		public webGL: boolean = false;	
+		public webGLisBroken: boolean = true;		
 		public webGLcanvas: HTMLCanvasElement;
 		private webGLcontext;
 		private webGLprogram;
@@ -72,7 +73,7 @@ export namespace Fractals {
 		public linearGradientChanging() {
 			if (this.webGL) {
 				var self = this;
-				window.requestAnimationFrame(function () { self.renderWebGLLow(false); });
+				window.requestAnimationFrame(function () { self.renderWebGLLow(); });
 
 			}
 			else {
@@ -297,11 +298,20 @@ export namespace Fractals {
 			}`;
 		}
 
+		private webGLbroken(reason:string){
+			console.log(reason);
+			this.webGLisBroken = true;
+			this.webGL = false;
+			return;
+		}
+
 		private webGLcompile() {
 			/* obtain a webgl rendering context */
 			this.webGLcontext = this.webGLcanvas.getContext("webgl", { preserveDrawingBuffer: true });
 
-			if (!this.webGLcontext) throw new Error("cant get webGL context :(");
+			if (!this.webGLcontext) {
+				this.webGLbroken("cant get webGL context :(");
+			}
 
 			/* compile and link shaders */
 			var vertex_shader = this.webGLcontext.createShader(this.webGLcontext.VERTEX_SHADER);
@@ -309,9 +319,13 @@ export namespace Fractals {
 			this.webGLcontext.shaderSource(vertex_shader, this.virtexShader);
 			this.webGLcontext.shaderSource(fragment_shader, this.getFragmentShader(this.webGLcontext));
 			this.webGLcontext.compileShader(vertex_shader);
-			if (this.webGLcontext.getShaderInfoLog(vertex_shader)) console.log(this.webGLcontext.getShaderInfoLog(vertex_shader));
+			if (this.webGLcontext.getShaderInfoLog(vertex_shader)) {
+				this.webGLbroken(this.webGLcontext.getShaderInfoLog(vertex_shader));
+			}
 			this.webGLcontext.compileShader(fragment_shader);
-			if (this.webGLcontext.getShaderInfoLog(fragment_shader)) console.log(this.webGLcontext.getShaderInfoLog(fragment_shader));
+			if (this.webGLcontext.getShaderInfoLog(fragment_shader)) {
+				this.webGLbroken(this.webGLcontext.getShaderInfoLog(fragment_shader));
+			}
 			this.webGLprogram = this.webGLcontext.createProgram();
 			this.webGLcontext.attachShader(this.webGLprogram, vertex_shader);
 			this.webGLcontext.attachShader(this.webGLprogram, fragment_shader);
@@ -347,13 +361,12 @@ export namespace Fractals {
 			if (calculateHistogram) this.renderCPU(true, false);
 		}
 
-		public renderWebGLLow(calculateHistogram = false) {
+		public renderWebGLLow() {
 			var self = this;
 			let then = performance.now();
 			self.webGLcanvas.width = Math.round(self.webGLcanvas.clientWidth * self.webGLperformanceRes);
 			self.webGLcanvas.height = Math.round(self.webGLcanvas.clientHeight * self.webGLperformanceRes);
 			self.renderWebGL();
-			if (calculateHistogram) this.renderCPU(true, false);
 			window.requestAnimationFrame(function () {
 				let now = performance.now();
 				let dt = now - then;
@@ -372,6 +385,10 @@ export namespace Fractals {
 			if (this.fractal_fragment != this.calculationFunction.getName()) {
 				this.fractal_fragment = this.calculationFunction.getName();
 				this.webGLcompile();
+				if (this.webGLisBroken) {					
+					this.renderCPU();
+					return;
+				}
 			}
 			if (!this.webGLcontext && !this.webGLprogram) this.webGLcompile();
 			let julia_c_value = { r: 0.0, i: 0.0 };
@@ -430,6 +447,11 @@ export namespace Fractals {
 			let pixWidth = this.complexPlain.getSquare().width / this.complexPlain.getViewCanvas().width;
 			let pixHeight = this.complexPlain.getSquare().height / this.complexPlain.getViewCanvas().height;
  
+			if (this.webGLisBroken) {
+				this.renderCPU();
+				return;
+			}
+
 			if (this.webGL) {
 				if (pixWidth < 1.0e-7 || pixHeight < 1.0e-7) {
 					this.webGL = false;

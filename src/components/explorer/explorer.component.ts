@@ -130,7 +130,7 @@ export class ExplorerComponent implements OnInit, Fractals.FractalEventListner, 
     ctx.canvas.height = canvas.offsetHeight;
 
     let gradient = new FractalColor.LinearGradient();
-    gradient.decodeJSON(this.colorBW)
+    gradient.decodeJSON(this.colorBlackBlue)
 
     this.fractal = new Fractals.Fractal(new Fractals.ComplexPlain(-0.8, 0, 3, canvas), new FractalEquations.Mandelbrot, gradient);
     this.fractal.iterations = this.NumIterations;
@@ -145,24 +145,13 @@ export class ExplorerComponent implements OnInit, Fractals.FractalEventListner, 
     this.storage.get("favorites").then((val) => {
       if (val != null) this.favorites = val;
     });
-
-
-
-
-
-    this.toastCtrl.create({
-      message: 'Switched To GPU rendering',
-      duration: 1000,
-      position: 'middle',
-      cssClass: "toast",
-    }).present();
   }
 
   init(url: string) {
     var equation = "Mandelbrot";
     var complexCenter = "-0.8, 0";
     var complexWidthStr = "3";
-    var colorStr = this.colorBW;
+    var colorStr = this.colorBlackBlue;
     var fractalEq: FractalEquations.equation = new FractalEquations.Mandelbrot;
 
     let st = decodeURI(url)
@@ -251,20 +240,24 @@ export class ExplorerComponent implements OnInit, Fractals.FractalEventListner, 
   */
 
   onEqChanged(eqString) {
+    this.NumIterations = 50;
+    this.ngModelChangeIterations();
+    this.fractal.getColor().decodeJSON(this.colorBlackBlue);
+
     if (eqString == "Mandelbrot") {
       this.fractal.complexPlain.replaceView(-0.8, 0, 3, <HTMLCanvasElement>this.mainFractalView.getCanvas())
       this.fractal.setCalculationFunction(new FractalEquations.Mandelbrot);
     }
     if (eqString == "MandelbrotPow4") {
-      this.fractal.complexPlain.replaceView(-0.8, 0, 3, <HTMLCanvasElement>this.mainFractalView.getCanvas())
+      this.fractal.complexPlain.replaceView(0, 0, 3, <HTMLCanvasElement>this.mainFractalView.getCanvas())
       this.fractal.setCalculationFunction(new FractalEquations.MandelbrotPow4);
     }
     if (eqString == "MandelbrotPow6") {
-      this.fractal.complexPlain.replaceView(-0.8, 0, 3, <HTMLCanvasElement>this.mainFractalView.getCanvas())
+      this.fractal.complexPlain.replaceView(0, 0, 3, <HTMLCanvasElement>this.mainFractalView.getCanvas())
       this.fractal.setCalculationFunction(new FractalEquations.MandelbrotPow6);
     }
     if (eqString == "Tricorn") {
-      this.fractal.complexPlain.replaceView(-0.8, 0, 3, <HTMLCanvasElement>this.mainFractalView.getCanvas())
+      this.fractal.complexPlain.replaceView(0, 0, 3, <HTMLCanvasElement>this.mainFractalView.getCanvas())
       this.fractal.setCalculationFunction(new FractalEquations.Tricorn);
     }
     else if (eqString == "BurningShip") {
@@ -326,7 +319,7 @@ export class ExplorerComponent implements OnInit, Fractals.FractalEventListner, 
     this.fractal.iterations = this.NumIterations;
     this.HTMLjuliaPicker.setIterations(this.NumIterations);
     if (this.fractal.webGL) {
-      this.fractal.renderWebGLLow(true);
+      this.fractal.renderWebGLLow();
     } else {
       this.fractal.render();
     }
@@ -407,7 +400,7 @@ export class ExplorerComponent implements OnInit, Fractals.FractalEventListner, 
     window.dispatchEvent(new Event('resize'));
   }
 
-  clickShare(event) {
+  testIntent(){
     //this.saveAndroid(this.imageToDownload);
     // id
     // "9990;/storage/emulated/0/Pictures/Fractal Explorer/2018-2-27-18.png"
@@ -430,44 +423,43 @@ export class ExplorerComponent implements OnInit, Fractals.FractalEventListner, 
         alert('Failed to open Android Intent ' + err);
       }
     );
+  }
 
+  clickShare(event) {
+    this.clickWebView(false);
+    var content = this.getShareURL();
 
-    // this.clickWebView(false);
-    // var content = this.getShareURL();
+    if (this.platform.is("android") && this.platform.is("cordova")) {
+      this.socialSharing.share("", "", null, content)
+    } else {
+      var textArea, copy, range, selection;
 
-    // if (this.platform.is("android") && this.platform.is("cordova")) {
-    //   console.log("android share triggered");
-    //   this.socialSharing.share("", "", null, content)
-    // } else {
-    //   var textArea, copy, range, selection;
+      textArea = document.createElement('textArea');
+      textArea.value = content;
+      textArea.style.fontSize = "xx-large";
+      document.body.appendChild(textArea);
 
-    //   textArea = document.createElement('textArea');
-    //   textArea.value = content;
-    //   textArea.style.fontSize = "xx-large";
-    //   document.body.appendChild(textArea);
+      if (navigator.userAgent.match(/ipad|iphone/i)) {
+        range = document.createRange();
+        range.selectNodeContents(textArea);
+        selection = window.getSelection();
+        selection.removeAllRanges();
+        selection.addRange(range);
+        textArea.setSelectionRange(0, 999999);
+      } else {
+        textArea.select();
+      }
 
-    //   if (navigator.userAgent.match(/ipad|iphone/i)) {
-    //     range = document.createRange();
-    //     range.selectNodeContents(textArea);
-    //     selection = window.getSelection();
-    //     selection.removeAllRanges();
-    //     selection.addRange(range);
-    //     textArea.setSelectionRange(0, 999999);
-    //   } else {
-    //     textArea.select();
-    //   }
+      document.execCommand('copy');
+      document.body.removeChild(textArea);
 
-    //   document.execCommand('copy');
-    //   document.body.removeChild(textArea);
-
-    //   this.HTMLalertComponent.titleStr = "Share Link"
-    //   this.HTMLalertComponent.textStr = "The URL has been copied to your clipboard."
-    //   this.HTMLalertComponent.noStr = "Close"
-    //   this.HTMLalertComponent.enableOptions(false, false, true)
-    //   this.HTMLalertComponent.setCallback(this.closeAlert.bind(this))
-    //   this.HTMLalert.nativeElement.style.visibility = "visible";
-    // }
-
+      this.HTMLalertComponent.titleStr = "Share Link"
+      this.HTMLalertComponent.textStr = "The URL has been copied to your clipboard."
+      this.HTMLalertComponent.noStr = "Close"
+      this.HTMLalertComponent.enableOptions(false, false, true)
+      this.HTMLalertComponent.setCallback(this.closeAlert.bind(this))
+      this.HTMLalert.nativeElement.style.visibility = "visible";
+    }
   }
 
   clickZoomOut(event) {
@@ -763,43 +755,47 @@ export class ExplorerComponent implements OnInit, Fractals.FractalEventListner, 
 
   private getPhotoLibraryAuthorization(base64: string) {
     var self = this;
-    this.photoLibrary.requestAuthorization().then(
+    this.photoLibrary.requestAuthorization({read:true,write:true}).then(
       function () {
-        console.log("requestAuthorization granted");
+        //console.log("requestAuthorization granted");
         self.saveAndroid(base64);
       },
       function (reason: any) {
-        alert("Cant save image: "+reason);
+        alert("Cant save image: " + reason);
         console.log('requestAuthorization failed, ', reason)
       });
   }
 
   private saveAndroid(base64: string) {
     var self = this;
-    console.log("saveAndroid V999=", this.savePromise);
-
-    console.log("before this.savePromise", this.savePromise);
     this.savePromise = this.savePromise = this.photoLibrary.saveImage(base64, 'Fractal Explorer').then(libraryItem => {
       console.log("LibraryItem Saved ", libraryItem);
       self.HTMLalertComponent.titleStr = "All Done";
       self.HTMLalertComponent.textStr = "Image Saved.";
       self.HTMLalertComponent.noStr = "Close";
-      self.HTMLalertComponent.enableOptions(false, false, true); 
+      self.HTMLalertComponent.enableOptions(false, false, true);
       self.HTMLalertComponent.setCallback(self.closeAlert.bind(self));
 
       self.HTMLalert.nativeElement.style.visibility = "visible";
 
       self.HTMLsaveButton.nativeElement.setAttribute("class", "btn");
     }).catch(reason => {
-      if (reason.startsWith('Permission')) {
-        self.getPhotoLibraryAuthorization(base64);
-      } else {
-
-        alert("Cant save image: "+reason);
-        console.log('save failed, ', reason);
-      }
+      alert("Cant save image: " + reason);
+      console.log('save failed, ', reason);
     });
-    //console.log("after this.savePromise",this.savePromise);
+  }
+
+  private saveBrowser(base64: string) {
+    this.HTMLalertComponent.titleStr = "Download Ready"
+    this.HTMLalertComponent.textStr = ""
+    this.HTMLalertComponent.downloadStr = "Download"
+    this.HTMLalertComponent.setYesHref(base64)
+    this.HTMLalertComponent.noStr = "Cancel"
+    this.HTMLalertComponent.enableOptions(true, false, true)
+    this.HTMLalertComponent.setCallback(this.closeAlert.bind(this))
+    this.HTMLalert.nativeElement.style.visibility = "visible";
+
+    this.HTMLsaveButton.nativeElement.setAttribute("class", "btn");
   }
 
   private saveJpg(width: number, height: number) {
@@ -807,32 +803,17 @@ export class ExplorerComponent implements OnInit, Fractals.FractalEventListner, 
     if ((this.platform.is("cordova") && this.platform.is("android")) || (this.platform.is("cordova") && this.platform.is("ios"))) {
       this.mainFractalView.downloadImage(width, height, {
         changed(fractal: Fractals.Fractal) {
-          console.log("in callbacks");
-          self.saveAndroid(fractal.complexPlain.getViewCanvas().toDataURL("image/png"));
+          self.getPhotoLibraryAuthorization(fractal.complexPlain.getViewCanvas().toDataURL("image/png"));
         }
       });
       this.updateSaveProgress();
     }
     else if (this.platform.is("core") || this.platform.is("mobileweb")) {
-      var element = {
-        base: <Fractals.FractalChangeObserver>{
-          explorer: this,
-          changed(fractal: Fractals.Fractal) {
-            fractal.unsubscribe(element.base)
-            this.explorer.HTMLalertComponent.titleStr = "Download Ready"
-            this.explorer.HTMLalertComponent.textStr = ""
-            this.explorer.HTMLalertComponent.downloadStr = "Download"
-            this.explorer.HTMLalertComponent.setYesHref(fractal.complexPlain.getViewCanvas().toDataURL("image/jpeg"))
-            this.explorer.HTMLalertComponent.noStr = "Cancel"
-            this.explorer.HTMLalertComponent.enableOptions(true, false, true)
-            this.explorer.HTMLalertComponent.setCallback(this.explorer.closeDownloadAlert.bind(this.explorer))
-            this.explorer.HTMLalert.nativeElement.style.visibility = "visible";
-
-            this.explorer.HTMLsaveButton.nativeElement.setAttribute("class", "btn");
-          }
+      this.mainFractalView.downloadImage(width, height, {
+        changed(fractal: Fractals.Fractal) {
+          self.saveBrowser(fractal.complexPlain.getViewCanvas().toDataURL("image/jpeg"));
         }
-      }
-      this.mainFractalView.downloadImage(width, height, element.base);
+      });
       this.updateSaveProgress();
     }
     else {
