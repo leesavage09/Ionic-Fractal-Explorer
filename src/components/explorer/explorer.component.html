@@ -96,7 +96,7 @@
           <a (click)="clickShare($event)" class="btn">
             <ion-icon name="share"></ion-icon> Share
           </a>
-          <a (click)="testIntent($event)" class="btn">
+          <a (click)="clickInfo($event)" class="btn">
             <ion-icon name="md-information-circle"></ion-icon> Info
           </a>
         </div>
@@ -252,7 +252,8 @@
             <h1>Favorites</h1>
           </div>
 
-          <a class="btn" (click)="addToFavorites()">Save Current</a>
+          <a class="btn" (click)="addToFavorites()">
+            <ion-icon name="ios-star"></ion-icon>Save to favorites</a>
 
           <div *ngFor="let fav of favorites">
             <div class="cards" (click)="onLibrarySelection($event,fav)">
@@ -260,6 +261,53 @@
               <ion-icon (click)="deleteFavorite($event,fav)" name="md-close-circle"></ion-icon>
             </div>
           </div>
+        </section>
+
+        <section #InfoSection class="hide">
+          <div class="header">
+            <ion-icon (click)="clickWebView(true)" name="md-close-circle"></ion-icon>
+            <h1>Info</h1>
+          </div>
+
+
+
+          <div>
+            <ul class="key-val">
+              <li>
+                Equation
+                <span (click)="clickEquation($event)">{{this.fractal.getCalculationFunction().getName()}}</span>
+              </li>
+              <li>
+                Real Center
+                <input [(ngModel)]="this.fractal.complexPlain.getSquare().center.r" (ngModelChange)="ngModelChangeCenter()" type="number" value="{{this.fractal.complexPlain.getSquare().center.r}}">
+              </li>
+              <li>
+                Imaginary Center
+                <input [(ngModel)]="this.fractal.complexPlain.getSquare().center.i" (ngModelChange)="ngModelChangeCenter()" type="number" value="{{this.fractal.complexPlain.getSquare().center.i}}">
+              </li>
+              <li>
+                Width
+                <input [(ngModel)]="this.fractal.complexPlain.getSquare().width" (ngModelChange)="ngModelChangeWidth()" type="number" value="{{this.fractal.complexPlain.getSquare().width}}">
+              </li>
+
+              <div *ngIf="this.fractal.getCalculationFunction().getName() == 'Julia';">
+                <li>Real Julia Value
+                    <input [(ngModel)]="this.fractal.getCalculationFunction().juliaReal" (ngModelChange)="ngModelChangeJulia()" type="number" value="{{this.fractal.getCalculationFunction().juliaReal}}">
+                </li>
+                <li>Imaginary Julia Value
+                    <input [(ngModel)]="this.fractal.getCalculationFunction().juliaImaginary" (ngModelChange)="ngModelChangeJulia()" type="number" value="{{this.fractal.getCalculationFunction().juliaImaginary}}">
+                </li>
+              </div>
+
+
+            </ul>
+
+          </div>
+
+          <a class="btn" (click)="addToFavorites()">
+            <ion-icon name="ios-star"></ion-icon> Save to favorites</a>
+          <a class="btn" (click)="clickShare($event)">
+            <ion-icon name="share"></ion-icon> Share this fractal</a>
 
 
         </section>

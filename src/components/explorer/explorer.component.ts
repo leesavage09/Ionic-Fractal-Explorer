@@ -42,6 +42,7 @@ export class ExplorerComponent implements OnInit, Fractals.FractalEventListner, 
   @ViewChild('gradientSection') readonly gradientSection: ElementRef;
   @ViewChild('LibrarySection') readonly librarySection: ElementRef;
   @ViewChild('FavoritesSection') readonly favoritesSection: ElementRef;
+  @ViewChild('InfoSection') readonly infoSection: ElementRef;
   @ViewChild('itSpan') readonly itSpan: ElementRef;
   @ViewChild('itInput') readonly itInput: ElementRef;
   @ViewChild('intColor') readonly intColor: ElementRef;
@@ -330,12 +331,33 @@ export class ExplorerComponent implements OnInit, Fractals.FractalEventListner, 
     this.itInput.nativeElement.style.width = width;
   }
 
+  ngModelChangeWidth(){
+    if (this.fractal.complexPlain.getSquare().width == 0 || this.fractal.complexPlain.getSquare().width == null) this.fractal.complexPlain.getSquare().width = 1;
+    if (this.fractal.complexPlain.getSquare().width <= 5.2291950245225395e-15) this.fractal.complexPlain.getSquare().width = 4.0e-15;
+    this.fractal.complexPlain.setWidth(this.fractal.complexPlain.getSquare().width);
+    this.fractal.render();
+  }
+
+  ngModelChangeCenter(){
+    this.fractal.render();
+  }
+
+  ngModelChangeJulia(){
+    this.fractal.render();
+  }
+
   saveSize(val) {
     this.clickWebView(true);
     this.HTMLsaveButton.nativeElement.setAttribute("class", "btn disabled");
     let width = this.fractal.complexPlain.getViewCanvas().width * val;
     let height = this.fractal.complexPlain.getViewCanvas().height * val;
     this.saveJpg(width, height);
+  }
+
+  clickInfo(event){
+    
+    this.HTMLwebView.nativeElement.setAttribute("class", "web-view open-full");
+    this.setWebViewSection(this.infoSection);
   }
 
   clickSave(event) {
@@ -364,6 +386,12 @@ export class ExplorerComponent implements OnInit, Fractals.FractalEventListner, 
     var share = this.getShareURL();
     this.favorites.unshift({ url: share, base64: this.mainFractalView.getBase64Image(512, 288) });
     this.storage.set('favorites', this.favorites);
+    this.toastCtrl.create({
+      message: 'Saved to favorites',
+      duration: 1000,
+      position: 'middle',
+      cssClass: "toast"
+    }).present();
   }
 
   deleteFavorite(event, fav: string) {
@@ -381,6 +409,12 @@ export class ExplorerComponent implements OnInit, Fractals.FractalEventListner, 
         }
         this.storage.set('favorites', this.favorites);
         this.closeAlert(null);
+        this.toastCtrl.create({
+          message: 'Favorite deleted',
+          duration: 1000,
+          position: 'middle',
+          cssClass: "toast"
+        }).present();
       }
       else {
         this.closeAlert(null);
@@ -453,12 +487,12 @@ export class ExplorerComponent implements OnInit, Fractals.FractalEventListner, 
       document.execCommand('copy');
       document.body.removeChild(textArea);
 
-      this.HTMLalertComponent.titleStr = "Share Link"
-      this.HTMLalertComponent.textStr = "The URL has been copied to your clipboard."
-      this.HTMLalertComponent.noStr = "Close"
-      this.HTMLalertComponent.enableOptions(false, false, true)
-      this.HTMLalertComponent.setCallback(this.closeAlert.bind(this))
-      this.HTMLalert.nativeElement.style.visibility = "visible";
+      this.toastCtrl.create({
+        message: 'The URL has been copied to your clipboard',
+        duration: 1000,
+        position: 'middle',
+        cssClass: "toast"
+      }).present();
     }
   }
 

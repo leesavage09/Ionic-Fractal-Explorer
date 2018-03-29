@@ -22,7 +22,7 @@ export namespace Fractals {
 		private compiledColor: Array<FractalColor.RGBcolor>; //Array< Array<number> >;
 		public currentScanLine = 0;
 		public webGL: boolean = false;	
-		public webGLisBroken: boolean = true;		
+		public webGLisBroken: boolean = false;		
 		public webGLcanvas: HTMLCanvasElement;
 		private webGLcontext;
 		private webGLprogram;
@@ -447,6 +447,10 @@ export namespace Fractals {
 			let pixWidth = this.complexPlain.getSquare().width / this.complexPlain.getViewCanvas().width;
 			let pixHeight = this.complexPlain.getSquare().height / this.complexPlain.getViewCanvas().height;
  
+			if (this.complexPlain.getSquare().width < 5.2291950245225395e-15) {
+				if (this.fractalEventListner != null) this.fractalEventListner.maxZoomReached();
+			}
+
 			if (this.webGLisBroken) {
 				this.renderCPU();
 				return;
@@ -477,10 +481,6 @@ export namespace Fractals {
 		public renderCPU(lowRes: boolean = true, hiRes: boolean = true) {
 			this.hiResCPU = hiRes;
 			this.stopRendering();
-
-			if (this.complexPlain.getSquare().width < 5.2291950245225395e-15) {
-				if (this.fractalEventListner != null) this.fractalEventListner.maxZoomReached();
-			}
 
 			if (lowRes) this.complexPlain.makeAlternativeResolutionCanvas(0.2);
 			this.histogram.startHistogram(this.iterations);
@@ -597,6 +597,18 @@ export namespace Fractals {
 
 		constructor(realCenter: number, imaginaryCenter: number, realWidth: number, canvas: HTMLCanvasElement) {
 			this.replaceView(realCenter, imaginaryCenter, realWidth, canvas);
+		}
+
+		setWidth(realWidth:number) {
+			this.setCenterWidth(this.complexSquare.center.r,this.complexSquare.center.i,realWidth);
+		}
+
+		setCenter(realCenter: number, imaginaryCenter: number) {
+			this.setCenterWidth(realCenter,imaginaryCenter,this.complexSquare.width);
+		}
+
+		setCenterWidth(realCenter: number, imaginaryCenter: number,realWidth:number) {
+			this.replaceView(realCenter,imaginaryCenter,realWidth,this.viewCanvas);
 		}
 
 		replaceView(realCenter: number, imaginaryCenter: number, realWidth: number, canvas: HTMLCanvasElement) {

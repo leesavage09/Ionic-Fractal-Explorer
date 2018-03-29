@@ -12,11 +12,11 @@ export class ComplexNumber {
 }
 
 export class ComplexSquare {
-	readonly min: ComplexNumber;
-	readonly max: ComplexNumber;
-	readonly width: number;
-	readonly height: number;
-	readonly center: ComplexNumber;
+	min: ComplexNumber;
+	max: ComplexNumber;
+	width: number;
+	height: number;
+	center: ComplexNumber;
 	constructor(center: ComplexNumber, width: number, height: number) {
 		this.center = center;
 		this.width = width;

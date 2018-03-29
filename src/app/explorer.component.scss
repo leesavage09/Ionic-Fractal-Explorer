@@ -502,13 +502,17 @@ $color-danger: rgb(216, 25, 25);
                     li {
                         width: 100%;
                         padding: $padding;
-                        padding-bottom: 0px;
                         list-style-type: none;
                         font-size: $font-size;
                         border-bottom-color: $color-web-btn-bg;
                         border-bottom-style: solid;
                         border-bottom-width: 2px;
                         text-align: left;
+                        overflow: auto;
+
+                        input {
+                           float: right;
+                        }
 
                         span {
                             display: block;
@@ -537,7 +541,7 @@ $color-danger: rgb(216, 25, 25);
 
                 .cards {
                     padding: $padding;
-                    background-color: white;                    
+                    background-color: white;
                     max-width: 80%;
                     margin: auto;
                     margin-top: $padding * 2;
@@ -579,7 +583,7 @@ $color-danger: rgb(216, 25, 25);
                     }
                 }
 
-                .btn {
+                a.btn {
                     @include interactive;
 
                     padding: $padding;
@@ -587,6 +591,9 @@ $color-danger: rgb(216, 25, 25);
                     color: $color-web-btn-txt;
                     border-color: $color-web-btn-txt;
                     box-shadow: $shadow;
+                    margin: $padding;
+                    display: inline-block;
+                    white-space: nowrap;
 
                     .platform-core &:hover {
                         background-color: $color-ok;
