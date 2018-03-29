@@ -228,7 +228,10 @@ export namespace FractalEquations {
 		public juliaImaginary: number = 0;
 		public static eq_name:string = "Julia";
 		copy(): equation {
-			return new Julia()
+			let fun = new Julia();
+			fun.juliaReal = this.juliaReal;
+			fun.juliaImaginary = this.juliaImaginary;
+			return fun;
 		}
 		getName():string{
 			return Julia.eq_name;

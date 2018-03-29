@@ -89,9 +89,21 @@ export namespace Fractals {
 			}
 		}
 
-		private getFragmentShader() {
-			return `
-			precision highp float;									
+		private getFragmentShader(webGLcontext) {
+			let low = webGLcontext.getShaderPrecisionFormat(webGLcontext.FRAGMENT_SHADER,webGLcontext.LOW_FLOAT);
+			let med = webGLcontext.getShaderPrecisionFormat(webGLcontext.FRAGMENT_SHADER,webGLcontext.MEDIUM_FLOAT);
+			let hi = webGLcontext.getShaderPrecisionFormat(webGLcontext.FRAGMENT_SHADER,webGLcontext.HIGH_FLOAT);
+
+			var precision = "precision highp float;";
+			if (hi.precision == 0) {
+				precision = "precision mediump float;";
+				if (med.precision == 0) {
+					precision = "precision lowp float;";
+				}
+			}
+			console.log("using",precision);
+
+			return precision+`								
 			uniform vec2 u_zoomCenter;
 			uniform vec2 u_zoomSize;
 			uniform int u_maxIterations;
@@ -295,7 +307,7 @@ export namespace Fractals {
 			var vertex_shader = this.webGLcontext.createShader(this.webGLcontext.VERTEX_SHADER);
 			var fragment_shader = this.webGLcontext.createShader(this.webGLcontext.FRAGMENT_SHADER);
 			this.webGLcontext.shaderSource(vertex_shader, this.virtexShader);
-			this.webGLcontext.shaderSource(fragment_shader, this.getFragmentShader());
+			this.webGLcontext.shaderSource(fragment_shader, this.getFragmentShader(this.webGLcontext));
 			this.webGLcontext.compileShader(vertex_shader);
 			if (this.webGLcontext.getShaderInfoLog(vertex_shader)) console.log(this.webGLcontext.getShaderInfoLog(vertex_shader));
 			this.webGLcontext.compileShader(fragment_shader);

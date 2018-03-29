@@ -95,7 +95,8 @@ export class GradientBuilderComponent implements OnInit, FractalColor.LinearGrad
   setColorActive(event) {
     let rgb = FractalColor.hexToRGB(this.colorPicker.nativeElement.jscolor.toHEXString())
     this.activeMarker.setColor(rgb);
-    this.draw();
+    this.draw(false);
+    this.gradient.notifyChanged(this);
   }
 
 

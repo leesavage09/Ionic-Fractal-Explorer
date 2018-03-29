@@ -173,24 +173,14 @@ export class FractalViewComponent implements Fractals.FractalChangeObserver {
     ctx.canvas.width = width
     ctx.canvas.height = height
 
-    let oldfun = <FractalEquations.equation>this.fractal.getCalculationFunction();
-    let newFun = oldfun.copy();
-    if (newFun instanceof FractalEquations.Julia) {
-      newFun.juliaReal = (<FractalEquations.Julia>oldfun).juliaReal
-      newFun.juliaImaginary = (<FractalEquations.Julia>oldfun).juliaImaginary
-    }
-
-
-
-
-    let cp = new Fractals.ComplexPlain(oldCp.getSquare().center.r, oldCp.getSquare().center.i, oldCp.getSquare().width, canvas)
-    this.downloadingFractal = new Fractals.Fractal(cp, newFun, this.fractal.getColor());
+    let newFun = <FractalEquations.equation>this.fractal.getCalculationFunction().copy();
+    let newCP = new Fractals.ComplexPlain(oldCp.getSquare().center.r, oldCp.getSquare().center.i, oldCp.getSquare().width, canvas)
+    
+    this.downloadingFractal = new Fractals.Fractal(newCP, newFun, this.fractal.getColor());
     this.downloadingFractal.iterations = this.fractal.iterations;
-    this.downloadingFractal.updateTimeout = 10;
+    this.downloadingFractal.updateTimeout = 100;
     this.downloadingFractal.getColor().unsubscribe(this.downloadingFractal);
 
-
-    console.log("subscribed for save callback")
     this.downloadingFractal.subscribe(callback)
     this.downloadingFractal.renderCPU(false, true);
   }
@@ -270,11 +260,9 @@ export class FractalViewComponent implements Fractals.FractalChangeObserver {
     if (this.zoomGestureHappening) {
       this.zoomGestureHappening = false;
       this.fractal.getAnimator().zoomByScaleEnd();
-      if (event.touches.length === 1) {
-        event = this.addTocuchOffsets(event);
-        this.mousedown(event);
-        console.log("test swtching from zoom to drag by lifting one finger before you delete me");
-      }
+      // if (event.touches.length === 1) {
+      //   this.touchStartDrag(event);
+      // }
     }
     else {
       event = this.addTocuchOffsets(event);

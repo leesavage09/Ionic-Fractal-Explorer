@@ -1,7 +1,7 @@
 import { Component, Input, OnInit, ViewChild, ElementRef } from "@angular/core";
 import { Platform, Toast } from 'ionic-angular';
 import { SocialSharing } from '@ionic-native/social-sharing';
-import { PhotoLibrary } from '@ionic-native/photo-library';
+import { PhotoLibrary, LibraryItem } from '@ionic-native/photo-library';
 import { AndroidFullScreen } from '@ionic-native/android-full-screen';
 import { ToastController } from 'ionic-angular';
 import { Storage } from '@ionic/storage';
@@ -97,7 +97,7 @@ export class ExplorerComponent implements OnInit, Fractals.FractalEventListner, 
 
   public complexJuliaPicker: string = "-0.7,0.0";
   public juliaPickerWidth: string = "3";
-  public imageToDownload: string = null;
+  public savePromise: Promise<void> = null;
   public NumIterations: number = 50;
 
   constructor(public platform: Platform, private socialSharing: SocialSharing, private photoLibrary: PhotoLibrary, private androidFullScreen: AndroidFullScreen, private toastCtrl: ToastController, private storage: Storage) {
@@ -408,41 +408,65 @@ export class ExplorerComponent implements OnInit, Fractals.FractalEventListner, 
   }
 
   clickShare(event) {
-    this.clickWebView(false);
-    var content = this.getShareURL();
+    //this.saveAndroid(this.imageToDownload);
+    // id
+    // "9990;/storage/emulated/0/Pictures/Fractal Explorer/2018-2-27-18.png"
 
-    if (this.platform.is("android") && this.platform.is("cordova")) {
-      console.log("android share triggered");
-      this.socialSharing.share("", "", null, content)
-    } else {
-      var textArea, copy, range, selection;
+    // photoURL
+    // "cdvphotolibrary://photo?photoId=9990%3B%2Fstorage%2Femulated%2F0%2FPictures%2FFractal%20Explorer%2F2018-2-27-18.png"
 
-      textArea = document.createElement('textArea');
-      textArea.value = content;
-      textArea.style.fontSize = "xx-large";
-      document.body.appendChild(textArea);
+    // thumbnailURL
+    // "cdvphotolibrary://thumbnail?photoId=9990%3B%2Fstorage%2Femulated%2F0%2FPictures%2FFractal%20Explorer%2F2018-2-27-18.png&width=512&height=384&quality=0.5"
 
-      if (navigator.userAgent.match(/ipad|iphone/i)) {
-        range = document.createRange();
-        range.selectNodeContents(textArea);
-        selection = window.getSelection();
-        selection.removeAllRanges();
-        selection.addRange(range);
-        textArea.setSelectionRange(0, 999999);
-      } else {
-        textArea.select();
+
+    (<any>window).plugins.intentShim.startActivity({
+      action: (<any>window).plugins.intentShim.ACTION_VIEW,
+      url: "/storage/emulated/0/Pictures/Fractal Explorer/2018-2-27-18.png",
+      type: "image/jpeg"
+    },
+      function () { alert('yay') },
+      function (err) {
+        console.log("err", err);
+        alert('Failed to open Android Intent ' + err);
       }
+    );
 
-      document.execCommand('copy');
-      document.body.removeChild(textArea);
 
-      this.HTMLalertComponent.titleStr = "Share Link"
-      this.HTMLalertComponent.textStr = "The URL has been copied to your clipboard."
-      this.HTMLalertComponent.noStr = "Close"
-      this.HTMLalertComponent.enableOptions(false, false, true)
-      this.HTMLalertComponent.setCallback(this.closeAlert.bind(this))
-      this.HTMLalert.nativeElement.style.visibility = "visible";
-    }
+    // this.clickWebView(false);
+    // var content = this.getShareURL();
+
+    // if (this.platform.is("android") && this.platform.is("cordova")) {
+    //   console.log("android share triggered");
+    //   this.socialSharing.share("", "", null, content)
+    // } else {
+    //   var textArea, copy, range, selection;
+
+    //   textArea = document.createElement('textArea');
+    //   textArea.value = content;
+    //   textArea.style.fontSize = "xx-large";
+    //   document.body.appendChild(textArea);
+
+    //   if (navigator.userAgent.match(/ipad|iphone/i)) {
+    //     range = document.createRange();
+    //     range.selectNodeContents(textArea);
+    //     selection = window.getSelection();
+    //     selection.removeAllRanges();
+    //     selection.addRange(range);
+    //     textArea.setSelectionRange(0, 999999);
+    //   } else {
+    //     textArea.select();
+    //   }
+
+    //   document.execCommand('copy');
+    //   document.body.removeChild(textArea);
+
+    //   this.HTMLalertComponent.titleStr = "Share Link"
+    //   this.HTMLalertComponent.textStr = "The URL has been copied to your clipboard."
+    //   this.HTMLalertComponent.noStr = "Close"
+    //   this.HTMLalertComponent.enableOptions(false, false, true)
+    //   this.HTMLalertComponent.setCallback(this.closeAlert.bind(this))
+    //   this.HTMLalert.nativeElement.style.visibility = "visible";
+    // }
 
   }
 
@@ -737,57 +761,68 @@ export class ExplorerComponent implements OnInit, Fractals.FractalEventListner, 
 
   }
 
-  private saveJpg(width: number, height: number) {
-    if (this.platform.is("cordova")) {
-      var element = {
-        base: <Fractals.FractalChangeObserver>{
-          explorer: this,
-          changed(fractal: Fractals.Fractal) {
-            console.log("save callback")
-            fractal.unsubscribe(element.base)
-            this.explorer.imageToDownload = fractal.complexPlain.getViewCanvas().toDataURL("image/png");
-            this.explorer.photoLibrary.requestAuthorization().then(() => {
-              console.log("photo libray premission granted")
-            }).catch(err => {
-              console.log('permissions weren\'t granted ' + err)
-              return;
-            });
-            var album = 'Fractal Explorer';
-            var res = this.explorer.photoLibrary.saveImage(this.explorer.imageToDownload, album, function (libraryItem) {
-              console.log("libraryItem", libraryItem);
-            }, function (err) {
-              console.log("err", err);
-            });
+  private getPhotoLibraryAuthorization(base64: string) {
+    var self = this;
+    this.photoLibrary.requestAuthorization().then(
+      function () {
+        console.log("requestAuthorization granted");
+        self.saveAndroid(base64);
+      },
+      function (reason: any) {
+        alert("Cant save image: "+reason);
+        console.log('requestAuthorization failed, ', reason)
+      });
+  }
 
-            console.log("res", res);
+  private saveAndroid(base64: string) {
+    var self = this;
+    console.log("saveAndroid V999=", this.savePromise);
 
-            this.explorer.HTMLalertComponent.titleStr = "All Done"
-            this.explorer.HTMLalertComponent.textStr = "Image Saved."
-            this.explorer.HTMLalertComponent.closeStr = "Close"
-            this.explorer.HTMLalertComponent.enableOptions(true, false, false, false)
-            this.explorer.HTMLalertComponent.setCallback(this.explorer.closeDownloadAlert.bind(this.explorer))
-            this.explorer.HTMLalert.nativeElement.style.visibility = "visible";
+    console.log("before this.savePromise", this.savePromise);
+    this.savePromise = this.savePromise = this.photoLibrary.saveImage(base64, 'Fractal Explorer').then(libraryItem => {
+      console.log("LibraryItem Saved ", libraryItem);
+      self.HTMLalertComponent.titleStr = "All Done";
+      self.HTMLalertComponent.textStr = "Image Saved.";
+      self.HTMLalertComponent.noStr = "Close";
+      self.HTMLalertComponent.enableOptions(false, false, true); 
+      self.HTMLalertComponent.setCallback(self.closeAlert.bind(self));
 
-            this.explorer.HTMLsaveButton.nativeElement.setAttribute("class", "btn");
-          }
-        }
+      self.HTMLalert.nativeElement.style.visibility = "visible";
+
+      self.HTMLsaveButton.nativeElement.setAttribute("class", "btn");
+    }).catch(reason => {
+      if (reason.startsWith('Permission')) {
+        self.getPhotoLibraryAuthorization(base64);
+      } else {
+
+        alert("Cant save image: "+reason);
+        console.log('save failed, ', reason);
       }
-      this.mainFractalView.downloadImage(width, height, element.base);
+    });
+    //console.log("after this.savePromise",this.savePromise);
+  }
 
+  private saveJpg(width: number, height: number) {
+    var self = this;
+    if ((this.platform.is("cordova") && this.platform.is("android")) || (this.platform.is("cordova") && this.platform.is("ios"))) {
+      this.mainFractalView.downloadImage(width, height, {
+        changed(fractal: Fractals.Fractal) {
+          console.log("in callbacks");
+          self.saveAndroid(fractal.complexPlain.getViewCanvas().toDataURL("image/png"));
+        }
+      });
       this.updateSaveProgress();
     }
-    else {
+    else if (this.platform.is("core") || this.platform.is("mobileweb")) {
       var element = {
         base: <Fractals.FractalChangeObserver>{
           explorer: this,
           changed(fractal: Fractals.Fractal) {
             fractal.unsubscribe(element.base)
-            this.explorer.imageToDownload = fractal.complexPlain.getViewCanvas().toDataURL("image/jpeg");
-
             this.explorer.HTMLalertComponent.titleStr = "Download Ready"
             this.explorer.HTMLalertComponent.textStr = ""
             this.explorer.HTMLalertComponent.downloadStr = "Download"
-            this.explorer.HTMLalertComponent.setYesHref(this.explorer.imageToDownload)
+            this.explorer.HTMLalertComponent.setYesHref(fractal.complexPlain.getViewCanvas().toDataURL("image/jpeg"))
             this.explorer.HTMLalertComponent.noStr = "Cancel"
             this.explorer.HTMLalertComponent.enableOptions(true, false, true)
             this.explorer.HTMLalertComponent.setCallback(this.explorer.closeDownloadAlert.bind(this.explorer))
@@ -798,20 +833,14 @@ export class ExplorerComponent implements OnInit, Fractals.FractalEventListner, 
         }
       }
       this.mainFractalView.downloadImage(width, height, element.base);
-
       this.updateSaveProgress();
+    }
+    else {
+      alert("the following platforms are not yet supported " + this.platform.platforms);
     }
   }
 
   private closeAlert(event) {
-    if (getComputedStyle(this.HTMLalert.nativeElement).visibility == "visible") {
-      this.HTMLalert.nativeElement.style.visibility = "hidden";
-      return;
-    }
-  }
-
-  private closeDownloadAlert(event) {
-    this.mainFractalView.abortDownload();
     if (getComputedStyle(this.HTMLalert.nativeElement).visibility == "visible") {
       this.HTMLalert.nativeElement.style.visibility = "hidden";
       return;
