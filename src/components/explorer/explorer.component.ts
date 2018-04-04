@@ -343,7 +343,11 @@ export class ExplorerComponent implements OnInit, Fractals.FractalEventListner, 
   }
 
   ngModelChangeJulia(){
+    var real = (<FractalEquations.Julia>this.fractal.getCalculationFunction()).juliaReal;
+    var imag = (<FractalEquations.Julia>this.fractal.getCalculationFunction()).juliaImaginary;
+    this.HTMLjuliaPicker.getFractalView().getFractal().complexPlain.setCenter(real,imag);
     this.fractal.render();
+    this.HTMLjuliaPicker.getFractalView().getFractal().render();
   }
 
   saveSize(val) {
@@ -607,7 +611,6 @@ export class ExplorerComponent implements OnInit, Fractals.FractalEventListner, 
     else {
       this.HTMLwebView.nativeElement.setAttribute("class", "web-view close");
     }
-    if (this.activeSection) this.activeSection.nativeElement.setAttribute("class", "hide");
   }
 
   swipeWebView(event, swipeLeftOpen = true, canOpen = true, canClose = true) {
@@ -863,6 +866,7 @@ export class ExplorerComponent implements OnInit, Fractals.FractalEventListner, 
   }
 
   private setWebViewSection(section: ElementRef) {
+    if (this.activeSection) this.activeSection.nativeElement.setAttribute("class", "hide");
     this.activeSection = section;
     section.nativeElement.setAttribute("class", "show");
     section.nativeElement.parentElement.scrollTop = 0;

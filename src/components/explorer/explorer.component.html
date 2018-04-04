@@ -269,8 +269,6 @@
             <h1>Info</h1>
           </div>
 
-
-
           <div>
             <ul class="key-val">
               <li>
@@ -292,10 +290,10 @@
 
               <div *ngIf="this.fractal.getCalculationFunction().getName() == 'Julia';">
                 <li>Real Julia Value
-                    <input [(ngModel)]="this.fractal.getCalculationFunction().juliaReal" (ngModelChange)="ngModelChangeJulia()" type="number" value="{{this.fractal.getCalculationFunction().juliaReal}}">
+                  <input [(ngModel)]="this.fractal.getCalculationFunction().juliaReal" (ngModelChange)="ngModelChangeJulia()" type="number" value="{{this.fractal.getCalculationFunction().juliaReal}}">
                 </li>
                 <li>Imaginary Julia Value
-                    <input [(ngModel)]="this.fractal.getCalculationFunction().juliaImaginary" (ngModelChange)="ngModelChangeJulia()" type="number" value="{{this.fractal.getCalculationFunction().juliaImaginary}}">
+                  <input [(ngModel)]="this.fractal.getCalculationFunction().juliaImaginary" (ngModelChange)="ngModelChangeJulia()" type="number" value="{{this.fractal.getCalculationFunction().juliaImaginary}}">
                 </li>
               </div>
 

@@ -21,11 +21,12 @@ export namespace Fractals {
 		private subscribers: Array<FractalChangeObserver> = new Array();
 		private compiledColor: Array<FractalColor.RGBcolor>; //Array< Array<number> >;
 		public currentScanLine = 0;
-		public webGL: boolean = false;	
-		public webGLisBroken: boolean = false;		
+		public webGL: boolean = false;
+		public webGLisBroken: boolean = false;
 		public webGLcanvas: HTMLCanvasElement;
 		private webGLcontext;
 		private webGLprogram;
+		private precision;
 		private fractal_fragment = "Tricorn";
 		private virtexShader = `
 								precision lowp float;
@@ -91,20 +92,22 @@ export namespace Fractals {
 		}
 
 		private getFragmentShader(webGLcontext) {
-			let low = webGLcontext.getShaderPrecisionFormat(webGLcontext.FRAGMENT_SHADER,webGLcontext.LOW_FLOAT);
-			let med = webGLcontext.getShaderPrecisionFormat(webGLcontext.FRAGMENT_SHADER,webGLcontext.MEDIUM_FLOAT);
-			let hi = webGLcontext.getShaderPrecisionFormat(webGLcontext.FRAGMENT_SHADER,webGLcontext.HIGH_FLOAT);
+			let low = webGLcontext.getShaderPrecisionFormat(webGLcontext.FRAGMENT_SHADER, webGLcontext.LOW_FLOAT);
+			let med = webGLcontext.getShaderPrecisionFormat(webGLcontext.FRAGMENT_SHADER, webGLcontext.MEDIUM_FLOAT);
+			let hi = webGLcontext.getShaderPrecisionFormat(webGLcontext.FRAGMENT_SHADER, webGLcontext.HIGH_FLOAT);
 
-			var precision = "precision highp float;";
+			var str = "precision highp float;";
+			this.precision = hi.precision;
 			if (hi.precision == 0) {
-				precision = "precision mediump float;";
+				str = "precision mediump float;";
+				this.precision = med.precision;
 				if (med.precision == 0) {
-					precision = "precision lowp float;";
+					str = "precision lowp float;";
+					this.precision = low.precision;
 				}
 			}
-			console.log("using",precision);
-
-			return precision+`								
+			
+			return str + `								
 			uniform vec2 u_zoomCenter;
 			uniform vec2 u_zoomSize;
 			uniform int u_maxIterations;
@@ -298,7 +301,7 @@ export namespace Fractals {
 			}`;
 		}
 
-		private webGLbroken(reason:string){
+		private webGLbroken(reason: string) {
 			console.log(reason);
 			this.webGLisBroken = true;
 			this.webGL = false;
@@ -381,16 +384,7 @@ export namespace Fractals {
 			});
 		}
 
-		private renderWebGL() {
-			if (this.fractal_fragment != this.calculationFunction.getName()) {
-				this.fractal_fragment = this.calculationFunction.getName();
-				this.webGLcompile();
-				if (this.webGLisBroken) {					
-					this.renderCPU();
-					return;
-				}
-			}
-			if (!this.webGLcontext && !this.webGLprogram) this.webGLcompile();
+		private renderWebGL() {			
 			let julia_c_value = { r: 0.0, i: 0.0 };
 			if (this.fractal_fragment == FractalEquations.Julia.eq_name) {
 				julia_c_value = { r: (<FractalEquations.Julia>this.calculationFunction).juliaReal, i: (<FractalEquations.Julia>this.calculationFunction).juliaImaginary };
@@ -443,12 +437,23 @@ export namespace Fractals {
 			self.webGLcontext.drawArrays(self.webGLcontext.TRIANGLES, 0, 6);
 		}
 
-		public render(): void {
+		private isInWebGLPrecision(): boolean {
 			let pixWidth = this.complexPlain.getSquare().width / this.complexPlain.getViewCanvas().width;
-			let pixHeight = this.complexPlain.getSquare().height / this.complexPlain.getViewCanvas().height;
- 
+			var precision = Math.abs(Math.log2(pixWidth));
+			return precision < this.precision;
+		}
+
+		public render(): void {
+			/*Alert zoom listner */
 			if (this.complexPlain.getSquare().width < 5.2291950245225395e-15) {
 				if (this.fractalEventListner != null) this.fractalEventListner.maxZoomReached();
+			}
+
+			/*Compile webGL if neeed*/
+			if (!this.webGLcontext && !this.webGLprogram) this.webGLcompile();
+			if (this.fractal_fragment != this.calculationFunction.getName()) {
+				this.fractal_fragment = this.calculationFunction.getName();
+				this.webGLcompile();
 			}
 
 			if (this.webGLisBroken) {
@@ -457,24 +462,30 @@ export namespace Fractals {
 			}
 
 			if (this.webGL) {
-				if (pixWidth < 1.0e-7 || pixHeight < 1.0e-7) {
+				if (!this.isInWebGLPrecision()) {
 					this.webGL = false;
 					if (this.fractalEventListner != null) this.fractalEventListner.switchCPUrendering();
 					this.webGLcanvas.style.visibility = "hidden";
 					this.renderCPU();
 					return;
 				}
-				this.renderWebGLFull();
+				else {
+					this.renderWebGLFull();
+					return;
+				}				
 			}
 			else {
-				if (pixWidth > 1.0e-7 || pixHeight > 1.0e-7) {
+				if (this.isInWebGLPrecision()) {
 					this.webGL = true;
 					if (this.fractalEventListner != null) this.fractalEventListner.switchWebGLRendering();
 					this.webGLcanvas.style.visibility = "visible";
 					this.renderWebGLFull();
 					return;
 				}
-				this.renderCPU();
+				else {
+					this.renderCPU();
+					return;
+				}				
 			}
 		}
 
@@ -599,16 +610,16 @@ export namespace Fractals {
 			this.replaceView(realCenter, imaginaryCenter, realWidth, canvas);
 		}
 
-		setWidth(realWidth:number) {
-			this.setCenterWidth(this.complexSquare.center.r,this.complexSquare.center.i,realWidth);
+		setWidth(realWidth: number) {
+			this.setCenterWidth(this.complexSquare.center.r, this.complexSquare.center.i, realWidth);
 		}
 
 		setCenter(realCenter: number, imaginaryCenter: number) {
-			this.setCenterWidth(realCenter,imaginaryCenter,this.complexSquare.width);
+			this.setCenterWidth(realCenter, imaginaryCenter, this.complexSquare.width);
 		}
 
-		setCenterWidth(realCenter: number, imaginaryCenter: number,realWidth:number) {
-			this.replaceView(realCenter,imaginaryCenter,realWidth,this.viewCanvas);
+		setCenterWidth(realCenter: number, imaginaryCenter: number, realWidth: number) {
+			this.replaceView(realCenter, imaginaryCenter, realWidth, this.viewCanvas);
 		}
 
 		replaceView(realCenter: number, imaginaryCenter: number, realWidth: number, canvas: HTMLCanvasElement) {
