@@ -14,7 +14,7 @@
     "ionic:run-android": "ionic cordova run android --device",
     "ionic:emulate-android": "ionic cordova emulate android",
     "build:apk": "ionic cordova build --release android",
-    "ionic:buildBrow": "ionic cordova build browser --prod"
+    "ionic:buildBrow": "ionic cordova build --release browser"
   },
   "dependencies": {
     "@angular/common": "5.0.3",

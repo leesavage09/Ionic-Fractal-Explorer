@@ -1,6 +1,6 @@
 {
-  "name": "Ionic",
-  "short_name": "Ionic",
+  "name": "Fractal Explorer",
+  "short_name": "Fractal Explorer",
   "start_url": "index.html",
   "display": "standalone",
   "icons": [{
