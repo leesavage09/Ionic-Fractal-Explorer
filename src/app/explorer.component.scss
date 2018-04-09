@@ -454,6 +454,7 @@ $color-danger: rgb(216, 25, 25);
 
             section {
                 padding-top: $button-size + $padding;
+                padding-bottom: 50%;
 
                 &.hide {
                     visibility: hidden;
@@ -492,14 +493,14 @@ $color-danger: rgb(216, 25, 25);
                     }
                 }
 
-                ul {
+                ion-list {
                     list-style-type: none;
                     -webkit-padding-start: 0;
                     background-color: white;
                     margin: $padding;
                     box-shadow: $shadow;
 
-                    li {
+                    ion-item {
                         width: 100%;
                         padding: $padding;
                         list-style-type: none;
@@ -509,9 +510,24 @@ $color-danger: rgb(216, 25, 25);
                         border-bottom-width: 2px;
                         text-align: left;
                         overflow: auto;
+                        display:table;
 
-                        input {
-                           float: right;
+                        .item-inner{
+                            border-style:none;
+                            box-shadow:none;
+                        }
+
+                        ion-label {
+                            display: table-cell;
+                            padding: $padding;
+                        }
+
+                        ion-input {
+                                width: 100%;
+                                border-style: solid;
+                                border-width: 1px;
+                                border-color: black;
+                            
                         }
 
                         span {
@@ -532,9 +548,9 @@ $color-danger: rgb(216, 25, 25);
                         }
 
                         .gradient {
-                            height: $button-size / 2;
                             width: 100%;
-                            display: inline-block;
+                            height: $button-size;
+                            //height:100%;
                         }
                     }
                 }

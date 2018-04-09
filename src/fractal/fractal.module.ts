@@ -28,8 +28,7 @@ export namespace Fractals {
 		private webGLprogram;
 		private precision;
 		private fractal_fragment = "Tricorn";
-		private virtexShader = `
-								precision lowp float;
+		private virtexShader = `precision lowp float;
 								attribute vec2 a_Position;
 								void main() {
 								gl_Position = vec4(a_Position.x, a_Position.y, 0.0, 1.0);
@@ -314,6 +313,7 @@ export namespace Fractals {
 
 			if (!this.webGLcontext) {
 				this.webGLbroken("cant get webGL context :(");
+				return;
 			}
 
 			/* compile and link shaders */
@@ -323,11 +323,11 @@ export namespace Fractals {
 			this.webGLcontext.shaderSource(fragment_shader, this.getFragmentShader(this.webGLcontext));
 			this.webGLcontext.compileShader(vertex_shader);
 			if (this.webGLcontext.getShaderInfoLog(vertex_shader)) {
-				this.webGLbroken(this.webGLcontext.getShaderInfoLog(vertex_shader));
+				console.log(this.webGLcontext.getShaderInfoLog(vertex_shader));
 			}
 			this.webGLcontext.compileShader(fragment_shader);
 			if (this.webGLcontext.getShaderInfoLog(fragment_shader)) {
-				this.webGLbroken(this.webGLcontext.getShaderInfoLog(fragment_shader));
+				console.log(this.webGLcontext.getShaderInfoLog(fragment_shader));
 			}
 			this.webGLprogram = this.webGLcontext.createProgram();
 			this.webGLcontext.attachShader(this.webGLprogram, vertex_shader);

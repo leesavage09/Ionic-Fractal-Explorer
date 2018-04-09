@@ -111,33 +111,33 @@
             <h1>Save Size</h1>
           </div>
 
-          <ul>
-            <li (click)="saveSize(1)">
+          <ion-list>
+            <ion-item (click)="saveSize(1)">
               <ion-icon name="ios-image"></ion-icon>
               1X screen size
               <span>{{this.fractal.complexPlain.getViewCanvas().width}} X {{this.fractal.complexPlain.getViewCanvas().height}}</span>
-            </li>
-            <li (click)="saveSize(2)">
+            </ion-item>
+            <ion-item (click)="saveSize(2)">
               <ion-icon name="ios-image"></ion-icon>
               2X screen size
               <span>{{this.fractal.complexPlain.getViewCanvas().width * 2}} X {{this.fractal.complexPlain.getViewCanvas().height * 2}}</span>
-            </li>
-            <li (click)="saveSize(3)">
+            </ion-item>
+            <ion-item (click)="saveSize(3)">
               <ion-icon name="ios-image"></ion-icon>
               3X screen size
               <span>{{this.fractal.complexPlain.getViewCanvas().width * 3}} X {{this.fractal.complexPlain.getViewCanvas().height * 3}}</span>
-            </li>
-            <li (click)="saveSize(5)">
+            </ion-item>
+            <ion-item (click)="saveSize(5)">
               <ion-icon name="ios-image"></ion-icon>
               5X screen size
               <span>{{this.fractal.complexPlain.getViewCanvas().width * 5}} X {{this.fractal.complexPlain.getViewCanvas().height * 5}}</span>
-            </li>
-            <li (click)="saveSize(8)">
+            </ion-item>
+            <ion-item (click)="saveSize(8)">
               <ion-icon name="ios-image"></ion-icon>
               8X screen size
               <span>{{this.fractal.complexPlain.getViewCanvas().width * 8}} X {{this.fractal.complexPlain.getViewCanvas().height * 8}}</span>
-            </li>
-          </ul>
+            </ion-item>
+          </ion-list>
         </section>
 
         <section #LibrarySection class="hide">
@@ -159,32 +159,32 @@
             <h1>Equations</h1>
           </div>
 
-          <ul>
-            <li (click)="onEqChanged('Mandelbrot')">
+          <ion-list>
+            <ion-item (click)="onEqChanged('Mandelbrot')">
               <ion-icon name="ios-cog"></ion-icon>
               Classic mandelbrot
-            </li>
-            <li (click)="onEqChanged('MandelbrotPow4')">
+            </ion-item>
+            <ion-item (click)="onEqChanged('MandelbrotPow4')">
               <ion-icon name="ios-cog"></ion-icon>
               Mandelbrot 4th power
-            </li>
-            <li (click)="onEqChanged('MandelbrotPow6')">
+            </ion-item>
+            <ion-item (click)="onEqChanged('MandelbrotPow6')">
               <ion-icon name="ios-cog"></ion-icon>
               Mandelbrot 6th power
-            </li>
-            <li (click)="onEqChanged('Tricorn')">
+            </ion-item>
+            <ion-item (click)="onEqChanged('Tricorn')">
               <ion-icon name="ios-cog"></ion-icon>
               Tricorn
-            </li>
-            <li (click)="onEqChanged('BurningShip')">
+            </ion-item>
+            <ion-item (click)="onEqChanged('BurningShip')">
               <ion-icon name="ios-cog"></ion-icon>
               Burning Ship
-            </li>
-            <li (click)="onEqChanged('Julia')">
+            </ion-item>
+            <ion-item (click)="onEqChanged('Julia')">
               <ion-icon name="ios-cog"></ion-icon>
               Julia explorer
-            </li>
-          </ul>
+            </ion-item>
+          </ion-list>
         </section>
 
         <section #gradientSection class="hide">
@@ -193,57 +193,43 @@
             <h1>Gradients</h1>
           </div>
 
-          <ul>
-            <li (click)="onGradientChanged(colorBlueGold)">
-              <ion-icon name="ios-color-palette"></ion-icon>
-              Blue/Gold
+          <ion-list>
+            <ion-item (click)="onGradientChanged(colorBlueGold)">
               <div class="gradient">
                 <app-colourslider colorStr="{{colorBlueGold}}"> </app-colourslider>
               </div>
-            </li>
-            <li (click)="onGradientChanged(colorBW)">
-              <ion-icon name="ios-color-palette"></ion-icon>
-              B/W
+            </ion-item>
+            <ion-item (click)="onGradientChanged(colorBW)">
               <div class="gradient">
                 <app-colourslider colorStr="{{colorBW}}"> </app-colourslider>
               </div>
-            </li>
-            <li (click)="onGradientChanged(colorRainbow)">
-              <ion-icon name="ios-color-palette"></ion-icon>
-              Rainbow
+            </ion-item>
+            <ion-item (click)="onGradientChanged(colorRainbow)">
               <div class="gradient">
                 <app-colourslider colorStr="{{colorRainbow}}"> </app-colourslider>
               </div>
-            </li>
-            <li (click)="onGradientChanged(colorBlackBlue)">
-              <ion-icon name="ios-color-palette"></ion-icon>
-              Black/Blue
+            </ion-item>
+            <ion-item (click)="onGradientChanged(colorBlackBlue)">
               <div class="gradient">
                 <app-colourslider colorStr="{{colorBlackBlue}}"> </app-colourslider>
               </div>
-            </li>
-            <li (click)="onGradientChanged(colorCell)">
-              <ion-icon name="ios-color-palette"></ion-icon>
-              Cell
+            </ion-item>
+            <ion-item (click)="onGradientChanged(colorCell)">
               <div class="gradient">
                 <app-colourslider colorStr="{{colorCell}}"> </app-colourslider>
               </div>
-            </li>
-            <li (click)="onGradientChanged(colorBlob)">
-              <ion-icon name="ios-color-palette"></ion-icon>
-              Blob
+            </ion-item>
+            <ion-item (click)="onGradientChanged(colorBlob)">
               <div class="gradient">
                 <app-colourslider colorStr="{{colorBlob}}"> </app-colourslider>
               </div>
-            </li>
-            <li (click)="onGradientChanged(colorCrystal)">
-              <ion-icon name="ios-color-palette"></ion-icon>
-              Crystal
+            </ion-item>
+            <ion-item (click)="onGradientChanged(colorCrystal)">
               <div class="gradient">
                 <app-colourslider colorStr="{{colorCrystal}}"> </app-colourslider>
               </div>
-            </li>
-          </ul>
+            </ion-item>
+          </ion-list>
         </section>
 
         <section #FavoritesSection class="hide">
@@ -270,35 +256,49 @@
           </div>
 
           <div>
-            <ul class="key-val">
-              <li>
-                Equation
-                <span (click)="clickEquation($event)">{{this.fractal.getCalculationFunction().getName()}}</span>
-              </li>
-              <li>
-                Real Center
-                <input [(ngModel)]="this.fractal.complexPlain.getSquare().center.r" (ngModelChange)="ngModelChangeCenter()" type="number" value="{{this.fractal.complexPlain.getSquare().center.r}}">
-              </li>
-              <li>
-                Imaginary Center
-                <input [(ngModel)]="this.fractal.complexPlain.getSquare().center.i" (ngModelChange)="ngModelChangeCenter()" type="number" value="{{this.fractal.complexPlain.getSquare().center.i}}">
-              </li>
-              <li>
-                Width
-                <input [(ngModel)]="this.fractal.complexPlain.getSquare().width" (ngModelChange)="ngModelChangeWidth()" type="number" value="{{this.fractal.complexPlain.getSquare().width}}">
-              </li>
+            <ion-list class="key-val">
+              <ion-item>
+                <ion-label>Equation</ion-label>
+              
+                  <span (click)="clickEquation($event)">{{this.fractal.getCalculationFunction().getName()}}</span>
+              
+              </ion-item>
+              <ion-item>
+                <ion-label>Real Center</ion-label>
+          
+                  <ion-input [(ngModel)]="this.fractal.complexPlain.getSquare().center.r" (ngModelChange)="ngModelChangeCenterR($event)" type="number"></ion-input>
+  
+              </ion-item>
+              <ion-item>
+                <ion-label>Imaginary Center</ion-label>
+       
+                  <ion-input [(ngModel)]="this.fractal.complexPlain.getSquare().center.i" (ngModelChange)="ngModelChangeCenterI($event)" type="number"></ion-input>
+               
+              </ion-item>
+              <ion-item>
+                <ion-label>Width</ion-label>
+             
+                  <ion-input [(ngModel)]="this.fractal.complexPlain.getSquare().width" (ngModelChange)="ngModelChangeWidth($event)" type="number"></ion-input>
+             
+              </ion-item>
 
               <div *ngIf="this.fractal.getCalculationFunction().getName() == 'Julia';">
-                <li>Real Julia Value
-                  <input [(ngModel)]="this.fractal.getCalculationFunction().juliaReal" (ngModelChange)="ngModelChangeJulia()" type="number" value="{{this.fractal.getCalculationFunction().juliaReal}}">
-                </li>
-                <li>Imaginary Julia Value
-                  <input [(ngModel)]="this.fractal.getCalculationFunction().juliaImaginary" (ngModelChange)="ngModelChangeJulia()" type="number" value="{{this.fractal.getCalculationFunction().juliaImaginary}}">
-                </li>
+                <ion-item>
+                  <ion-label>Real Julia Value</ion-label>
+                 
+                    <ion-input [(ngModel)]="this.fractal.getCalculationFunction().juliaReal" (ngModelChange)="ngModelChangeJuliaR($event)" type="number"></ion-input>
+              
+                </ion-item>
+                <ion-item>
+                  <ion-label>Imaginary Julia Value</ion-label>
+              
+                    <ion-input [(ngModel)]="this.fractal.getCalculationFunction().juliaImaginary" (ngModelChange)="ngModelChangeJuliaI($event)" type="number"></ion-input>
+             
+                </ion-item>
               </div>
 
 
-            </ul>
+            </ion-list>
 
           </div>
 

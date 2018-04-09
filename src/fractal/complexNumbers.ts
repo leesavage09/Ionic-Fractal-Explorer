@@ -1,6 +1,6 @@
 export class ComplexNumber {
-	readonly r: number;
-	readonly i: number;
+	r: number;
+	i: number;
 	constructor(real, imaginary) {
 		this.r = real;
 		this.i = imaginary;

@@ -50,10 +50,10 @@ export class ExplorerComponent implements OnInit, Fractals.FractalEventListner, 
   readonly colorBW: string = '{"mn":0,"md":0.5,"mx":1,"arr":[{"s":0,"c":{"r":0,"g":0,"b":0}},{"s":1,"c":{"r":255,"g":255,"b":255}}]}'
   readonly colorRainbow: string = '{"mn":0,"md":0.5,"mx":1,"arr":[{"s":0,"c":{"r":255,"g":0,"b":0}},{"s":0.166,"c":{"r":255,"g":100,"b":0}},{"s":0.332,"c":{"r":249,"g":255,"b":0}},{"s":0.498,"c":{"r":0,"g":255,"b":13}},{"s":0.664,"c":{"r":0,"g":67,"b":255}},{"s":0.830,"c":{"r":133,"g":0,"b":255}},{"s":1,"c":{"r":255,"g":0,"b":215}}]}'
   readonly colorBlueGold: string = '{"mn":0,"md":0.5,"mx":1,"arr":[{"s":0,"c":{"r":0,"g":51,"b":255}},{"s":0.8041666666666667,"c":{"r":255,"g":200,"b":0}},{"s":1,"c":{"r":255,"g":115,"b":0}}]}';
-  readonly colorBlackBlue: string = '{"mn":0.04325513196480939,"md":0.5,"mx":1,"arr":[{"s":0,"c":{"r":0,"g":0,"b":0}},{"s":0.21994134897360704,"c":{"r":0,"g":51,"b":255}},{"s":0.49560117302052786,"c":{"r":255,"g":200,"b":0}},{"s":1,"c":{"r":255,"g":255,"b":255}}]}'
-  readonly colorCell: string = '{"mn":0,"md":0.43328445747800587,"mx":1,"arr":[{"s":0,"c":{"r":0,"g":0,"b":0}},{"s":0.1590909090909091,"c":{"r":0,"g":0,"b":0}},{"s":0.16715542521994134,"c":{"r":89,"g":255,"b":225}},{"s":0.17668621700879766,"c":{"r":0,"g":0,"b":0}},{"s":0.30058651026392963,"c":{"r":74,"g":104,"b":255}},{"s":0.5175953079178885,"c":{"r":18,"g":255,"b":0}},{"s":1,"c":{"r":255,"g":255,"b":255}}]}'
-  readonly colorBlob: string = '{"mn":0,"md":0.36363636363636365,"mx":1,"arr":[{"s":0,"c":{"r":255,"g":255,"b":255}},{"s":0.1495601173020528,"c":{"r":255,"g":255,"b":255}},{"s":0.16715542521994134,"c":{"r":0,"g":0,"b":0}},{"s":0.18841642228739003,"c":{"r":255,"g":255,"b":255}},{"s":0.30058651026392963,"c":{"r":255,"g":0,"b":0}},{"s":0.5175953079178885,"c":{"r":255,"g":110,"b":63}},{"s":1,"c":{"r":255,"g":221,"b":0}}]}'
-  readonly colorCrystal: string = '{"mn":0.2653958944281525,"md":0.4868035190615836,"mx":1,"arr":[{"s":0,"c":{"r":0,"g":0,"b":0}},{"s":0.001466275659824047,"c":{"r":0,"g":0,"b":0}},{"s":0.4897360703812317,"c":{"r":250,"g":255,"b":115}},{"s":1,"c":{"r":106,"g":103,"b":255}}]}'
+  readonly colorBlackBlue: string = '{"mn":0.0,"md":0.5,"mx":1,"arr":[{"s":0,"c":{"r":0,"g":0,"b":0}},{"s":0.21994134897360704,"c":{"r":0,"g":51,"b":255}},{"s":0.49560117302052786,"c":{"r":255,"g":200,"b":0}},{"s":1,"c":{"r":255,"g":255,"b":255}}]}'
+  readonly colorCell: string = '{"mn":0,"md":0.5,"mx":1,"arr":[{"s":0,"c":{"r":0,"g":0,"b":0}},{"s":0.1590909090909091,"c":{"r":0,"g":0,"b":0}},{"s":0.16715542521994134,"c":{"r":89,"g":255,"b":225}},{"s":0.17668621700879766,"c":{"r":0,"g":0,"b":0}},{"s":0.30058651026392963,"c":{"r":74,"g":104,"b":255}},{"s":0.5175953079178885,"c":{"r":18,"g":255,"b":0}},{"s":1,"c":{"r":255,"g":255,"b":255}}]}'
+  readonly colorBlob: string = '{"mn":0,"md":0.5,"mx":1,"arr":[{"s":0,"c":{"r":255,"g":255,"b":255}},{"s":0.1495601173020528,"c":{"r":255,"g":255,"b":255}},{"s":0.16715542521994134,"c":{"r":0,"g":0,"b":0}},{"s":0.18841642228739003,"c":{"r":255,"g":255,"b":255}},{"s":0.30058651026392963,"c":{"r":255,"g":0,"b":0}},{"s":0.5175953079178885,"c":{"r":255,"g":110,"b":63}},{"s":1,"c":{"r":255,"g":221,"b":0}}]}'
+  readonly colorCrystal: string = '{"mn":0.0,"md":0.5,"mx":1,"arr":[{"s":0,"c":{"r":0,"g":0,"b":0}},{"s":0.001466275659824047,"c":{"r":0,"g":0,"b":0}},{"s":0.4897360703812317,"c":{"r":250,"g":255,"b":115}},{"s":1,"c":{"r":106,"g":103,"b":255}}]}'
 
   private readonly libFav: Array<{ url: string, base64: string }> = [
     {
@@ -243,7 +243,9 @@ export class ExplorerComponent implements OnInit, Fractals.FractalEventListner, 
   onEqChanged(eqString) {
     this.NumIterations = 50;
     this.ngModelChangeIterations();
-    this.fractal.getColor().decodeJSON(this.colorBlackBlue);
+    this.fractal.getColor().setMin(0);
+    this.fractal.getColor().setMid(0.5);
+    this.fractal.getColor().setMax(1);
 
     if (eqString == "Mandelbrot") {
       this.fractal.complexPlain.replaceView(-0.8, 0, 3, <HTMLCanvasElement>this.mainFractalView.getCanvas())
@@ -331,21 +333,72 @@ export class ExplorerComponent implements OnInit, Fractals.FractalEventListner, 
     this.itInput.nativeElement.style.width = width;
   }
 
-  ngModelChangeWidth(){
-    if (this.fractal.complexPlain.getSquare().width == 0 || this.fractal.complexPlain.getSquare().width == null) this.fractal.complexPlain.getSquare().width = 1;
+  ngModelChangeWidth(event) {
+    var val = parseFloat(event);
+    if (isNaN(val)) {
+      console.log("isNaN")
+      this.fractal.complexPlain.getSquare().width = 1;
+    }
+    else if (val == 0 || val == null) {
+      console.log("0 or null")
+      this.fractal.complexPlain.getSquare().width = 1;
+    }
+    else {
+      this.fractal.complexPlain.getSquare().width = val;
+    }
     if (this.fractal.complexPlain.getSquare().width <= 5.2291950245225395e-15) this.fractal.complexPlain.getSquare().width = 4.0e-15;
     this.fractal.complexPlain.setWidth(this.fractal.complexPlain.getSquare().width);
     this.fractal.render();
   }
 
-  ngModelChangeCenter(){
+  ngModelChangeCenterR(event) {
+    var val = parseFloat(event);
+    if (isNaN(val)) {
+      console.log("isNaN")
+      this.fractal.complexPlain.getSquare().center.r = 0;
+    }
+    else {
+      this.fractal.complexPlain.getSquare().center.r = val;
+    }
     this.fractal.render();
   }
 
-  ngModelChangeJulia(){
-    var real = (<FractalEquations.Julia>this.fractal.getCalculationFunction()).juliaReal;
-    var imag = (<FractalEquations.Julia>this.fractal.getCalculationFunction()).juliaImaginary;
-    this.HTMLjuliaPicker.getFractalView().getFractal().complexPlain.setCenter(real,imag);
+  ngModelChangeCenterI(event) {
+    var val = parseFloat(event);
+    if (isNaN(val)) {
+      console.log("isNaN")
+      this.fractal.complexPlain.getSquare().center.i = 0;
+    }
+    else {
+      this.fractal.complexPlain.getSquare().center.i = val;
+    }
+    this.fractal.render();
+  }
+
+  ngModelChangeJuliaR(event) {
+    var real = parseFloat(event);
+    if (isNaN(real)) {
+      (<FractalEquations.Julia>this.fractal.getCalculationFunction()).juliaReal = 0;
+      this.HTMLjuliaPicker.getFractalView().getFractal().complexPlain.setCenter(0, this.HTMLjuliaPicker.getFractalView().getFractal().complexPlain.getSquare().center.i);
+    } else {
+      (<FractalEquations.Julia>this.fractal.getCalculationFunction()).juliaReal = real;
+      this.HTMLjuliaPicker.getFractalView().getFractal().complexPlain.setCenter(real, this.HTMLjuliaPicker.getFractalView().getFractal().complexPlain.getSquare().center.i);
+    }
+
+    this.fractal.render();
+    this.HTMLjuliaPicker.getFractalView().getFractal().render();
+  }
+
+  ngModelChangeJuliaI(event) {
+    var imag = parseFloat(event);
+    if (isNaN(imag)) {
+      (<FractalEquations.Julia>this.fractal.getCalculationFunction()).juliaImaginary = 0;
+      this.HTMLjuliaPicker.getFractalView().getFractal().complexPlain.setCenter(this.HTMLjuliaPicker.getFractalView().getFractal().complexPlain.getSquare().center.r, 0);
+    } else {
+      (<FractalEquations.Julia>this.fractal.getCalculationFunction()).juliaImaginary = imag;
+      this.HTMLjuliaPicker.getFractalView().getFractal().complexPlain.setCenter(this.HTMLjuliaPicker.getFractalView().getFractal().complexPlain.getSquare().center.r, imag);
+    }
+
     this.fractal.render();
     this.HTMLjuliaPicker.getFractalView().getFractal().render();
   }
@@ -358,8 +411,8 @@ export class ExplorerComponent implements OnInit, Fractals.FractalEventListner, 
     this.saveJpg(width, height);
   }
 
-  clickInfo(event){
-    
+  clickInfo(event) {
+
     this.HTMLwebView.nativeElement.setAttribute("class", "web-view open-full");
     this.setWebViewSection(this.infoSection);
   }
@@ -438,7 +491,7 @@ export class ExplorerComponent implements OnInit, Fractals.FractalEventListner, 
     window.dispatchEvent(new Event('resize'));
   }
 
-  testIntent(){
+  testIntent() {
     //this.saveAndroid(this.imageToDownload);
     // id
     // "9990;/storage/emulated/0/Pictures/Fractal Explorer/2018-2-27-18.png"
@@ -792,7 +845,7 @@ export class ExplorerComponent implements OnInit, Fractals.FractalEventListner, 
 
   private getPhotoLibraryAuthorization(base64: string) {
     var self = this;
-    this.photoLibrary.requestAuthorization({read:true,write:true}).then(
+    this.photoLibrary.requestAuthorization({ read: true, write: true }).then(
       function () {
         //console.log("requestAuthorization granted");
         self.saveAndroid(base64);
