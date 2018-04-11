@@ -220,7 +220,7 @@ export class FractalViewComponent implements Fractals.FractalChangeObserver {
   */
 
   touchStartDrag(event) {
-    event.preventDefault();
+    if (event.cancelable) event.preventDefault();
     event = this.addTocuchOffsets(event);
     if (event.touches.length === 2) {
       this.fractal.getAnimator().dragEnd(event.offsetX, event.offsetY, false);
@@ -241,7 +241,7 @@ export class FractalViewComponent implements Fractals.FractalChangeObserver {
   }
 
   touchMove(event) {
-    event.preventDefault();
+    if (event.cancelable) event.preventDefault();
     if (this.zoomGestureHappening) {
       var dist = Math.abs(Math.hypot(event.touches[0].clientX - event.touches[1].clientX, event.touches[0].clientY - event.touches[1].clientY));
       this.fractal.getAnimator().zoomByScale(dist);
@@ -256,7 +256,7 @@ export class FractalViewComponent implements Fractals.FractalChangeObserver {
   }
 
   touchEndDrag(event) {
-    event.preventDefault();
+    if (event.cancelable) event.preventDefault();
     if (this.zoomGestureHappening) {
       this.zoomGestureHappening = false;
       this.fractal.getAnimator().zoomByScaleEnd();

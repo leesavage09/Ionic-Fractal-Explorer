@@ -53,11 +53,11 @@
 
         <div #iterationControls class="iteration controls">
           <div class="btn-group shaddow-high" data-toggle="buttons">
-            <a (touchstart)="startChangingIterations(0.95)" (touchend)="stopChangingIterations()" (mousedown)='startChangingIterations(0.9)' (mouseup)="stopChangingIterations()" (mouseleave)='stopChangingIterations()' class="btn">
+            <a (touchstart)="startChangingIterations($event,0.95)" (touchend)="stopChangingIterations($event)" (mousedown)='startChangingIterations($event,0.9)' (mouseup)="stopChangingIterations($event)" (mouseleave)='stopChangingIterations($event)' class="btn">
               <i class="fa fa-minus" aria-hidden="true"></i>
             </a>
             <input #itInput class="iteration-textbox" [(ngModel)]="NumIterations" (ngModelChange)="ngModelChangeIterations()" type="number" min="2" value="85">
-            <a (touchstart)="startChangingIterations(1.05)" (touchend)="stopChangingIterations()" (mousedown)='startChangingIterations(1.1)' (mouseup)="stopChangingIterations()" (mouseleave)='stopChangingIterations()' class="btn">
+            <a (touchstart)="startChangingIterations($event,1.05)" (touchend)="stopChangingIterations($event)" (mousedown)='startChangingIterations($event,1.1)' (mouseup)="stopChangingIterations($event)" (mouseleave)='stopChangingIterations($event)' class="btn">
               <i class="fa fa-plus" aria-hidden="true"></i>
             </a>
           </div>

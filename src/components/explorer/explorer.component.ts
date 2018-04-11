@@ -304,13 +304,14 @@ export class ExplorerComponent implements OnInit, Fractals.FractalEventListner, 
     this.clickWebView(false);
   }
 
-  startChangingIterations(i) {
+  startChangingIterations(event,i) {
+    event.preventDefault();
     if (this.iterationsAreChanging) return;
-    this.updateNumIterations(i);
-    this.animateIterations(i);
+    this.animateIterations(i, true);    
   }
 
-  stopChangingIterations() {
+  stopChangingIterations(event) {
+    event.preventDefault();
     this.iterationsAreChanging = false;
   }
 
@@ -777,18 +778,18 @@ export class ExplorerComponent implements OnInit, Fractals.FractalEventListner, 
   * Private Functions \/
   */
 
-  private animateIterations(i) {
+  private animateIterations(i: number, first: boolean = false) {
     var self = this;
     this.iterationsAreChanging = true;
     this.fractal.stopRendering();
-    setTimeout(function () {
+    setTimeout(function () { 
       if (!self.iterationsAreChanging) {
+        if (first) self.updateNumIterations(i);
         if (self.fractal.webGL) self.fractal.renderWebGLFull();
         return;
       }
 
       self.updateNumIterations(i);
-
       self.animateIterations(i);
     }, 100);
   }

@@ -31,7 +31,7 @@ export namespace Fractals {
 		private virtexShader = `precision lowp float;
 								attribute vec2 a_Position;
 								void main() {
-								gl_Position = vec4(a_Position.x, a_Position.y, 0.0, 1.0);
+									gl_Position = vec4(a_Position.x, a_Position.y, 0.0, 1.0);
 								}`;
 		private webGLperformanceRes = 1;
 		private hiResCPU = true;
@@ -105,7 +105,7 @@ export namespace Fractals {
 					this.precision = low.precision;
 				}
 			}
-			
+
 			return str + `								
 			uniform vec2 u_zoomCenter;
 			uniform vec2 u_zoomSize;
@@ -373,18 +373,20 @@ export namespace Fractals {
 			window.requestAnimationFrame(function () {
 				let now = performance.now();
 				let dt = now - then;
-				if (dt > 33) {
-					self.webGLperformanceRes = self.webGLperformanceRes * 0.5;
+				if (dt > 40) {
+					let reduction = 1 / (dt / 40)
+					self.webGLperformanceRes = self.webGLperformanceRes * reduction;
+					if (self.webGLperformanceRes < 0.05) self.webGLperformanceRes = 0.05
 				}
 				if (dt < 10) {
-					self.webGLperformanceRes = self.webGLperformanceRes * 1.25;
+					let increase = 1 / (dt / 10)
+					self.webGLperformanceRes = self.webGLperformanceRes * increase;
+					if (self.webGLperformanceRes > 1.0) self.webGLperformanceRes = 1.0;
 				}
-				if (self.webGLperformanceRes > 1.0) self.webGLperformanceRes = 1.0;
-				else if (self.webGLperformanceRes < 0.05) self.webGLperformanceRes = 0.05
 			});
 		}
 
-		private renderWebGL() {			
+		private renderWebGL() {
 			let julia_c_value = { r: 0.0, i: 0.0 };
 			if (this.fractal_fragment == FractalEquations.Julia.eq_name) {
 				julia_c_value = { r: (<FractalEquations.Julia>this.calculationFunction).juliaReal, i: (<FractalEquations.Julia>this.calculationFunction).juliaImaginary };
@@ -472,7 +474,7 @@ export namespace Fractals {
 				else {
 					this.renderWebGLFull();
 					return;
-				}				
+				}
 			}
 			else {
 				if (this.isInWebGLPrecision()) {
@@ -485,7 +487,7 @@ export namespace Fractals {
 				else {
 					this.renderCPU();
 					return;
-				}				
+				}
 			}
 		}
 
