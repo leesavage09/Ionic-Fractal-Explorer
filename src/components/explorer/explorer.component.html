@@ -80,9 +80,6 @@
             <ion-icon name="ios-image"></ion-icon>
             <span #saveText> Save</span>
           </a>
-          <a (click)="clickLibrary($event)" class="btn">
-            <ion-icon name="ios-bookmark"></ion-icon> Library
-          </a>
           <a (click)="clickEquation($event)" class="btn">
             <ion-icon name="ios-cog"></ion-icon> Equations
           </a>
@@ -98,6 +95,9 @@
           </a>
           <a (click)="clickInfo($event)" class="btn">
             <ion-icon name="md-information-circle"></ion-icon> Info
+          </a>
+          <a (click)="clickSettings($event)" class="btn">
+            <ion-icon name="md-build"></ion-icon> Settings
           </a>
         </div>
 
@@ -138,19 +138,6 @@
               <span>{{this.fractal.complexPlain.getViewCanvas().width * 8}} X {{this.fractal.complexPlain.getViewCanvas().height * 8}}</span>
             </ion-item>
           </ion-list>
-        </section>
-
-        <section #LibrarySection class="hide">
-          <div class="header">
-            <ion-icon (click)="clickWebView(true)" name="md-close-circle"></ion-icon>
-            <h1>Library</h1>
-          </div>
-
-          <div *ngFor="let lib of libFav">
-            <div class="cards" (click)="onLibrarySelection($event,lib)">
-              <img class="fractalTumb" src="{{lib.base64}}" width="512px" height="288px">
-            </div>
-          </div>
         </section>
 
         <section #equationSection class="hide">
@@ -242,9 +229,19 @@
             <ion-icon name="ios-star"></ion-icon>Save to favorites</a>
 
           <div *ngFor="let fav of favorites">
-            <div class="cards" (click)="onLibrarySelection($event,fav)">
+            <div class="cards clickable" (click)="onLibrarySelection($event,fav)">
               <img class="fractalTumb" src="{{fav.base64}}" width="512px" height="288px">
               <ion-icon (click)="deleteFavorite($event,fav)" name="md-close-circle"></ion-icon>
+            </div>
+          </div>
+
+          <div class="header pos">
+            Library Items
+          </div>
+
+          <div *ngFor="let lib of libFav">
+            <div class="cards clickable" (click)="onLibrarySelection($event,lib)">
+              <img class="fractalTumb" src="{{lib.base64}}" width="512px" height="288px">
             </div>
           </div>
         </section>
@@ -259,55 +256,78 @@
             <ion-list class="key-val">
               <ion-item>
                 <ion-label>Equation</ion-label>
-              
-                  <span (click)="clickEquation($event)">{{this.fractal.getCalculationFunction().getName()}}</span>
-              
+
+                <span (click)="clickEquation($event)">{{this.fractal.getCalculationFunction().getName()}}</span>
+
               </ion-item>
               <ion-item>
                 <ion-label>Real Center</ion-label>
-          
-                  <ion-input [(ngModel)]="this.fractal.complexPlain.getSquare().center.r" (ngModelChange)="ngModelChangeCenterR($event)" type="number"></ion-input>
-  
+
+                <ion-input [(ngModel)]="this.fractal.complexPlain.getSquare().center.r" (ngModelChange)="ngModelChangeCenterR($event)" type="number"></ion-input>
+
               </ion-item>
               <ion-item>
                 <ion-label>Imaginary Center</ion-label>
-       
-                  <ion-input [(ngModel)]="this.fractal.complexPlain.getSquare().center.i" (ngModelChange)="ngModelChangeCenterI($event)" type="number"></ion-input>
-               
+
+                <ion-input [(ngModel)]="this.fractal.complexPlain.getSquare().center.i" (ngModelChange)="ngModelChangeCenterI($event)" type="number"></ion-input>
+
               </ion-item>
               <ion-item>
                 <ion-label>Width</ion-label>
-             
-                  <ion-input [(ngModel)]="this.fractal.complexPlain.getSquare().width" (ngModelChange)="ngModelChangeWidth($event)" type="number"></ion-input>
-             
+
+                <ion-input [(ngModel)]="this.fractal.complexPlain.getSquare().width" (ngModelChange)="ngModelChangeWidth($event)" type="number"></ion-input>
+
               </ion-item>
 
               <div *ngIf="this.fractal.getCalculationFunction().getName() == 'Julia';">
                 <ion-item>
                   <ion-label>Real Julia Value</ion-label>
-                 
-                    <ion-input [(ngModel)]="this.fractal.getCalculationFunction().juliaReal" (ngModelChange)="ngModelChangeJuliaR($event)" type="number"></ion-input>
-              
+
+                  <ion-input [(ngModel)]="this.fractal.getCalculationFunction().juliaReal" (ngModelChange)="ngModelChangeJuliaR($event)" type="number"></ion-input>
+
                 </ion-item>
                 <ion-item>
                   <ion-label>Imaginary Julia Value</ion-label>
-              
-                    <ion-input [(ngModel)]="this.fractal.getCalculationFunction().juliaImaginary" (ngModelChange)="ngModelChangeJuliaI($event)" type="number"></ion-input>
-             
+
+                  <ion-input [(ngModel)]="this.fractal.getCalculationFunction().juliaImaginary" (ngModelChange)="ngModelChangeJuliaI($event)" type="number"></ion-input>
+
                 </ion-item>
               </div>
-
-
             </ion-list>
 
           </div>
+        </section>
 
-          <a class="btn" (click)="addToFavorites()">
-            <ion-icon name="ios-star"></ion-icon> Save to favorites</a>
-          <a class="btn" (click)="clickShare($event)">
-            <ion-icon name="share"></ion-icon> Share this fractal</a>
+        <section #settingsSection class="hide">
+          <div class="header">
+            <ion-icon (click)="clickWebView(true)" name="md-close-circle"></ion-icon>
+            <h1>Settings</h1>
+          </div>
 
+          <div class="cards">
+            <h3>Force Rendering Mode</h3>
+            <p>Somtimes you might want to force the rendering to be either on the GPU or the CPU, The default mode is autodetect.
+              <br>
+              <br> When in autodetect mode the rendering will automaticly switch between CPU or GPU
+              <br>
+              <br> Somtimes for example when exploring extrerm julia numbers presision can be lost early even when you are not zoomed excesivly, In this case you can select to force CPU mode for extra presission.
+            </p>
 
+            <ion-list radio-group [(ngModel)]="renderingMode" (ngModelChange)="renderingModeChanged(renderingMode)">
+              <ion-item>
+                <ion-label>Auto</ion-label>
+                <ion-radio value="auto" checked></ion-radio>
+              </ion-item>
+              <ion-item>
+                <ion-label>Force GPU</ion-label>
+                <ion-radio value="gpu"></ion-radio>
+              </ion-item>
+              <ion-item>
+                <ion-label>Force CPU</ion-label>
+                <ion-radio value="cpu"></ion-radio>
+              </ion-item>
+            </ion-list>
+          </div>>
         </section>
 
       </div>

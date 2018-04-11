@@ -43,6 +43,7 @@ export class ExplorerComponent implements OnInit, Fractals.FractalEventListner, 
   @ViewChild('LibrarySection') readonly librarySection: ElementRef;
   @ViewChild('FavoritesSection') readonly favoritesSection: ElementRef;
   @ViewChild('InfoSection') readonly infoSection: ElementRef;
+  @ViewChild('settingsSection') readonly settingsSection: ElementRef;
   @ViewChild('itSpan') readonly itSpan: ElementRef;
   @ViewChild('itInput') readonly itInput: ElementRef;
   @ViewChild('intColor') readonly intColor: ElementRef;
@@ -304,10 +305,10 @@ export class ExplorerComponent implements OnInit, Fractals.FractalEventListner, 
     this.clickWebView(false);
   }
 
-  startChangingIterations(event,i) {
+  startChangingIterations(event, i) {
     event.preventDefault();
     if (this.iterationsAreChanging) return;
-    this.animateIterations(i, true);    
+    this.animateIterations(i, true);
   }
 
   stopChangingIterations(event) {
@@ -413,9 +414,13 @@ export class ExplorerComponent implements OnInit, Fractals.FractalEventListner, 
   }
 
   clickInfo(event) {
-
     this.HTMLwebView.nativeElement.setAttribute("class", "web-view open-full");
     this.setWebViewSection(this.infoSection);
+  }
+
+  clickSettings() {
+    this.HTMLwebView.nativeElement.setAttribute("class", "web-view open-full");
+    this.setWebViewSection(this.settingsSection);
   }
 
   clickSave(event) {
@@ -723,6 +728,26 @@ export class ExplorerComponent implements OnInit, Fractals.FractalEventListner, 
   * Callbacks
   */
 
+  renderingModeChanged(mode) {
+    if (mode == "auto") {
+      this.fractal.webGLauto(true);
+      this.HTMLjuliaPicker.getFractalView().getFractal().webGLauto(true);
+    }
+    else {
+      this.fractal.webGLauto(false);
+      this.HTMLjuliaPicker.getFractalView().getFractal().webGLauto(false);
+    }
+    
+    if (mode == "gpu") {
+      this.fractal.turnOnWebGL(true);
+      this.HTMLjuliaPicker.getFractalView().getFractal().turnOnWebGL(true);
+    }
+    else if (mode == "cpu") {
+      this.fractal.turnOnWebGL(false);
+      this.HTMLjuliaPicker.getFractalView().getFractal().turnOnWebGL(false);
+    }
+  }
+
   linearGradientChanging() {
     var rgb = this.fractal.getColor().getInteriorColor();
     this.intColor.nativeElement.style.backgroundColor = "rgb(" + rgb.r + "," + rgb.g + "," + rgb.b + ")"
@@ -761,6 +786,7 @@ export class ExplorerComponent implements OnInit, Fractals.FractalEventListner, 
   }
 
   juliaNumberChanged(center: ComplexNumber, res: String) {
+    this.fractal.stopRendering();
     let fun = this.fractal.getCalculationFunction();
     if (fun instanceof FractalEquations.Julia) {
       (<FractalEquations.Julia>fun).juliaReal = center.r;
@@ -769,7 +795,7 @@ export class ExplorerComponent implements OnInit, Fractals.FractalEventListner, 
         if (res == 'full') this.fractal.renderWebGLFull()
         else this.fractal.renderWebGLLow()
       } else {
-        this.fractal.renderCPU();
+        if (res == 'full') this.fractal.renderCPU();
       }
     }
   }
@@ -782,7 +808,7 @@ export class ExplorerComponent implements OnInit, Fractals.FractalEventListner, 
     var self = this;
     this.iterationsAreChanging = true;
     this.fractal.stopRendering();
-    setTimeout(function () { 
+    setTimeout(function () {
       if (!self.iterationsAreChanging) {
         if (first) self.updateNumIterations(i);
         if (self.fractal.webGL) self.fractal.renderWebGLFull();

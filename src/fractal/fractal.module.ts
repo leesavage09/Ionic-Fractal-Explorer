@@ -23,6 +23,7 @@ export namespace Fractals {
 		public currentScanLine = 0;
 		public webGL: boolean = false;
 		public webGLisBroken: boolean = false;
+		public webGLautoMode: boolean = true;
 		public webGLcanvas: HTMLCanvasElement;
 		private webGLcontext;
 		private webGLprogram;
@@ -300,11 +301,30 @@ export namespace Fractals {
 			}`;
 		}
 
-		private webGLbroken(reason: string) {
+		public webGLbroken(reason: string) {
 			console.log(reason);
 			this.webGLisBroken = true;
-			this.webGL = false;
+			this.turnOnWebGL(false);
 			return;
+		}
+
+		public webGLauto(b:boolean){
+			this.webGLautoMode = b;
+		}
+
+		public turnOnWebGL(on) {
+			if (on) {
+				this.webGL = true;
+				if (this.fractalEventListner != null) this.fractalEventListner.switchWebGLRendering();
+				this.webGLcanvas.style.visibility = "visible";
+				this.renderWebGLFull();
+			}
+			else {
+				this.webGL = false;
+				if (this.fractalEventListner != null) this.fractalEventListner.switchCPUrendering();
+				this.webGLcanvas.style.visibility = "hidden";
+				this.renderCPU();
+			}
 		}
 
 		private webGLcompile() {
@@ -464,11 +484,8 @@ export namespace Fractals {
 			}
 
 			if (this.webGL) {
-				if (!this.isInWebGLPrecision()) {
-					this.webGL = false;
-					if (this.fractalEventListner != null) this.fractalEventListner.switchCPUrendering();
-					this.webGLcanvas.style.visibility = "hidden";
-					this.renderCPU();
+				if (this.webGLautoMode && !this.isInWebGLPrecision()) {
+					this.turnOnWebGL(false);
 					return;
 				}
 				else {
@@ -477,11 +494,8 @@ export namespace Fractals {
 				}
 			}
 			else {
-				if (this.isInWebGLPrecision()) {
-					this.webGL = true;
-					if (this.fractalEventListner != null) this.fractalEventListner.switchWebGLRendering();
-					this.webGLcanvas.style.visibility = "visible";
-					this.renderWebGLFull();
+				if (this.webGLautoMode && this.isInWebGLPrecision()) {
+					this.turnOnWebGL(true);
 					return;
 				}
 				else {
@@ -491,7 +505,7 @@ export namespace Fractals {
 			}
 		}
 
-		public renderCPU(lowRes: boolean = true, hiRes: boolean = true) {
+		public renderCPU(lowRes: boolean = true, hiRes: boolean = true) {	
 			this.hiResCPU = hiRes;
 			this.stopRendering();
 
