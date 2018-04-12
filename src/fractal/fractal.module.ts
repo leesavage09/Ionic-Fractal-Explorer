@@ -382,6 +382,8 @@ export namespace Fractals {
 			if (calculateHistogram) this.renderCPU(true, false);
 		}
 
+		public static targetMaxFPS = 100;
+		public static targetMinFPS = 25;
 		public renderWebGLLow() {
 			var self = this;
 			let then = performance.now();
@@ -391,16 +393,21 @@ export namespace Fractals {
 			window.requestAnimationFrame(function () {
 				let now = performance.now();
 				let dt = now - then;
-				if (dt > 40) {
-					let reduction = 1 / (dt / 40)
+				let min = 1000/Fractal.targetMinFPS;
+				let max = 1000/Fractal.targetMaxFPS;
+				if (dt > min) {
+					let reduction = 1 / (dt / min)
 					self.webGLperformanceRes = self.webGLperformanceRes * reduction;
-					if (self.webGLperformanceRes < 0.05) self.webGLperformanceRes = 0.05
+					if (self.webGLperformanceRes < 0.05) self.webGLperformanceRes = 0.05;
+				//	console.log("red",self.webGLperformanceRes,Fractal.targetMinFPS)
 				}
-				if (dt < 10) {
-					let increase = 1 / (dt / 10)
+				if (dt < max) {
+					let increase = 1 / (dt / max)
 					self.webGLperformanceRes = self.webGLperformanceRes * increase;
 					if (self.webGLperformanceRes > 1.0) self.webGLperformanceRes = 1.0;
+				//	console.log("inc",self.webGLperformanceRes,Fractal.targetMaxFPS)
 				}
+				
 			});
 		}
 

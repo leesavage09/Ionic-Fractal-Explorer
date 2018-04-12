@@ -44,6 +44,7 @@ export class ExplorerComponent implements OnInit, Fractals.FractalEventListner, 
   @ViewChild('FavoritesSection') readonly favoritesSection: ElementRef;
   @ViewChild('InfoSection') readonly infoSection: ElementRef;
   @ViewChild('settingsSection') readonly settingsSection: ElementRef;
+  @ViewChild('helpSection') readonly helpSection: ElementRef;
   @ViewChild('itSpan') readonly itSpan: ElementRef;
   @ViewChild('itInput') readonly itInput: ElementRef;
   @ViewChild('intColor') readonly intColor: ElementRef;
@@ -105,6 +106,8 @@ export class ExplorerComponent implements OnInit, Fractals.FractalEventListner, 
   public savePromise: Promise<void> = null;
   public NumIterations: number = 50;
   public renderingMode: string = "auto";
+  public tminfps:number = 25;
+  public tmaxfps:number = 100;
 
   constructor(public platform: Platform, private socialSharing: SocialSharing, private photoLibrary: PhotoLibrary, private androidFullScreen: AndroidFullScreen, private toastCtrl: ToastController, private storage: Storage) {
     this.socialSharing = socialSharing;
@@ -554,6 +557,11 @@ export class ExplorerComponent implements OnInit, Fractals.FractalEventListner, 
     this.HTMLwebView.nativeElement.setAttribute("class", "web-view open-full");
     this.setWebViewSection(this.gradientSection);
     window.dispatchEvent(new Event('resize'));
+  }
+
+  clickHelp(){
+    this.HTMLwebView.nativeElement.setAttribute("class", "web-view open-full");
+    this.setWebViewSection(this.helpSection);
   }
 
   testIntent() {
@@ -1027,5 +1035,13 @@ export class ExplorerComponent implements OnInit, Fractals.FractalEventListner, 
 
     let content = host + "e=" + equation + "&g=" + color + "&i=" + iterations + "&c=" + complexCenter + "&w=" + complexWidth + "&p=" + complexJuliaPicker + "&r=" + juliaWidth;
     return encodeURI(content);
+  }
+
+  public targetMinFPS(target){
+    Fractals.Fractal.targetMinFPS = target;
+  }
+
+  public targetMaxFPS(target){
+    Fractals.Fractal.targetMaxFPS = target;
   }
 }

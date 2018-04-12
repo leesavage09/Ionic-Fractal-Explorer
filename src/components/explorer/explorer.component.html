@@ -99,6 +99,9 @@
           <a (click)="clickSettings($event)" class="btn">
             <ion-icon name="md-build"></ion-icon> Settings
           </a>
+          <a (click)="clickHelp($event)" class="btn">
+            <ion-icon name="md-help-circle"></ion-icon> Help
+          </a>
         </div>
 
       </div>
@@ -238,7 +241,7 @@
           <div>
             <ion-list class="key-val">
               <ion-item>
-                <ion-label  (click)="clickEquation($event)">
+                <ion-label (click)="clickEquation($event)">
                   Equation
                   <span>{{this.fractal.getCalculationFunction().getName()}}</span>
                 </ion-label>
@@ -310,7 +313,73 @@
                 <ion-radio value="cpu"></ion-radio>
               </ion-item>
             </ion-list>
-          </div>>
+          </div>
+
+          <div class="cards">
+            <h3>GPU target fps</h3>
+            <p>This is only releavent during animations, The final render quality is not affected
+              <br> If the FPS falls below the minimum quality will be reduced, If the FPS exedes the maximum then quality will be incressed
+              <br> The defauts are max:100 min:25</p>
+            
+            <ion-item>
+                <ion-label>Minimum target FPS</ion-label>
+                <ion-input [(ngModel)]="tminfps" (ngModelChange)="targetMinFPS(tminfps)" type="number"></ion-input>
+              </ion-item>
+            <ion-item>
+              <ion-label>Maximum target FPS</ion-label>
+              <ion-input [(ngModel)]="tmaxfps" (ngModelChange)="targetMaxFPS(tmaxfps)" type="number"></ion-input>
+            </ion-item>
+
+          </div>
+        </section>
+
+        <section #helpSection class="hide">
+          <div class="header">
+            <ion-icon (click)="clickWebView(true)" name="md-close-circle"></ion-icon>
+            <h1>Help</h1>
+          </div>
+
+
+          <div class="cards">
+            <h3>Exploring</h3>
+            <p>Use drag and pinch gestures or double tap to zoom. Mouse, trackpad and mouse wheels are also supported.</p>
+            <video class="video" poster="assets/imgs/logo.png" controls>
+              <source src="assets/video/exploring.mp4" type="video/mp4">
+            </video>
+          </div>
+
+          <div class="cards">
+            <h3>Changing Iterations</h3>
+            <p>Iterations control the detail of the fractal.</p>
+            <video class="video" poster="assets/imgs/logo.png" controls>
+              <source src="assets/video/iterations.mp4" type="video/mp4">
+            </video>
+          </div>
+
+          <div class="cards">
+            <h3>Create a gradient</h3>
+            <p>Creating a gradient.</p>
+            <video class="video" poster="assets/imgs/logo.png" controls>
+              <source src="assets/video/gradient.mp4" type="video/mp4">
+            </video>
+          </div>
+
+          <div class="cards">
+            <h3>Using the histogram</h3>
+            <p>Distort the gradient onto the fractal to control what colour is placed where.</p>
+            <video class="video" poster="assets/imgs/logo.png" controls>
+              <source src="assets/video/histogram.mp4" type="video/mp4">
+            </video>
+          </div>
+
+          <div class="cards">
+            <h3>The Julia Explorer</h3>
+            <p>Use the Julia picker to generate unique fractals from the Mandelbrot set.</p>
+            <video class="video" poster="assets/imgs/logo.png" controls>
+              <source src="assets/video/julia.mp4" type="video/mp4">
+            </video>
+          </div>
+
         </section>
 
       </div>

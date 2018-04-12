@@ -585,7 +585,11 @@ $color-danger: rgb(216, 25, 25);
                     margin-bottom: $padding * 2;
                     box-shadow: $shadow_2;
                     position: relative;
-                    display: inline-block;
+                    display: block;
+
+                    .video{
+                        width:100%;
+                    }
 
                     &.clickable {
                         .platform-core &:hover {
