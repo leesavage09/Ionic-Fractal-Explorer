@@ -101,6 +101,7 @@ export class ExplorerComponent implements OnInit, Fractals.FractalEventListner, 
   public juliaPickerWidth: string = "3";
   public savePromise: Promise<void> = null;
   public NumIterations: number = 50;
+  public renderingMode:string = "auto";
 
   constructor(public platform: Platform, private socialSharing: SocialSharing, private photoLibrary: PhotoLibrary, private androidFullScreen: AndroidFullScreen, private toastCtrl: ToastController, private storage: Storage) {
     this.socialSharing = socialSharing;
@@ -141,6 +142,13 @@ export class ExplorerComponent implements OnInit, Fractals.FractalEventListner, 
     this.fractal.render();
     this.fractal.getColor().subscribe(this);
     this.linearGradientChanging();
+
+    let width = parseFloat(this.juliaPickerWidth);
+    let centerJuliaPicker = this.complexJuliaPicker.split(",");
+    let centercenterJuliaPickerR = parseFloat(centerJuliaPicker[0]);
+    let centercenterJuliaPickerI = parseFloat(centerJuliaPicker[1]);
+    this.HTMLjuliaPicker.init(this.fractal.getColor(), this.NumIterations, centercenterJuliaPickerR, centercenterJuliaPickerI, width);
+    this.HTMLjuliaPicker.isOnScreen = false;
 
     this.ngModelChangeIterations();
 
@@ -613,14 +621,8 @@ export class ExplorerComponent implements OnInit, Fractals.FractalEventListner, 
     if (openView) {
       this.HTMLjuliaPullOut.nativeElement.classList.remove("close");
       this.HTMLjuliaPullOut.nativeElement.classList.add("open");
-      if (!this.HTMLjuliaPicker.hasInit) {
-        let width = parseFloat(this.juliaPickerWidth);
-        let centerJuliaPicker = this.complexJuliaPicker.split(",");
-        let centercenterJuliaPickerR = parseFloat(centerJuliaPicker[0]);
-        let centercenterJuliaPickerI = parseFloat(centerJuliaPicker[1]);
-        this.HTMLjuliaPicker.init(this.fractal.getColor(), this.NumIterations, centercenterJuliaPickerR, centercenterJuliaPickerI, width);
-      }
       this.HTMLjuliaPicker.isOnScreen = true;
+      this.HTMLjuliaPicker.getFractalView().getFractal().render();
     }
     else {
       this.HTMLjuliaPullOut.nativeElement.classList.remove("open");
@@ -730,21 +732,25 @@ export class ExplorerComponent implements OnInit, Fractals.FractalEventListner, 
 
   renderingModeChanged(mode) {
     if (mode == "auto") {
-      this.fractal.webGLauto(true);
-      this.HTMLjuliaPicker.getFractalView().getFractal().webGLauto(true);
+      Fractals.Fractal.webGLauto(true);
+      if (this.HTMLjuliaPicker.isOnScreen) this.HTMLjuliaPicker.getFractalView().getFractal().render();
+      this.fractal.render();
     }
     else {
-      this.fractal.webGLauto(false);
-      this.HTMLjuliaPicker.getFractalView().getFractal().webGLauto(false);
+      Fractals.Fractal.webGLauto(false);
     }
     
     if (mode == "gpu") {
       this.fractal.turnOnWebGL(true);
       this.HTMLjuliaPicker.getFractalView().getFractal().turnOnWebGL(true);
+      if (this.HTMLjuliaPicker.isOnScreen) this.HTMLjuliaPicker.getFractalView().getFractal().renderWebGLFull();
+      this.fractal.renderWebGLFull();
     }
     else if (mode == "cpu") {
       this.fractal.turnOnWebGL(false);
       this.HTMLjuliaPicker.getFractalView().getFractal().turnOnWebGL(false);
+      if (this.HTMLjuliaPicker.isOnScreen) this.HTMLjuliaPicker.getFractalView().getFractal().renderCPU();
+      this.fractal.renderCPU();
     }
   }
 

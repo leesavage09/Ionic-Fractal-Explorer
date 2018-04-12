@@ -23,7 +23,7 @@ export namespace Fractals {
 		public currentScanLine = 0;
 		public webGL: boolean = false;
 		public webGLisBroken: boolean = false;
-		public webGLautoMode: boolean = true;
+		private static webGLautoMode: boolean = true;
 		public webGLcanvas: HTMLCanvasElement;
 		private webGLcontext;
 		private webGLprogram;
@@ -308,8 +308,8 @@ export namespace Fractals {
 			return;
 		}
 
-		public webGLauto(b:boolean){
-			this.webGLautoMode = b;
+		public static webGLauto(b:boolean){
+			Fractal.webGLautoMode = b;
 		}
 
 		public turnOnWebGL(on) {
@@ -317,13 +317,11 @@ export namespace Fractals {
 				this.webGL = true;
 				if (this.fractalEventListner != null) this.fractalEventListner.switchWebGLRendering();
 				this.webGLcanvas.style.visibility = "visible";
-				this.renderWebGLFull();
 			}
 			else {
 				this.webGL = false;
 				if (this.fractalEventListner != null) this.fractalEventListner.switchCPUrendering();
 				this.webGLcanvas.style.visibility = "hidden";
-				this.renderCPU();
 			}
 		}
 
@@ -484,7 +482,7 @@ export namespace Fractals {
 			}
 
 			if (this.webGL) {
-				if (this.webGLautoMode && !this.isInWebGLPrecision()) {
+				if (Fractal.webGLautoMode && !this.isInWebGLPrecision()) {
 					this.turnOnWebGL(false);
 					return;
 				}
@@ -494,7 +492,7 @@ export namespace Fractals {
 				}
 			}
 			else {
-				if (this.webGLautoMode && this.isInWebGLPrecision()) {
+				if (Fractal.webGLautoMode && this.isInWebGLPrecision()) {
 					this.turnOnWebGL(true);
 					return;
 				}

@@ -18,28 +18,28 @@ export class JuliaPickerComponent implements Fractals.FractalChangeObserver {
   @Output() numberChanged = new EventEmitter<ComplexNumber>();
   @Output() numberChanging = new EventEmitter<ComplexNumber>();
   private movingMarker: boolean = false;
-  public hasInit: boolean = false
+  //public hasInit: boolean = false
   public isOnScreen: boolean = true;
   constructor() {
   }
 
   init(color: FractalColor.LinearGradient, iterations: number, pickerLocR: number, pickerLocI: number, viewWidth: number) {
-    if (this.hasInit) throw new Error("Julia picker has already init");
+    //if (this.hasInit) throw new Error("Julia picker has already init");
     let canvas = <HTMLCanvasElement>this.mainFractalView.getCanvas();
     let ctx = <CanvasRenderingContext2D>canvas.getContext("2d");
 
-    ctx.canvas.width = canvas.offsetWidth;
-    ctx.canvas.height = canvas.offsetHeight;
+    ctx.canvas.width = 250;
+    ctx.canvas.height = 200;
 
 
     this.juliaFractal = new Fractals.Fractal(new Fractals.ComplexPlain(pickerLocR, pickerLocI, viewWidth, canvas), new FractalEquations.Mandelbrot, color);
     this.juliaFractal.iterations = iterations;
     this.juliaFractal.subscribe(this);
     this.mainFractalView.setFractal(this.juliaFractal)
-    this.mainFractalView.getFractal().render();
+    //this.mainFractalView.getFractal().render();
 
-    this.setXY(this.getPickerX(), this.getPickerY());
-    this.hasInit = true;
+    this.setXY(125,100);
+    //this.hasInit = true;
   }
 
   public getFractalView(): FractalViewComponent {
@@ -84,12 +84,12 @@ export class JuliaPickerComponent implements Fractals.FractalChangeObserver {
   */
 
   public setIterations(i: number) {
-    if (this.hasInit) {
+    //if (this.hasInit) {
       this.juliaFractal.iterations = i;
       if (this.isOnScreen) {
         this.juliaFractal.render();
       }
-    }
+    //}
   }
 
 
