@@ -114,6 +114,24 @@ $color-danger: rgb(216, 25, 25);
     user-select: none;
 }
 
+@mixin delete-button {
+    position: absolute;
+    top: $padding;
+    right: $padding;
+    font-size: $button-size;
+    width: $button-size;
+    height: $button-size;
+    background-color: white;
+    color: $color-web-btn-bg;
+    border-bottom-left-radius: $corner-radius;
+
+    .platform-core &:hover {
+        color: $color-danger;
+    }
+
+    // z-index: 1;
+}
+
 .fade-show {
     animation-name: fadeIn;
     animation-duration: 0.5s;
@@ -481,8 +499,8 @@ $color-danger: rgb(216, 25, 25);
                     &.pos {
                         position: relative;
                         left: 0%;
-                        margin-left: - $padding;
-                        margin-right: - $padding;
+                        margin-left: -$padding;
+                        margin-right: -$padding;
                         box-shadow: $shadow_1;
                         z-index: 0;
                     }
@@ -504,41 +522,31 @@ $color-danger: rgb(216, 25, 25);
                 }
 
                 ion-list {
-                    list-style-type: none;
-                    -webkit-padding-start: 0;
-                    background-color: white;
                     margin: $padding;
                     box-shadow: $shadow_1;
-                    overflow: hidden;
-
+                    
                     ion-item {
                         width: 100%;
                         padding: $padding;
-                        list-style-type: none;
                         font-size: $font-size;
                         border-bottom-color: $color-web-btn-bg;
                         border-bottom-style: solid;
                         border-bottom-width: 2px;
-                        text-align: left;
-                        overflow: auto;
-                        display:table;
-
-                        .item-inner{
-                            border-style:none;
-                            box-shadow:none;
+                        
+                        .item-inner {
+                            border-style: none;
+                            box-shadow: none;
                         }
 
                         ion-label {
-                            display: table-cell;
                             padding: $padding;
                         }
 
                         ion-input {
-                                width: 100%;
-                                border-style: solid;
-                                border-width: 1px;
-                                border-color: black;
-                            
+                            width: 100%;
+                            border-style: solid;
+                            border-width: 1px;
+                            border-color: black;
                         }
 
                         span {
@@ -561,7 +569,9 @@ $color-danger: rgb(216, 25, 25);
                         .gradient {
                             width: 100%;
                             height: $button-size;
-                            //height:100%;
+                            ion-icon {
+                                @include delete-button;
+                            }
                         }
                     }
                 }
@@ -577,14 +587,14 @@ $color-danger: rgb(216, 25, 25);
                     position: relative;
                     display: inline-block;
 
-                    &.clickable{
+                    &.clickable {
                         .platform-core &:hover {
                             background-color: $color-ok;
-    
+
                             ion-icon {
                                 background-color: $color-ok;
                             }
-                        }  
+                        }
                     }
 
                     .fractalTumb {
@@ -593,22 +603,7 @@ $color-danger: rgb(216, 25, 25);
                     }
 
                     ion-icon {
-                        position: absolute;
-                        top: $padding;
-                        right: $padding;
-                        font-size: $button-size;
-                        width: $button-size;
-                        height: $button-size;
-                        background-color: white;
-                        color: $color-web-btn-bg;
-                        border-bottom-left-radius: $corner-radius;
-
-                        .platform-core &:hover {
-                            color: $color-danger;
-                        }
-
-                        // z-index: 1;
-                   
+                        @include delete-button;
                     }
                 }
 

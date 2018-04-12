@@ -484,6 +484,7 @@ export namespace Fractals {
 			if (this.webGL) {
 				if (Fractal.webGLautoMode && !this.isInWebGLPrecision()) {
 					this.turnOnWebGL(false);
+					this.renderCPU();
 					return;
 				}
 				else {
@@ -494,6 +495,7 @@ export namespace Fractals {
 			else {
 				if (Fractal.webGLautoMode && this.isInWebGLPrecision()) {
 					this.turnOnWebGL(true);
+					this.renderWebGLFull();
 					return;
 				}
 				else {

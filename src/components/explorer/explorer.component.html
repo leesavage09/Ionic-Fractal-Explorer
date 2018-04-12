@@ -78,7 +78,7 @@
         <div class="menu">
           <a #saveButton (click)="clickSave($event)" class="btn">
             <ion-icon name="ios-image"></ion-icon>
-            <span #saveText> Save</span>
+            <span #saveText> Image</span>
           </a>
           <a (click)="clickEquation($event)" class="btn">
             <ion-icon name="ios-cog"></ion-icon> Equations
@@ -108,7 +108,7 @@
         <section #saveSection class="hide">
           <div class="header">
             <ion-icon (click)="clickWebView(true)" name="md-close-circle"></ion-icon>
-            <h1>Save Size</h1>
+            <h1>Image Save Size</h1>
           </div>
 
           <ion-list>
@@ -180,40 +180,23 @@
             <h1>Gradients</h1>
           </div>
 
-          <ion-list>
-            <ion-item (click)="onGradientChanged(colorBlueGold)">
+          <a class="btn" (click)="addToGradient()">
+            <ion-icon name="ios-star"></ion-icon>Save Gradient</a>
+
+          <ion-list *ngFor="let gra of gradients">
+            <ion-item (click)="onGradientChanged(gra)">
               <div class="gradient">
-                <app-colourslider colorStr="{{colorBlueGold}}"> </app-colourslider>
+                <app-colourslider colorStr="{{gra}}"> </app-colourslider>
+
+                <ion-icon (click)="deleteGradient($event,gra)" name="md-close-circle"></ion-icon>
               </div>
             </ion-item>
-            <ion-item (click)="onGradientChanged(colorBW)">
+          </ion-list>
+
+          <ion-list *ngFor="let gra of libGra">
+            <ion-item (click)="onGradientChanged(gra)">
               <div class="gradient">
-                <app-colourslider colorStr="{{colorBW}}"> </app-colourslider>
-              </div>
-            </ion-item>
-            <ion-item (click)="onGradientChanged(colorRainbow)">
-              <div class="gradient">
-                <app-colourslider colorStr="{{colorRainbow}}"> </app-colourslider>
-              </div>
-            </ion-item>
-            <ion-item (click)="onGradientChanged(colorBlackBlue)">
-              <div class="gradient">
-                <app-colourslider colorStr="{{colorBlackBlue}}"> </app-colourslider>
-              </div>
-            </ion-item>
-            <ion-item (click)="onGradientChanged(colorCell)">
-              <div class="gradient">
-                <app-colourslider colorStr="{{colorCell}}"> </app-colourslider>
-              </div>
-            </ion-item>
-            <ion-item (click)="onGradientChanged(colorBlob)">
-              <div class="gradient">
-                <app-colourslider colorStr="{{colorBlob}}"> </app-colourslider>
-              </div>
-            </ion-item>
-            <ion-item (click)="onGradientChanged(colorCrystal)">
-              <div class="gradient">
-                <app-colourslider colorStr="{{colorCrystal}}"> </app-colourslider>
+                <app-colourslider colorStr="{{gra}}"> </app-colourslider>
               </div>
             </ion-item>
           </ion-list>
@@ -255,10 +238,10 @@
           <div>
             <ion-list class="key-val">
               <ion-item>
-                <ion-label>Equation</ion-label>
-
-                <span (click)="clickEquation($event)">{{this.fractal.getCalculationFunction().getName()}}</span>
-
+                <ion-label  (click)="clickEquation($event)">
+                  Equation
+                  <span>{{this.fractal.getCalculationFunction().getName()}}</span>
+                </ion-label>
               </ion-item>
               <ion-item>
                 <ion-label>Real Center</ion-label>

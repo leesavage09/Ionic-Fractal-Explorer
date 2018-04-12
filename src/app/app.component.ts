@@ -29,7 +29,6 @@ export class MyApp {
     });
 
     platform.resume.subscribe(() => {
-      console.log("resume")
     });
   }
 

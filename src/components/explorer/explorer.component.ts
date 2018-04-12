@@ -48,13 +48,15 @@ export class ExplorerComponent implements OnInit, Fractals.FractalEventListner, 
   @ViewChild('itInput') readonly itInput: ElementRef;
   @ViewChild('intColor') readonly intColor: ElementRef;
 
-  readonly colorBW: string = '{"mn":0,"md":0.5,"mx":1,"arr":[{"s":0,"c":{"r":0,"g":0,"b":0}},{"s":1,"c":{"r":255,"g":255,"b":255}}]}'
-  readonly colorRainbow: string = '{"mn":0,"md":0.5,"mx":1,"arr":[{"s":0,"c":{"r":255,"g":0,"b":0}},{"s":0.166,"c":{"r":255,"g":100,"b":0}},{"s":0.332,"c":{"r":249,"g":255,"b":0}},{"s":0.498,"c":{"r":0,"g":255,"b":13}},{"s":0.664,"c":{"r":0,"g":67,"b":255}},{"s":0.830,"c":{"r":133,"g":0,"b":255}},{"s":1,"c":{"r":255,"g":0,"b":215}}]}'
-  readonly colorBlueGold: string = '{"mn":0,"md":0.5,"mx":1,"arr":[{"s":0,"c":{"r":0,"g":51,"b":255}},{"s":0.8041666666666667,"c":{"r":255,"g":200,"b":0}},{"s":1,"c":{"r":255,"g":115,"b":0}}]}';
-  readonly colorBlackBlue: string = '{"mn":0.0,"md":0.5,"mx":1,"arr":[{"s":0,"c":{"r":0,"g":0,"b":0}},{"s":0.21994134897360704,"c":{"r":0,"g":51,"b":255}},{"s":0.49560117302052786,"c":{"r":255,"g":200,"b":0}},{"s":1,"c":{"r":255,"g":255,"b":255}}]}'
-  readonly colorCell: string = '{"mn":0,"md":0.5,"mx":1,"arr":[{"s":0,"c":{"r":0,"g":0,"b":0}},{"s":0.1590909090909091,"c":{"r":0,"g":0,"b":0}},{"s":0.16715542521994134,"c":{"r":89,"g":255,"b":225}},{"s":0.17668621700879766,"c":{"r":0,"g":0,"b":0}},{"s":0.30058651026392963,"c":{"r":74,"g":104,"b":255}},{"s":0.5175953079178885,"c":{"r":18,"g":255,"b":0}},{"s":1,"c":{"r":255,"g":255,"b":255}}]}'
-  readonly colorBlob: string = '{"mn":0,"md":0.5,"mx":1,"arr":[{"s":0,"c":{"r":255,"g":255,"b":255}},{"s":0.1495601173020528,"c":{"r":255,"g":255,"b":255}},{"s":0.16715542521994134,"c":{"r":0,"g":0,"b":0}},{"s":0.18841642228739003,"c":{"r":255,"g":255,"b":255}},{"s":0.30058651026392963,"c":{"r":255,"g":0,"b":0}},{"s":0.5175953079178885,"c":{"r":255,"g":110,"b":63}},{"s":1,"c":{"r":255,"g":221,"b":0}}]}'
-  readonly colorCrystal: string = '{"mn":0.0,"md":0.5,"mx":1,"arr":[{"s":0,"c":{"r":0,"g":0,"b":0}},{"s":0.001466275659824047,"c":{"r":0,"g":0,"b":0}},{"s":0.4897360703812317,"c":{"r":250,"g":255,"b":115}},{"s":1,"c":{"r":106,"g":103,"b":255}}]}'
+  private readonly libGra: Array<string> = [
+    '{"mn":0,"md":0.5,"mx":1,"arr":[{"s":0,"c":{"r":0,"g":0,"b":0}},{"s":1,"c":{"r":255,"g":255,"b":255}}]}',
+    '{"mn":0,"md":0.5,"mx":1,"arr":[{"s":0,"c":{"r":255,"g":0,"b":0}},{"s":0.166,"c":{"r":255,"g":100,"b":0}},{"s":0.332,"c":{"r":249,"g":255,"b":0}},{"s":0.498,"c":{"r":0,"g":255,"b":13}},{"s":0.664,"c":{"r":0,"g":67,"b":255}},{"s":0.830,"c":{"r":133,"g":0,"b":255}},{"s":1,"c":{"r":255,"g":0,"b":215}}]}',
+    '{"mn":0,"md":0.5,"mx":1,"arr":[{"s":0,"c":{"r":0,"g":51,"b":255}},{"s":0.8041666666666667,"c":{"r":255,"g":200,"b":0}},{"s":1,"c":{"r":255,"g":115,"b":0}}]}',
+    '{"mn":0.0,"md":0.5,"mx":1,"arr":[{"s":0,"c":{"r":0,"g":0,"b":0}},{"s":0.21994134897360704,"c":{"r":0,"g":51,"b":255}},{"s":0.49560117302052786,"c":{"r":255,"g":200,"b":0}},{"s":1,"c":{"r":255,"g":255,"b":255}}]}',
+    '{"mn":0,"md":0.5,"mx":1,"arr":[{"s":0,"c":{"r":0,"g":0,"b":0}},{"s":0.1590909090909091,"c":{"r":0,"g":0,"b":0}},{"s":0.16715542521994134,"c":{"r":89,"g":255,"b":225}},{"s":0.17668621700879766,"c":{"r":0,"g":0,"b":0}},{"s":0.30058651026392963,"c":{"r":74,"g":104,"b":255}},{"s":0.5175953079178885,"c":{"r":18,"g":255,"b":0}},{"s":1,"c":{"r":255,"g":255,"b":255}}]}',
+    '{"mn":0,"md":0.5,"mx":1,"arr":[{"s":0,"c":{"r":255,"g":255,"b":255}},{"s":0.1495601173020528,"c":{"r":255,"g":255,"b":255}},{"s":0.16715542521994134,"c":{"r":0,"g":0,"b":0}},{"s":0.18841642228739003,"c":{"r":255,"g":255,"b":255}},{"s":0.30058651026392963,"c":{"r":255,"g":0,"b":0}},{"s":0.5175953079178885,"c":{"r":255,"g":110,"b":63}},{"s":1,"c":{"r":255,"g":221,"b":0}}]}',
+    '{"mn":0.0,"md":0.5,"mx":1,"arr":[{"s":0,"c":{"r":0,"g":0,"b":0}},{"s":0.001466275659824047,"c":{"r":0,"g":0,"b":0}},{"s":0.4897360703812317,"c":{"r":250,"g":255,"b":115}},{"s":1,"c":{"r":106,"g":103,"b":255}}]}'
+  ];
 
   private readonly libFav: Array<{ url: string, base64: string }> = [
     {
@@ -96,12 +98,13 @@ export class ExplorerComponent implements OnInit, Fractals.FractalEventListner, 
   private iterationsAreChanging: boolean = false;
   private activeSection: ElementRef = this.saveSection;
   private favorites: Array<{ url: string, base64: string }> = new Array();
+  private gradients: Array<string> = new Array();
 
   public complexJuliaPicker: string = "-0.7,0.0";
   public juliaPickerWidth: string = "3";
   public savePromise: Promise<void> = null;
   public NumIterations: number = 50;
-  public renderingMode:string = "auto";
+  public renderingMode: string = "auto";
 
   constructor(public platform: Platform, private socialSharing: SocialSharing, private photoLibrary: PhotoLibrary, private androidFullScreen: AndroidFullScreen, private toastCtrl: ToastController, private storage: Storage) {
     this.socialSharing = socialSharing;
@@ -110,7 +113,7 @@ export class ExplorerComponent implements OnInit, Fractals.FractalEventListner, 
     this.toastCtrl = toastCtrl;
     this.storage = storage;
 
-    console.log("this.platform", this.platform.platforms());
+    //console.log("this.platform", this.platform.platforms());
 
     if (this.platform.is("android") && this.platform.is("cordova")) {
       androidFullScreen.isImmersiveModeSupported()
@@ -133,7 +136,7 @@ export class ExplorerComponent implements OnInit, Fractals.FractalEventListner, 
     ctx.canvas.height = canvas.offsetHeight;
 
     let gradient = new FractalColor.LinearGradient();
-    gradient.decodeJSON(this.colorBlackBlue)
+    gradient.decodeJSON(this.libGra[0])
 
     this.fractal = new Fractals.Fractal(new Fractals.ComplexPlain(-0.8, 0, 3, canvas), new FractalEquations.Mandelbrot, gradient);
     this.fractal.iterations = this.NumIterations;
@@ -155,13 +158,17 @@ export class ExplorerComponent implements OnInit, Fractals.FractalEventListner, 
     this.storage.get("favorites").then((val) => {
       if (val != null) this.favorites = val;
     });
+
+    this.storage.get("gradients").then((val) => {
+      if (val != null) this.gradients = val;
+    });
   }
 
   init(url: string) {
     var equation = "Mandelbrot";
     var complexCenter = "-0.8, 0";
     var complexWidthStr = "3";
-    var colorStr = this.colorBlackBlue;
+    var colorStr = this.libGra[0];
     var fractalEq: FractalEquations.equation = new FractalEquations.Mandelbrot;
 
     let st = decodeURI(url)
@@ -180,8 +187,8 @@ export class ExplorerComponent implements OnInit, Fractals.FractalEventListner, 
         colorStr = element[1];
       }
       if (element[0] == "i") {
-        this.NumIterations = parseInt(element[1])
-        this.ngModelChangeIterations();
+        this.NumIterations = parseInt(element[1]);
+        this.HTMLjuliaPicker.getFractalView().getFractal().iterations = this.NumIterations;
       }
       if (element[0] == "c") {
         complexCenter = element[1];
@@ -346,11 +353,9 @@ export class ExplorerComponent implements OnInit, Fractals.FractalEventListner, 
   ngModelChangeWidth(event) {
     var val = parseFloat(event);
     if (isNaN(val)) {
-      console.log("isNaN")
       this.fractal.complexPlain.getSquare().width = 1;
     }
     else if (val == 0 || val == null) {
-      console.log("0 or null")
       this.fractal.complexPlain.getSquare().width = 1;
     }
     else {
@@ -364,7 +369,6 @@ export class ExplorerComponent implements OnInit, Fractals.FractalEventListner, 
   ngModelChangeCenterR(event) {
     var val = parseFloat(event);
     if (isNaN(val)) {
-      console.log("isNaN")
       this.fractal.complexPlain.getSquare().center.r = 0;
     }
     else {
@@ -376,7 +380,6 @@ export class ExplorerComponent implements OnInit, Fractals.FractalEventListner, 
   ngModelChangeCenterI(event) {
     var val = parseFloat(event);
     if (isNaN(val)) {
-      console.log("isNaN")
       this.fractal.complexPlain.getSquare().center.i = 0;
     }
     else {
@@ -463,6 +466,50 @@ export class ExplorerComponent implements OnInit, Fractals.FractalEventListner, 
       position: 'middle',
       cssClass: "toast"
     }).present();
+  }
+
+  addToGradient() {
+    var str = this.fractal.getColor().encodeJSON();
+    this.gradients.unshift(str);
+    this.storage.set('gradients', this.gradients);
+    this.toastCtrl.create({
+      message: 'Saved Gradient',
+      duration: 1000,
+      position: 'middle',
+      cssClass: "toast"
+    }).present();
+    window.requestAnimationFrame(function () {
+      window.dispatchEvent(new Event('resize'));
+    });
+  }
+
+  deleteGradient(event, gra: string) {
+    event.stopPropagation();
+    this.HTMLalertComponent.titleStr = "Delete"
+    this.HTMLalertComponent.textStr = "Are you sure you want to delete this Gradient?."
+    this.HTMLalertComponent.noStr = "Cancel"
+    this.HTMLalertComponent.yesStr = "Delete"
+    this.HTMLalertComponent.enableOptions(false, true, true);
+    this.HTMLalertComponent.setCallback(function (str) {
+      if (str == "yes") {
+        var index = this.gradients.indexOf(gra);
+        if (index !== -1) {
+          this.gradients.splice(index, 1);
+        }
+        this.storage.set('gradients', this.gradients);
+        this.closeAlert(null);
+        this.toastCtrl.create({
+          message: 'Gradient deleted',
+          duration: 1000,
+          position: 'middle',
+          cssClass: "toast"
+        }).present();
+      }
+      else {
+        this.closeAlert(null);
+      }
+    }.bind(this))
+    this.HTMLalert.nativeElement.style.visibility = "visible";
   }
 
   deleteFavorite(event, fav: string) {
@@ -739,7 +786,7 @@ export class ExplorerComponent implements OnInit, Fractals.FractalEventListner, 
     else {
       Fractals.Fractal.webGLauto(false);
     }
-    
+
     if (mode == "gpu") {
       this.fractal.turnOnWebGL(true);
       this.HTMLjuliaPicker.getFractalView().getFractal().turnOnWebGL(true);
@@ -885,14 +932,12 @@ export class ExplorerComponent implements OnInit, Fractals.FractalEventListner, 
       },
       function (reason: any) {
         alert("Cant save image: " + reason);
-        console.log('requestAuthorization failed, ', reason)
       });
   }
 
   private saveAndroid(base64: string) {
     var self = this;
     this.savePromise = this.savePromise = this.photoLibrary.saveImage(base64, 'Fractal Explorer').then(libraryItem => {
-      console.log("LibraryItem Saved ", libraryItem);
       self.HTMLalertComponent.titleStr = "All Done";
       self.HTMLalertComponent.textStr = "Image Saved.";
       self.HTMLalertComponent.noStr = "Close";
@@ -904,7 +949,6 @@ export class ExplorerComponent implements OnInit, Fractals.FractalEventListner, 
       self.HTMLsaveButton.nativeElement.setAttribute("class", "btn");
     }).catch(reason => {
       alert("Cant save image: " + reason);
-      console.log('save failed, ', reason);
     });
   }
 
