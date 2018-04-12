@@ -469,8 +469,12 @@ export class ExplorerComponent implements OnInit, Fractals.FractalEventListner, 
   }
 
   addToGradient() {
-    var str = this.fractal.getColor().encodeJSON();
-    this.gradients.unshift(str);
+    var col = new FractalColor.LinearGradient();
+    col.decodeJSON(this.fractal.getColor().encodeJSON());
+    col.setMin(0.0);
+    col.setMid(0.5);
+    col.setMax(1.0);
+    this.gradients.unshift(col.encodeJSON());
     this.storage.set('gradients', this.gradients);
     this.toastCtrl.create({
       message: 'Saved Gradient',
