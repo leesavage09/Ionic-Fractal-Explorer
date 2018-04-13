@@ -1,1 +1,17 @@
-<ExplorerComponent #explorer></ExplorerComponent>
+<div #onboarding class="onboarding" *ngIf="onboardingToDo">
+    <ion-slides #onboardingSlides pager="true">
+        <ion-slide>
+            <h1>Slide 1</h1>
+        </ion-slide>
+        <ion-slide>
+            <h1>Slide 2</h1>
+        </ion-slide>
+        <ion-slide>
+            <h1>Slide 3</h1>
+
+            <a (click)="closeOnboarding()">Let me in.</a>
+        </ion-slide> 
+    </ion-slides>
+</div>
+
+<ExplorerComponent #explorer ></ExplorerComponent>

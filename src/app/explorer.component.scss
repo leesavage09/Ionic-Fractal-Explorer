@@ -144,6 +144,15 @@ $color-danger: rgb(216, 25, 25);
     animation-fill-mode: forwards;
 }
 
+#hide {
+    visibility: hidden;
+    position: absolute;
+    white-space: pre;
+    font-size: $font-size-small;
+    margin: 0;
+    padding: 4px;
+}
+
 #jscolor, #jscolor2 {
     visibility: hidden;
     position: absolute;
@@ -176,6 +185,10 @@ $color-danger: rgb(216, 25, 25);
         font-size: $font-size;
         color: $colour-tool;
     }
+}
+
+.onboarding {
+    height: 100%;
 }
 
 #explorer {
@@ -303,7 +316,7 @@ $color-danger: rgb(216, 25, 25);
                     width: $iterations-width;
                     height: $button-size;
                     border-radius: 0px;
-                    transition: width 0.5s;
+                    transition: width 0.2s;
                 }
             }
         }
@@ -361,18 +374,18 @@ $color-danger: rgb(216, 25, 25);
         box-shadow: $shadow_2;
 
         &.open {
-            transform: translateX(-35%);
-            transition: 0.2s;
+            transform: translateX(-85%);
+            transition: 0.3s;
         }
 
         &.open-full {
-            transform: translateX(-135%);
+            transform: translateX(-185%);
             transition: 0.4s;
         }
 
         &.close {
             transform: translateX(0%);
-            transition: 0.2s;
+            transition: 0.3s;
         }
 
         #web-view-btn {
@@ -394,7 +407,7 @@ $color-danger: rgb(216, 25, 25);
         }
 
         .web-view-outer {
-            width: 35%;
+            width: 85%;
             height: 100%;
             background-color: $color-tool-bg;
             padding: $padding;
@@ -406,20 +419,40 @@ $color-danger: rgb(216, 25, 25);
             border-color: $colour-tool;
             overflow-y: scroll;
 
-            h1 {
+            .heading {
                 position: fixed;
-                color: $color-text;
-                margin: 0px;
                 background-color: $color-tool-bg-solid;
                 z-index: 1;
                 margin: -$padding;
-                width: 35%;
+                width: 85%;
                 padding: $padding;
                 box-shadow: $shadow_2;
+                text-align: right;
+
+                .help {
+                    display: inline-block;
+                    font-size: $font-size;
+                    border-color: $color-ok;
+                    border-style: solid;
+                    border-width: 1px;
+                    border-radius: $corner-radius;
+                    padding: $padding/2;
+                    color: $color-web-btn-txt;
+
+                    ion-icon {
+                        color: $color-ok;
+                        font-size: $font-size;
+                    }
+                }
             }
 
             .menu {
                 padding-top: $button-size;
+            }
+
+            .spacer{
+                display: block;
+                height:$button-size/3;
             }
 
             .btn {
@@ -491,19 +524,10 @@ $color-danger: rgb(216, 25, 25);
                     box-shadow: $shadow_2;
                     position: fixed;
                     top: 0;
-                    left: 35%;
+                    left: 85%;
                     background-color: white;
                     color: $color-web-btn-bg;
                     z-index: 1;
-
-                    &.pos {
-                        position: relative;
-                        left: 0%;
-                        margin-left: -$padding;
-                        margin-right: -$padding;
-                        box-shadow: $shadow_1;
-                        z-index: 0;
-                    }
 
                     h1 {
                         font-size: $font-size;
@@ -524,7 +548,7 @@ $color-danger: rgb(216, 25, 25);
                 ion-list {
                     margin: $padding;
                     box-shadow: $shadow_1;
-                    
+
                     ion-item {
                         width: 100%;
                         padding: $padding;
@@ -532,7 +556,7 @@ $color-danger: rgb(216, 25, 25);
                         border-bottom-color: $color-web-btn-bg;
                         border-bottom-style: solid;
                         border-bottom-width: 2px;
-                        
+
                         .item-inner {
                             border-style: none;
                             box-shadow: none;
@@ -587,8 +611,8 @@ $color-danger: rgb(216, 25, 25);
                     position: relative;
                     display: block;
 
-                    .video{
-                        width:100%;
+                    .video {
+                        width: 100%;
                     }
 
                     &.clickable {
@@ -741,13 +765,4 @@ $color-danger: rgb(216, 25, 25);
             border-top-right-radius: 0px;
         }
     }
-}
-
-#hide {
-    visibility: hidden;
-    position: absolute;
-    white-space: pre;
-    font-size: $font-size-small;
-    margin: 0;
-    padding: 4px;
 }

@@ -308,7 +308,7 @@ export namespace Fractals {
 			return;
 		}
 
-		public static webGLauto(b:boolean){
+		public static webGLauto(b: boolean) {
 			Fractal.webGLautoMode = b;
 		}
 
@@ -393,21 +393,21 @@ export namespace Fractals {
 			window.requestAnimationFrame(function () {
 				let now = performance.now();
 				let dt = now - then;
-				let min = 1000/Fractal.targetMinFPS;
-				let max = 1000/Fractal.targetMaxFPS;
+				let min = 1000 / Fractal.targetMinFPS;
+				let max = 1000 / Fractal.targetMaxFPS;
 				if (dt > min) {
 					let reduction = 1 / (dt / min)
 					self.webGLperformanceRes = self.webGLperformanceRes * reduction;
 					if (self.webGLperformanceRes < 0.05) self.webGLperformanceRes = 0.05;
-				//	console.log("red",self.webGLperformanceRes,Fractal.targetMinFPS)
+					//	console.log("red",self.webGLperformanceRes,Fractal.targetMinFPS)
 				}
 				if (dt < max) {
 					let increase = 1 / (dt / max)
 					self.webGLperformanceRes = self.webGLperformanceRes * increase;
 					if (self.webGLperformanceRes > 1.0) self.webGLperformanceRes = 1.0;
-				//	console.log("inc",self.webGLperformanceRes,Fractal.targetMaxFPS)
+					//	console.log("inc",self.webGLperformanceRes,Fractal.targetMaxFPS)
 				}
-				
+
 			});
 		}
 
@@ -512,7 +512,7 @@ export namespace Fractals {
 			}
 		}
 
-		public renderCPU(lowRes: boolean = true, hiRes: boolean = true) {	
+		public renderCPU(lowRes: boolean = true, hiRes: boolean = true) {
 			this.hiResCPU = hiRes;
 			this.stopRendering();
 

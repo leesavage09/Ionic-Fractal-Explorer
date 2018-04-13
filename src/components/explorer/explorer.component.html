@@ -69,38 +69,43 @@
     <div #webView class="web-view">
 
       <div id="web-view-btn" (click)="clickWebView()" (swipe)="swipeWebView($event)">
-        <i #webViewCaret class="fa fa-cogs" aria-hidden="true"></i>
+        <ion-icon name="md-menu"></ion-icon>
       </div>
 
       <div class="web-view-outer" (swipe)="swipeWebView($event)">
-        <h1>Options</h1>
+        <div class="heading">
+          <a class="help" (click)="clickHelp($event)">Help
+            <ion-icon name="md-help-circle"></ion-icon>
+          </a>
+        </div>
 
         <div class="menu">
-          <a #saveButton (click)="clickSave($event)" class="btn">
-            <ion-icon name="ios-image"></ion-icon>
-            <span #saveText> Image</span>
-          </a>
+
           <a (click)="clickEquation($event)" class="btn">
-            <ion-icon name="ios-cog"></ion-icon> Equations
+            <ion-icon name="ios-cog"></ion-icon> Fractals
           </a>
+          <span class="spacer"></span>
           <a (click)="clickGradient($event)" class="btn">
-            <ion-icon name="ios-color-palette"></ion-icon> Gradients
+            <ion-icon name="ios-color-palette"></ion-icon> Colour Presets
           </a>
           <a #saveButton (click)="clickFavorite($event)" class="btn">
             <ion-icon name="ios-star"></ion-icon>
-            <span #saveText> Favorite</span>
+            <span> Favorites</span>
+          </a>
+          <span class="spacer"></span>
+          <a #saveButton (click)="clickSave($event)" class="btn">
+            <ion-icon name="ios-image"></ion-icon>
+            <span #saveText> Save Image</span>
           </a>
           <a (click)="clickShare($event)" class="btn">
             <ion-icon name="share"></ion-icon> Share
           </a>
+          <span class="spacer"></span>
           <a (click)="clickInfo($event)" class="btn">
-            <ion-icon name="md-information-circle"></ion-icon> Info
+            <ion-icon name="md-information-circle"></ion-icon> Fractal Data
           </a>
           <a (click)="clickSettings($event)" class="btn">
             <ion-icon name="md-build"></ion-icon> Settings
-          </a>
-          <a (click)="clickHelp($event)" class="btn">
-            <ion-icon name="md-help-circle"></ion-icon> Help
           </a>
         </div>
 
@@ -146,7 +151,7 @@
         <section #equationSection class="hide">
           <div class="header">
             <ion-icon (click)="clickWebView(true)" name="md-close-circle"></ion-icon>
-            <h1>Equations</h1>
+            <h1>Fractals</h1>
           </div>
 
           <ion-list>
@@ -180,11 +185,11 @@
         <section #gradientSection class="hide">
           <div class="header">
             <ion-icon (click)="clickWebView(true)" name="md-close-circle"></ion-icon>
-            <h1>Gradients</h1>
+            <h1>Colour Presets</h1>
           </div>
 
           <a class="btn" (click)="addToGradient()">
-            <ion-icon name="ios-star"></ion-icon>Save Gradient</a>
+            <ion-icon name="ios-star"></ion-icon>Save Colour</a>
 
           <ion-list *ngFor="let gra of gradients">
             <ion-item (click)="onGradientChanged(gra)">
@@ -219,10 +224,6 @@
               <img class="fractalTumb" src="{{fav.base64}}" width="512px" height="288px">
               <ion-icon (click)="deleteFavorite($event,fav)" name="md-close-circle"></ion-icon>
             </div>
-          </div>
-
-          <div class="header pos">
-            Library Items
           </div>
 
           <div *ngFor="let lib of libFav">
@@ -320,11 +321,11 @@
             <p>This is only releavent during animations, The final render quality is not affected
               <br> If the FPS falls below the minimum quality will be reduced, If the FPS exedes the maximum then quality will be incressed
               <br> The defauts are max:100 min:25</p>
-            
+
             <ion-item>
-                <ion-label>Minimum target FPS</ion-label>
-                <ion-input [(ngModel)]="tminfps" (ngModelChange)="targetMinFPS(tminfps)" type="number"></ion-input>
-              </ion-item>
+              <ion-label>Minimum target FPS</ion-label>
+              <ion-input [(ngModel)]="tminfps" (ngModelChange)="targetMinFPS(tminfps)" type="number"></ion-input>
+            </ion-item>
             <ion-item>
               <ion-label>Maximum target FPS</ion-label>
               <ion-input [(ngModel)]="tmaxfps" (ngModelChange)="targetMaxFPS(tmaxfps)" type="number"></ion-input>
@@ -339,6 +340,8 @@
             <h1>Help</h1>
           </div>
 
+
+          <a class="btn" (click)="myApp.openOnboarding()">Restart Onboarding</a>
 
           <div class="cards">
             <h3>Exploring</h3>

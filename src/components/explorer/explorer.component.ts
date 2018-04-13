@@ -15,6 +15,7 @@ import { HistogramComponent } from "../histogram/histogram.component";
 import { JuliaPickerComponent } from "../juliaPicker/juliaPicker.component";
 import { FractalViewComponent } from '../fractalView/fractalView.component';
 import { AlertComponent } from "../alert/alert.component";
+import { MyApp } from "../../app/app.component";
 
 @Component({
   selector: "ExplorerComponent",
@@ -106,18 +107,12 @@ export class ExplorerComponent implements OnInit, Fractals.FractalEventListner, 
   public savePromise: Promise<void> = null;
   public NumIterations: number = 50;
   public renderingMode: string = "auto";
-  public tminfps:number = 25;
-  public tmaxfps:number = 100;
+  public tminfps: number = 25;
+  public tmaxfps: number = 100;
+  public myApp: MyApp;
 
   constructor(public platform: Platform, private socialSharing: SocialSharing, private photoLibrary: PhotoLibrary, private androidFullScreen: AndroidFullScreen, private toastCtrl: ToastController, private storage: Storage) {
-    this.socialSharing = socialSharing;
-    this.photoLibrary = photoLibrary;
-    this.platform = platform;
-    this.toastCtrl = toastCtrl;
-    this.storage = storage;
-
     //console.log("this.platform", this.platform.platforms());
-
     if (this.platform.is("android") && this.platform.is("cordova")) {
       androidFullScreen.isImmersiveModeSupported()
         .then(() => androidFullScreen.immersiveMode())
@@ -559,7 +554,7 @@ export class ExplorerComponent implements OnInit, Fractals.FractalEventListner, 
     window.dispatchEvent(new Event('resize'));
   }
 
-  clickHelp(){
+  clickHelp() {
     this.HTMLwebView.nativeElement.setAttribute("class", "web-view open-full");
     this.setWebViewSection(this.helpSection);
   }
@@ -1037,11 +1032,11 @@ export class ExplorerComponent implements OnInit, Fractals.FractalEventListner, 
     return encodeURI(content);
   }
 
-  public targetMinFPS(target){
+  public targetMinFPS(target) {
     Fractals.Fractal.targetMinFPS = target;
   }
 
-  public targetMaxFPS(target){
+  public targetMaxFPS(target) {
     Fractals.Fractal.targetMaxFPS = target;
   }
 }
