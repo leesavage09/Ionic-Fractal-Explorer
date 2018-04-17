@@ -112,14 +112,13 @@ export class ExplorerComponent implements OnInit, Fractals.FractalEventListner, 
   public myApp: MyApp;
 
   constructor(public platform: Platform, private socialSharing: SocialSharing, private photoLibrary: PhotoLibrary, private androidFullScreen: AndroidFullScreen, private toastCtrl: ToastController, private storage: Storage) {
-    //console.log("this.platform", this.platform.platforms());
+   // console.log("this.platform", this.platform.platforms());
     if (this.platform.is("android") && this.platform.is("cordova")) {
-      androidFullScreen.isImmersiveModeSupported()
-        .then(() => androidFullScreen.immersiveMode())
-        .catch((error: any) => console.log(error));
+      androidFullScreen.isImmersiveModeSupported().then(() => androidFullScreen.immersiveMode()).catch((error: any) => console.log(error));
+
+      this.targetMinFPS(this.tminfps = 20);
+      this.targetMaxFPS(this.tmaxfps = 30);
     }
-    this.targetMinFPS(15);
-    this.targetMaxFPS(30);
   }
 
   ngOnInit() {
@@ -213,6 +212,8 @@ export class ExplorerComponent implements OnInit, Fractals.FractalEventListner, 
     let rgb = this.fractal.getColor().getInteriorColor();
     this.intColor.nativeElement.style.backgroundColor = "rgb(" + rgb.r + "," + rgb.g + "," + rgb.b + ")";
     this.fractal.iterations = this.NumIterations;
+    this.ngModelChangeIterations();
+    this.renderingModeChanged(this.renderingMode='auto');
 
     if (equation == "MandelbrotPow4") {
       fractalEq = new FractalEquations.MandelbrotPow4;

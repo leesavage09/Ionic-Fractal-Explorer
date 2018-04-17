@@ -14,7 +14,7 @@ export class MyApp {
   @ViewChild('onboarding') onboarding: ElementRef;
   @ViewChild('onboardingSlides') onboardingSlides: Slides;
 
-  public onboardingToDo: boolean = true;
+  public onboardingToDo: boolean = false;
 
   constructor(private platform: Platform, splashScreen: SplashScreen, private storage: Storage, private screenOrientation: ScreenOrientation) {
     platform.ready().then(() => {
@@ -34,13 +34,12 @@ export class MyApp {
 
 
       this.storage.get("onboardingToDo").then((val) => {
-        if (val != null) this.onboardingToDo = val;
-        console.log("onboarding enabled for dev", this.onboardingToDo);
-        this.onboardingToDo = true;
-        if (this.onboardingToDo) {
+        var doOnboarding = true;
+        if (val != null) doOnboarding = val;
+        if (doOnboarding) {
           this.openOnboarding();
         }
-        if (platform.is("android") && platform.is("cordova")) {
+        if (platform.is("cordova")) {
           splashScreen.hide();
         }
       });

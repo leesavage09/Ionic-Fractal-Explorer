@@ -131,7 +131,7 @@
     <plugin name="cordova-plugin-fullscreen" spec="^1.2.0" />
     <plugin name="cordova-sqlite-storage" spec="^2.2.1" />
     <plugin name="com-darryncampbell-cordova-plugin-intent" spec="^1.0.0" />
+    <plugin name="cordova-plugin-screen-orientation" spec="^3.0.1" />
     <engine name="android" spec="7.0.0" />
     <engine name="browser" spec="5.0.3" />
-    <plugin name="cordova-plugin-screen-orientation" spec="^3.0.1" />
 </widget>
