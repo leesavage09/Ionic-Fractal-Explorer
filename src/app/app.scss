@@ -198,7 +198,7 @@ $font-size-small: 18px !default;
 
     .cards {
         height: 85vh;
-        width:85vw;
+        width: 85vw;
         max-width: 85vw;
         max-height: 85vh;
         padding: $padding;
@@ -261,7 +261,7 @@ $font-size-small: 18px !default;
 
             .btn {
                 display: block;
-                margin-top:$padding;
+                margin-top: $padding;
                 color: $color-green;
                 border-color: $color-green;
                 border-style: solid;
@@ -297,15 +297,15 @@ $font-size-small: 18px !default;
                 background-color: $color-green;
             }
         }
+
+        ion-icon {
+            @include delete-button;
+        }
     }
 
     .fractalTumb {
         pointer-events: none;
         height: initial;
-    }
-
-    ion-icon {
-        @include delete-button;
     }
 }
 
