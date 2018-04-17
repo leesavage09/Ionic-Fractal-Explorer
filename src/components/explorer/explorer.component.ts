@@ -138,7 +138,6 @@ export class ExplorerComponent implements OnInit, Fractals.FractalEventListner, 
 
     this.fractal = new Fractals.Fractal(new Fractals.ComplexPlain(-0.8, 0, 3, canvas), new FractalEquations.Mandelbrot, gradient);
     this.fractal.iterations = this.NumIterations;
-    this.fractal.setMaxZoomListener(this);
     this.mainFractalView.setFractal(this.fractal);
     this.fractal.render();
     this.fractal.getColor().subscribe(this);
@@ -248,6 +247,8 @@ export class ExplorerComponent implements OnInit, Fractals.FractalEventListner, 
     this.fractal.complexPlain.replaceView(centerR, centerI, complexWidth, <HTMLCanvasElement>this.mainFractalView.getCanvas())
     this.fractal.setCalculationFunction(fractalEq);
     this.fractal.render();
+
+    this.fractal.setFractalEventListner(this);
   }
 
   /*

@@ -599,11 +599,11 @@ export namespace Fractals {
 			return this.renderVersion;
 		}
 
-		public setMaxZoomListener(l: FractalEventListner) {
+		public setFractalEventListner(l: FractalEventListner) {
 			this.fractalEventListner = l;
 		}
 
-		public deleteMaxZoomListener() {
+		public deleteFractalEventListner() {
 			this.fractalEventListner = null;
 		}
 	}

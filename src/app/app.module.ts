@@ -7,6 +7,7 @@ import { PhotoLibrary } from '@ionic-native/photo-library';
 import { AndroidFullScreen } from '@ionic-native/android-full-screen';
 import { IonicSwipeAllModule } from 'ionic-swipe-all';
 import { IonicStorageModule } from '@ionic/storage';
+import { ScreenOrientation } from '@ionic-native/screen-orientation';
 
 import { MyApp } from './app.component';
 
@@ -48,6 +49,7 @@ import { AlertComponent } from '../components/alert/alert.component';
     PhotoLibrary,
     AndroidFullScreen,
     SplashScreen,
+    ScreenOrientation,
     {provide: ErrorHandler, useClass: IonicErrorHandler}
   ]
 })

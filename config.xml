@@ -133,4 +133,5 @@
     <plugin name="com-darryncampbell-cordova-plugin-intent" spec="^1.0.0" />
     <engine name="android" spec="7.0.0" />
     <engine name="browser" spec="5.0.3" />
+    <plugin name="cordova-plugin-screen-orientation" spec="^3.0.1" />
 </widget>

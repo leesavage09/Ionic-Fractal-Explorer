@@ -74,9 +74,7 @@
 
       <div class="web-view-outer" (swipe)="swipeWebView($event)">
         <div class="heading">
-          <a class="help" (click)="clickHelp($event)">Help
-            <ion-icon name="md-help-circle"></ion-icon>
-          </a>
+          Menu
         </div>
 
         <div class="menu">
@@ -88,7 +86,7 @@
           <a (click)="clickGradient($event)" class="btn">
             <ion-icon name="ios-color-palette"></ion-icon> Colour Presets
           </a>
-          <a #saveButton (click)="clickFavorite($event)" class="btn">
+          <a (click)="clickFavorite($event)" class="btn">
             <ion-icon name="ios-star"></ion-icon>
             <span> Favorites</span>
           </a>
@@ -99,6 +97,10 @@
           </a>
           <a (click)="clickShare($event)" class="btn">
             <ion-icon name="share"></ion-icon> Share
+          </a>
+          <span class="spacer"></span>
+          <a class="btn" (click)="clickHelp($event)">
+            <ion-icon name="md-help-circle"></ion-icon> Tutorials
           </a>
           <span class="spacer"></span>
           <a (click)="clickInfo($event)" class="btn">
@@ -236,14 +238,14 @@
         <section #InfoSection class="hide">
           <div class="header">
             <ion-icon (click)="clickWebView(true)" name="md-close-circle"></ion-icon>
-            <h1>Info</h1>
+            <h1>Fractal Data</h1>
           </div>
 
           <div>
             <ion-list class="key-val">
               <ion-item>
                 <ion-label (click)="clickEquation($event)">
-                  Equation
+                  Fractal
                   <span>{{this.fractal.getCalculationFunction().getName()}}</span>
                 </ion-label>
               </ion-item>
@@ -292,7 +294,7 @@
           </div>
 
           <div class="cards">
-            <h3>Force Rendering Mode</h3>
+            <h3>Rendering Mode</h3>
             <p>Somtimes you might want to force the rendering to be either on the GPU or the CPU, The default mode is autodetect.
               <br>
               <br> When in autodetect mode the rendering will automaticly switch between CPU or GPU
@@ -337,7 +339,7 @@
         <section #helpSection class="hide">
           <div class="header">
             <ion-icon (click)="clickWebView(true)" name="md-close-circle"></ion-icon>
-            <h1>Help</h1>
+            <h1>Tutorial</h1>
           </div>
 
 

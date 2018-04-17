@@ -1,17 +1,44 @@
 <div #onboarding class="onboarding" *ngIf="onboardingToDo">
     <ion-slides #onboardingSlides pager="true">
         <ion-slide>
-            <h1>Slide 1</h1>
+            <div class="cards">
+                <ion-icon name="ios-cog"></ion-icon>
+                <h1>Explore and discover</h1>
+                <div class="flexable">
+                    <video class="video" poster="assets/imgs/logo.png" autoplay loop>
+                        <source src="assets/video/iterations.mp4" type="video/mp4">
+                    </video>
+                </div>
+                <p>Discover the infinite complexety of fractals.</p>
+            </div>
         </ion-slide>
         <ion-slide>
-            <h1>Slide 2</h1>
-        </ion-slide>
-        <ion-slide>
-            <h1>Slide 3</h1>
+            <div class="cards">
+                <ion-icon name="ios-color-palette"></ion-icon>
+                <h1>Colour and Create</h1>
+                <div class="flexable">
+                    <img src="assets/imgs/onbording/1.jpg">
+                </div>
+                <p>Create unique images using a simple &amp; powerfull colouing tool to.</p>
 
-            <a (click)="closeOnboarding()">Let me in.</a>
-        </ion-slide> 
+            </div>
+        </ion-slide>
+        <ion-slide>
+            <div class="cards">
+                <ion-icon name="share"></ion-icon>
+                <div class="text">
+                    <h1>Save and Share</h1>
+                </div>
+                <div class="flexable">
+                    <img src="assets/imgs/onbording/bg.jpg">
+                </div>
+                <div class="text">
+                    <p>Make desktop walpapers and share you discoverys.</p>
+                    <a (click)="closeOnboarding()" class="btn">Let me in.</a>
+                </div>
+            </div>
+        </ion-slide>
     </ion-slides>
 </div>
 
-<ExplorerComponent #explorer ></ExplorerComponent>
+<ExplorerComponent #explorer></ExplorerComponent>

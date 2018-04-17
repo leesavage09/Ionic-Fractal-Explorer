@@ -2,6 +2,7 @@ import { Component, ViewChild, ElementRef } from '@angular/core';
 import { Platform, Slides } from 'ionic-angular';
 import { SplashScreen } from '@ionic-native/splash-screen';
 import { Storage } from '@ionic/storage';
+import { ScreenOrientation } from '@ionic-native/screen-orientation';
 
 import { ExplorerComponent } from '../components/explorer/explorer.component'
 
@@ -13,9 +14,9 @@ export class MyApp {
   @ViewChild('onboarding') onboarding: ElementRef;
   @ViewChild('onboardingSlides') onboardingSlides: Slides;
 
-  public onboardingToDo: boolean = false;
+  public onboardingToDo: boolean = true;
 
-  constructor(platform: Platform, splashScreen: SplashScreen, private storage: Storage) {
+  constructor(private platform: Platform, splashScreen: SplashScreen, private storage: Storage, private screenOrientation: ScreenOrientation) {
     platform.ready().then(() => {
 
       this.explorer.myApp = this;
@@ -34,7 +35,8 @@ export class MyApp {
 
       this.storage.get("onboardingToDo").then((val) => {
         if (val != null) this.onboardingToDo = val;
-        console.log("onboarding enabled for dev",this.onboardingToDo);
+        console.log("onboarding enabled for dev", this.onboardingToDo);
+        this.onboardingToDo = true;
         if (this.onboardingToDo) {
           this.openOnboarding();
         }
@@ -50,9 +52,15 @@ export class MyApp {
 
   public closeOnboarding() {
     this.storage.set("onboardingToDo", this.onboardingToDo = false);
+    if (this.platform.is("android")) {
+      this.screenOrientation.unlock();
+    }
   }
 
   public openOnboarding() {
+    if (this.platform.is("android")) {
+      this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT);
+    }
     this.onboardingToDo = true;
   }
 }
