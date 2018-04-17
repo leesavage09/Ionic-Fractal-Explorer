@@ -16,15 +16,18 @@ $corner-radius: 12px;
 $color-canvas-bg: rgb(0, 29, 0);
 $colour-tool: rgb(0, 180, 0);
 $color-tool-bg: rgba(4, 21, 63, 0.75);
-$color-tool-bg-solid: rgb(4, 21, 63);
+$color-dark-blue: rgb(4, 21, 63);
+$color-dark-blue-faded: rgb(35, 45, 63);
 $color-mouseover: rgb(100, 255, 100);
 $color-text: rgba(255, 255, 255, 0.9); //$color-text: #488aff;
 $color-transparent: rgba(255, 255, 255, 0);
 $color-web-bg: rgb(59, 64, 77);
 $color-web-btn-bg: rgb(4, 21, 63);
 $color-web-btn-txt: rgb(255, 255, 255);
-$color-ok: rgb(0, 180, 0);
-$color-danger: rgb(216, 25, 25);
+$color-green: rgb(0, 180, 0);
+$color-green-faded: rgb(65, 180, 65);
+$color-red: rgb(216, 25, 25);
+$color-red-faded: rgb(216, 90, 90);
 
 $shadow_2: 4px 4px 20px 0px rgba($color: #000, $alpha: 1);
 $shadow_1: 2px 2px 10px 0px rgba($color: #000, $alpha: 1);
@@ -116,7 +119,7 @@ $font-size-small: 18px !default;
     border-bottom-left-radius: $corner-radius;
 
     .platform-core &:hover {
-        color: $color-danger;
+        color: $color-red;
     }
 
     // z-index: 1;
@@ -181,61 +184,91 @@ $font-size-small: 18px !default;
     height: 100%;
     background-color: $color-web-bg;
 
+    .blue-gr {
+        background: linear-gradient(to bottom, $color-dark-blue, black);
+    }
+
+    .red-gr {
+        background: linear-gradient(to bottom, $color-red, black);
+    }
+
+    .green-gr {
+        background: linear-gradient(to bottom, $color-green, black);
+    }
+
     .cards {
-        height: 80vh;
+        height: 85vh;
+        width:85vw;
+        max-width: 85vw;
+        max-height: 85vh;
         padding: $padding;
         display: flex;
         flex-direction: column;
-
-        ion-icon {
-            line-height: $font-size * 2;
-            font-size: $font-size * 2;
-            position: absolute;
-            top: $padding;
-            left: $padding;
-            width: $font-size * 2;
-            height: $font-size * 2;
-        }
+        background-color: white;
 
         h1 {
-            margin: $padding;
-            margin-top: 0px;
-            padding-left: $font-size * 2;
-            padding-right: $font-size;
             text-align: center;
+            margin: $padding;
+            font-size: $font-size * 1.5;
+            color: white;
         }
 
-        .btn {
-            color: $color-ok;
-            border-color: $color-ok;
-            border-style: solid;
-            border-width: 1px;
-            border-color: $color-ok;
-            padding: $padding;
-            border-radius: $corner-radius;
-            display: inline-block;
-        }
+        .icon-logo {
+            margin-left: -$padding;
+            margin-right: -$padding;
+            margin-top: -$padding;
+            position: relative;
 
-        .text {
-            overflow: hidden;
-        }
-
-        .flexable {
-            max-width: 100%;
-            max-height: 100%;
-            flex-grow: 1;
-            flex-shrink: 1;
-            height: 100px;
-            overflow: hidden;
-        
-
-            .video , img {
+            ion-icon {
+                line-height: 35vh;
+                font-size: 45vh;
+                display: block;
                 position: relative;
-                top:50%;
+                background-color: $color-transparent;
+                transform: translate($padding, -$padding);
+                width: 85vw;
+                height: 45vh;
+                z-index: 1;
+                color: white;
+            }
+
+            img {
+                width: 85vw;
+                max-width: 85vw;
+                display: block;
+                position: absolute;
+                bottom: -1px;
+                left: 0;
+                margin: 0px;
+            }
+        }
+
+        .body-text {
+            margin: -$padding;
+            flex-grow: 1;
+            position: relative;
+
+            p {
+                padding: $padding;
+                position: absolute;
+                top: 50%;
+                left: 0;
                 transform: translateY(-50%);
-                width:100%;
-                height: initial;
-                border-radius: 10%;
+                margin: 0px;
+                width: 85vw;
+                font-size: $font-size;
+            }
+
+            .btn {
+                display: block;
+                margin-top:$padding;
+                color: $color-green;
+                border-color: $color-green;
+                border-style: solid;
+                border-width: 1px;
+                border-color: $color-green;
+                padding: $padding;
+                border-radius: $corner-radius;
             }
         }
     }
@@ -258,10 +291,10 @@ $font-size-small: 18px !default;
 
     &.clickable {
         .platform-core &:hover {
-            background-color: $color-ok;
+            background-color: $color-green;
 
             ion-icon {
-                background-color: $color-ok;
+                background-color: $color-green;
             }
         }
     }
@@ -527,7 +560,7 @@ $font-size-small: 18px !default;
 
             .heading {
                 position: fixed;
-                background-color: $color-tool-bg-solid;
+                background-color: $color-dark-blue;
                 z-index: 1;
                 margin: -$padding;
                 width: 85%;
@@ -632,7 +665,7 @@ $font-size-small: 18px !default;
                         line-height: $font-size * 1.5;
 
                         .platform-core &:hover {
-                            color: $color-ok;
+                            color: $color-green;
                         }
                     }
                 }
@@ -707,7 +740,7 @@ $font-size-small: 18px !default;
                     line-height: $font-size;
 
                     .platform-core &:hover {
-                        background-color: $color-ok;
+                        background-color: $color-green;
                         color: $color-web-btn-txt;
                     }
                 }
