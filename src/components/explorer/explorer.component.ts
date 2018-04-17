@@ -118,6 +118,8 @@ export class ExplorerComponent implements OnInit, Fractals.FractalEventListner, 
         .then(() => androidFullScreen.immersiveMode())
         .catch((error: any) => console.log(error));
     }
+    this.targetMinFPS(15);
+    this.targetMaxFPS(30);
   }
 
   ngOnInit() {
