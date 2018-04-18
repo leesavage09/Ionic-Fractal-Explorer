@@ -117,7 +117,7 @@ export class StopMarkerComponent {
     }
 
     this.stopMarker.nativeElement.style.left = x.toString() + "px";
-    let cssLeft = this.getCSSLeft() + this.getCSSWidth() / 2;
+    let cssLeft = Math.round(this.getCSSLeft() + this.getCSSWidth() / 2);
     this.stopValue = General.mapInOut(cssLeft, 0, this.parent.maxCSSleft, 0, 1);
   }
 

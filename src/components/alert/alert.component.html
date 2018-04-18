@@ -1,14 +1,14 @@
 <h4>{{titleStr}}</h4>
 <p>{{textStr}}</p>
 
-<a #download href="{{yesHREF}}" download="fractal.jpg"  (click)="noClick()" class="btn" >
-      {{downloadStr}}
+<a #no (click)="noClick()" class="btn" >
+    {{noStr}}
 </a>
 
 <a #yes (click)="yesClick()" class="btn" >
     {{yesStr}}
 </a>
 
-<a #no (click)="noClick()" class="btn" >
-    {{noStr}}
+<a #download href="{{yesHREF}}" download="fractal.jpg"  (click)="noClick()" class="btn" >
+    {{downloadStr}}
 </a>
