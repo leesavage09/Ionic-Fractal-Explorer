@@ -57,12 +57,6 @@ export namespace Fractals {
 			}
 		}
 
-		public renderIfVersionIsNew(v: number): void {
-			if (this.renderVersion <= v) {
-				this.render();
-			}
-		}
-
 		public setCalculationFunction(f: FractalEquations.equation): void {
 			this.calculationFunction = f;
 		}
@@ -513,15 +507,16 @@ export namespace Fractals {
 		}
 
 		public renderCPU(lowRes: boolean = true, hiRes: boolean = true) {
-			this.hiResCPU = hiRes;
 			this.stopRendering();
+			this.hiResCPU = hiRes;
 
 			if (lowRes) this.complexPlain.makeAlternativeResolutionCanvas(0.2);
 			this.histogram.startHistogram(this.iterations);
 			this.compiledColor = this.color.compileColor(this.iterations);
 			var self = this;
+			var version = this.renderVersion;
 			setTimeout(function () {
-				self.scanLine(self.complexPlain.getDrawableHeight(), self.renderVersion);
+				self.scanLine(self.complexPlain.getDrawableHeight(), version);
 			}, 0);
 		}
 
@@ -534,7 +529,9 @@ export namespace Fractals {
 		}
 
 		private scanLine(y: number, version: number): void {
-			if (this.renderVersion != version) return;
+			if (this.renderVersion != version) {
+				return;
+			}
 			this.currentScanLine = y;
 			this.img = this.complexPlain.getScanLineImage();
 			var Ci = this.complexPlain.getImaginaryNumber(y);
@@ -593,10 +590,6 @@ export namespace Fractals {
 
 		public stopRendering(): void {
 			this.renderVersion = this.renderVersion + 1;
-		}
-
-		public getCurrentVersion(): number {
-			return this.renderVersion;
 		}
 
 		public setFractalEventListner(l: FractalEventListner) {
@@ -942,11 +935,8 @@ export namespace Fractals {
 			}
 			else {
 				this.scaleFractalView(this.currentMagnification, this.clickX, this.clickY)
-				let version = this.fractal.getCurrentVersion();
 				let that = this;
-				setTimeout(function () {
-					that.fractal.renderIfVersionIsNew(version);
-				}, 0)
+				window.requestAnimationFrame(function () { that.fractal.render() });
 				this.zoomAnimationIsRunning = false;
 			}
 		}

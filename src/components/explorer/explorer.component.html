@@ -198,7 +198,7 @@
               <div class="gradient">
                 <app-colourslider colorStr="{{gra}}"> </app-colourslider>
 
-                <ion-icon (click)="deleteGradient($event,gra)" name="md-close-circle"></ion-icon>
+                <ion-icon class="delete" (click)="deleteGradient($event,gra)" name="md-close-circle"></ion-icon>
               </div>
             </ion-item>
           </ion-list>
@@ -224,7 +224,7 @@
           <div *ngFor="let fav of favorites">
             <div class="cards clickable" (click)="onLibrarySelection($event,fav)">
               <img class="fractalTumb" src="{{fav.base64}}" width="512px" height="288px">
-              <ion-icon (click)="deleteFavorite($event,fav)" name="md-close-circle"></ion-icon>
+              <ion-icon  class="delete" (click)="deleteFavorite($event,fav)" name="md-close-circle"></ion-icon>
             </div>
           </div>
 
@@ -302,7 +302,7 @@
               <br> Somtimes for example when exploring extrerm julia numbers presision can be lost early even when you are not zoomed excesivly, In this case you can select to force CPU mode for extra presission.
             </p>
 
-            <ion-list radio-group [(ngModel)]="renderingMode" (ngModelChange)="renderingModeChanged(renderingMode)">
+            <ion-list radio-group [(ngModel)]="renderingMode" (ngModelChange)="render(renderingMode)">
               <ion-item>
                 <ion-label>Auto</ion-label>
                 <ion-radio value="auto"></ion-radio>

@@ -212,8 +212,6 @@ export class ExplorerComponent implements OnInit, Fractals.FractalEventListner, 
     let rgb = this.fractal.getColor().getInteriorColor();
     this.intColor.nativeElement.style.backgroundColor = "rgb(" + rgb.r + "," + rgb.g + "," + rgb.b + ")";
     this.fractal.iterations = this.NumIterations;
-    this.ngModelChangeIterations();
-    this.renderingModeChanged(this.renderingMode='auto');
 
     if (equation == "MandelbrotPow4") {
       fractalEq = new FractalEquations.MandelbrotPow4;
@@ -244,14 +242,15 @@ export class ExplorerComponent implements OnInit, Fractals.FractalEventListner, 
       this.HTMLjuliaPicker.getFractalView().getFractal().render();
     }
     else {
-      this.HTMLjuliaPullOut.nativeElement.style.display = "none";
+      this.clickJuliaPullOut(false);
     }
 
     this.fractal.complexPlain.replaceView(centerR, centerI, complexWidth, <HTMLCanvasElement>this.mainFractalView.getCanvas())
     this.fractal.setCalculationFunction(fractalEq);
-    this.fractal.render();
-
     this.fractal.setFractalEventListner(this);
+
+    this.ngModelChangeIterations();
+    this.render(this.renderingMode='auto');
   }
 
   /*
@@ -788,7 +787,7 @@ export class ExplorerComponent implements OnInit, Fractals.FractalEventListner, 
   * Callbacks
   */
 
-  renderingModeChanged(mode) {
+  render(mode) {
     if (mode == "auto") {
       Fractals.Fractal.webGLauto(true);
       if (this.HTMLjuliaPicker.isOnScreen) this.HTMLjuliaPicker.getFractalView().getFractal().render();

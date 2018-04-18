@@ -20,6 +20,7 @@
     <preference name="SplashScreen" value="screen" />
     <preference name="SplashScreenDelay" value="1000" />
     <preference name="AutoHideSplashScreen" value="false" />
+    <preference name="loadUrlTimeoutValue" value="700000" />
     <platform name="android">
         <config-file parent="/manifest/application/activity" target="AndroidManifest.xml">
             <intent-filter>
@@ -132,6 +133,6 @@
     <plugin name="cordova-sqlite-storage" spec="^2.2.1" />
     <plugin name="com-darryncampbell-cordova-plugin-intent" spec="^1.0.0" />
     <plugin name="cordova-plugin-screen-orientation" spec="^3.0.1" />
-    <engine name="android" spec="7.0.0" />
     <engine name="browser" spec="5.0.3" />
+    <engine name="android" spec="~7.0.0" />
 </widget>
