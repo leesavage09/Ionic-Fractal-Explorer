@@ -1,8 +1,8 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="uk.co.leesavage.fractalexplorer" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:android="http://schemas.android.com/apk/res/android" xmlns:cdv="http://cordova.apache.org/ns/1.0">
-    <name>Fractal Explorer</name>
+<widget id="uk.co.leesavage.fractic" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:android="http://schemas.android.com/apk/res/android" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+    <name>Fractic</name>
     <description>Explore beautiful fractal images.</description>
-    <author email="leesavage09@gmail.com" href="http://leesavage.co.uk//">Lee Savage</author>
+    <author email="lee@fractic.leesavage.co.uk" href="https://fractic.leesavage.co.uk/">Lee Savage</author>
     <content src="index.html" />
     <access origin="*" />
     <allow-intent href="http://*/*" />
@@ -27,37 +27,37 @@
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data android:host="leesavage.co.uk" android:scheme="https" />
+                <data android:host="fractic.leesavage.co.uk" android:scheme="https" />
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data android:host="leesavage.co.uk" android:scheme="http" />
+                <data android:host="fractic.leesavage.co.uk" android:scheme="http" />
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data android:host="leesavage.co.uk" android:scheme="" />
+                <data android:host="fractic.leesavage.co.uk" android:scheme="" />
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data android:host="www.leesavage.co.uk" android:scheme="https" />
+                <data android:host="www.fractic.leesavage.co.uk" android:scheme="https" />
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data android:host="www.leesavage.co.uk" android:scheme="http" />
+                <data android:host="www.fractic.leesavage.co.uk" android:scheme="http" />
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data android:host="www.leesavage.co.uk" android:scheme="" />
+                <data android:host="www.fractic.leesavage.co.uk" android:scheme="" />
             </intent-filter>
         </config-file>
         <allow-intent href="market:*" />
@@ -114,12 +114,6 @@
         <splash height="960" src="resources/ios/splash/Default@2x~iphone.png" width="640" />
         <splash height="480" src="resources/ios/splash/Default~iphone.png" width="320" />
         <splash height="2732" src="resources/ios/splash/Default@2x~universal~anyany.png" width="2732" />
-    </platform>
-    <platform name="browser">
-        <preference name="SplashScreenBackgroundColor" value="#000000" />
-        <preference name="SplashScreen" value="assets/imgs/splash.png" />
-        <preference name="SplashScreenWidth" value="720" />
-        <preference name="SplashScreenHeight" value="450" />
     </platform>
     <plugin name="cordova-plugin-whitelist" spec="^1.3.3" />
     <plugin name="cordova-plugin-device" spec="^2.0.1" />

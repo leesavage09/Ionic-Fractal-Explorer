@@ -1,11 +1,11 @@
 import { BrowserModule } from '@angular/platform-browser';
+import { HammerGestureConfig, HAMMER_GESTURE_CONFIG } from '@angular/platform-browser';
 import { ErrorHandler, NgModule } from '@angular/core';
 import { IonicApp, IonicErrorHandler, IonicModule } from 'ionic-angular';
 import { SplashScreen } from '@ionic-native/splash-screen';
 import { SocialSharing } from '@ionic-native/social-sharing';
 import { PhotoLibrary } from '@ionic-native/photo-library';
 import { AndroidFullScreen } from '@ionic-native/android-full-screen';
-import { IonicSwipeAllModule } from 'ionic-swipe-all';
 import { IonicStorageModule } from '@ionic/storage';
 import { ScreenOrientation } from '@ionic-native/screen-orientation';
 
@@ -19,6 +19,19 @@ import { HistogramComponent } from '../components/histogram/histogram.component'
 import { JuliaPickerComponent } from '../components/juliaPicker/juliaPicker.component';
 import { FractalViewComponent } from '../components/fractalView/fractalView.component';
 import { AlertComponent } from '../components/alert/alert.component';
+
+declare var Hammer: any;
+
+export class MyHammerConfig extends HammerGestureConfig {
+  buildHammer(element: HTMLElement) {
+    var dir = element.className == "colorPullDown-btn" ? Hammer.DIRECTION_ALL : Hammer.DIRECTION_HORIZONTAL;
+    return new Hammer.Manager(element, {
+      recognizers: [
+        [Hammer.Swipe, { direction: dir }]
+      ]
+    });
+  }
+}
 
 @NgModule({
   declarations: [
@@ -36,7 +49,6 @@ import { AlertComponent } from '../components/alert/alert.component';
   imports: [
     BrowserModule,
     IonicModule.forRoot(MyApp),
-    IonicSwipeAllModule,
     IonicStorageModule.forRoot()
   ],
   bootstrap: [IonicApp],
@@ -50,7 +62,8 @@ import { AlertComponent } from '../components/alert/alert.component';
     AndroidFullScreen,
     SplashScreen,
     ScreenOrientation,
-    {provide: ErrorHandler, useClass: IonicErrorHandler}
+    { provide: ErrorHandler, useClass: IonicErrorHandler },
+    { provide: HAMMER_GESTURE_CONFIG, useClass: MyHammerConfig }
   ]
 })
-export class AppModule {}
+export class AppModule { }

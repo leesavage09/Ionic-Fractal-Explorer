@@ -2,7 +2,12 @@
 
     <canvas #gradientDisplay id="gradient-display"></canvas>
 
-    <div #StopMarkerSlider id="stop-markers" (window:resize)="windowResized()" (mousedown)="createStopMarker($event)" (window:mousemove)="move($event);" (window:touchmove)="touchMove($event);">
+    <div #StopMarkerSlider id="stop-markers" 
+                        (window:resize)="windowResized()" 
+                        (window:orientationchange)="windowResized()" 
+                        (mousedown)="createStopMarker($event)" 
+                        (window:mousemove)="move($event);" 
+                        (window:touchmove)="touchMove($event);">
         <template #stopMarkers></template>
     </div>
 

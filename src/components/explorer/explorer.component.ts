@@ -112,7 +112,6 @@ export class ExplorerComponent implements OnInit, Fractals.FractalEventListner, 
   public myApp: MyApp;
 
   constructor(public platform: Platform, private socialSharing: SocialSharing, private photoLibrary: PhotoLibrary, private androidFullScreen: AndroidFullScreen, private toastCtrl: ToastController, private storage: Storage) {
-   // console.log("this.platform", this.platform.platforms());
     if (this.platform.is("android") && this.platform.is("cordova")) {
       androidFullScreen.isImmersiveModeSupported().then(() => androidFullScreen.immersiveMode()).catch((error: any) => console.log(error));
 
@@ -160,13 +159,33 @@ export class ExplorerComponent implements OnInit, Fractals.FractalEventListner, 
     this.storage.get("gradients").then((val) => {
       if (val != null) this.gradients = val;
     });
+
+    if (!this.platform.is("cordova")) {
+      var exp = this;
+      var ch =  {
+        changed(){
+          var stateObj = { foo: "bar" };
+          history.replaceState(stateObj, "page 2", exp.getShareURL());
+        }
+      }
+      var col_ch = {
+        linearGradientChanging(){},
+        linearGradientChanged(){
+          var stateObj = { foo: "bar" };
+          history.replaceState(stateObj, "page 2", exp.getShareURL());
+        }
+      }
+      this.fractal.subscribe(ch);
+      this.fractal.getColor().subscribe(col_ch);
+    }
+(col_ch);
   }
 
   init(url: string) {
     var equation = "Mandelbrot";
     var complexCenter = "-0.8, 0";
     var complexWidthStr = "3";
-    var colorStr = this.libGra[0];
+    var colorStr = this.libGra[3];
     var fractalEq: FractalEquations.equation = new FractalEquations.Mandelbrot;
 
     let st = decodeURI(url)
@@ -250,7 +269,7 @@ export class ExplorerComponent implements OnInit, Fractals.FractalEventListner, 
     this.fractal.setFractalEventListner(this);
 
     this.ngModelChangeIterations();
-    this.render(this.renderingMode='auto');
+    this.render(this.renderingMode = 'auto');
   }
 
   /*
@@ -329,7 +348,10 @@ export class ExplorerComponent implements OnInit, Fractals.FractalEventListner, 
 
   stopChangingIterations(event) {
     event.preventDefault();
-    this.iterationsAreChanging = false;
+    if(this.iterationsAreChanging) {
+      this.iterationsAreChanging = false;      
+      this.fractal.render();
+    }
   }
 
   ngModelChangeIterations() {
@@ -462,7 +484,7 @@ export class ExplorerComponent implements OnInit, Fractals.FractalEventListner, 
     this.favorites.unshift({ url: share, base64: this.mainFractalView.getBase64Image(512, 288) });
     this.storage.set('favorites', this.favorites);
     this.toastCtrl.create({
-      message: 'Saved to favorites',
+      message: 'Saved to favourites',
       duration: 1000,
       position: 'middle',
       cssClass: "toast"
@@ -520,7 +542,7 @@ export class ExplorerComponent implements OnInit, Fractals.FractalEventListner, 
   deleteFavorite(event, fav: string) {
     event.stopPropagation();
     this.HTMLalertComponent.titleStr = "Delete"
-    this.HTMLalertComponent.textStr = "Are you sure you want to delete this favorate?."
+    this.HTMLalertComponent.textStr = "Are you sure you want to delete this favourites?"
     this.HTMLalertComponent.noStr = "Cancel"
     this.HTMLalertComponent.yesStr = "Delete"
     this.HTMLalertComponent.enableOptions(false, true, true);
@@ -533,7 +555,7 @@ export class ExplorerComponent implements OnInit, Fractals.FractalEventListner, 
         this.storage.set('favorites', this.favorites);
         this.closeAlert(null);
         this.toastCtrl.create({
-          message: 'Favorite deleted',
+          message: 'Favourite deleted',
           duration: 1000,
           position: 'middle',
           cssClass: "toast"
@@ -590,8 +612,7 @@ export class ExplorerComponent implements OnInit, Fractals.FractalEventListner, 
   clickShare(event) {
     this.clickWebView(false);
     var content = this.getShareURL();
-
-    if (this.platform.is("android") && this.platform.is("cordova")) {
+    if ((this.platform.is("cordova") && this.platform.is("android"))) {
       this.socialSharing.share("", "", null, content)
     } else {
       var textArea, copy, range, selection;
@@ -616,7 +637,7 @@ export class ExplorerComponent implements OnInit, Fractals.FractalEventListner, 
       document.body.removeChild(textArea);
 
       this.toastCtrl.create({
-        message: 'The URL has been copied to your clipboard',
+        message: 'Link copied to clipboard',
         duration: 1000,
         position: 'middle',
         cssClass: "toast"
@@ -947,7 +968,7 @@ export class ExplorerComponent implements OnInit, Fractals.FractalEventListner, 
 
   private saveAndroid(base64: string) {
     var self = this;
-    this.savePromise = this.savePromise = this.photoLibrary.saveImage(base64, 'Fractal Explorer').then(libraryItem => {
+    this.savePromise = this.savePromise = this.photoLibrary.saveImage(base64, 'Fractic').then(libraryItem => {
       self.HTMLalertComponent.titleStr = "All Done";
       self.HTMLalertComponent.textStr = "Image Saved.";
       self.HTMLalertComponent.noStr = "Close";
@@ -966,6 +987,7 @@ export class ExplorerComponent implements OnInit, Fractals.FractalEventListner, 
     this.HTMLalertComponent.titleStr = "Download Ready"
     this.HTMLalertComponent.textStr = ""
     this.HTMLalertComponent.downloadStr = "Download"
+   // var base64 = base64.replace(/^data:image\/[^;]+/, 'data:application/octet-stream');
     this.HTMLalertComponent.setYesHref(base64)
     this.HTMLalertComponent.noStr = "Cancel"
     this.HTMLalertComponent.enableOptions(true, false, true)
@@ -977,13 +999,13 @@ export class ExplorerComponent implements OnInit, Fractals.FractalEventListner, 
 
   private saveJpg(width: number, height: number) {
     var self = this;
-    if ((this.platform.is("cordova") && this.platform.is("android")) || (this.platform.is("cordova") && this.platform.is("ios"))) {
-      this.mainFractalView.downloadImage(width, height, {
-        changed(fractal: Fractals.Fractal) {
-          self.getPhotoLibraryAuthorization(fractal.complexPlain.getViewCanvas().toDataURL("image/png"));
-        }
-      });
-      this.updateSaveProgress();
+    if ((this.platform.is("cordova") && this.platform.is("android"))) {
+          this.mainFractalView.downloadImage(width, height, {
+            changed(fractal: Fractals.Fractal) {
+              self.getPhotoLibraryAuthorization(fractal.complexPlain.getViewCanvas().toDataURL("image/png"));
+            }
+          });
+          this.updateSaveProgress();
     }
     else if (this.platform.is("core") || this.platform.is("mobileweb")) {
       this.mainFractalView.downloadImage(width, height, {
@@ -1013,7 +1035,10 @@ export class ExplorerComponent implements OnInit, Fractals.FractalEventListner, 
   }
 
   private getShareURL() {
-    var host = "https://leesavage.co.uk/?";
+    var host = "https://fractic.leesavage.co.uk/?";
+    if (window.location.hostname=="localhost") {
+      var host = "http://localhost:4200/?";
+    }
 
 
     let equation = this.fractal.getCalculationFunction().getName();

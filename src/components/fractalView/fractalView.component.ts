@@ -140,6 +140,15 @@ export class FractalViewComponent implements Fractals.FractalChangeObserver {
   }
 
   public sizeChanged() {
+    this.resizeCanvas(); 
+    var self = this; 
+    setTimeout(function(){
+      // fix safari bug
+      self.resizeCanvas();
+    }, 500);
+  }
+
+  private resizeCanvas(){
     let canvas = <HTMLCanvasElement>this.HTMLcanvas.nativeElement;
     let ctx = <CanvasRenderingContext2D>canvas.getContext("2d");
     if (!canvas.offsetParent) {

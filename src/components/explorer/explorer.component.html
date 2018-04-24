@@ -36,7 +36,7 @@
 
     <div class="paddedPullDown">
       <div #colorPullDown class="colorPullDown close">
-        <div class="colorPullDown-btn" (click)="clickColorPullDown()" swipeAll (swipe)="swipeColorPullDown($event)">
+        <div class="colorPullDown-btn" (click)="clickColorPullDown()" (swipe)="swipeColorPullDown($event)">
           <ion-icon name="ios-color-palette"></ion-icon>
         </div>
 
@@ -72,7 +72,7 @@
         <ion-icon name="md-menu"></ion-icon>
       </div>
 
-      <div class="web-view-outer" (swipe)="swipeWebView($event)">
+      <div class="web-view-outer" (swiperight)="swipeWebView($event)">
         <div class="heading">
           Menu
         </div>
@@ -88,7 +88,7 @@
           </a>
           <a (click)="clickFavorite($event)" class="btn">
             <ion-icon name="ios-star"></ion-icon>
-            <span> Favorites</span>
+            <span> Favourites</span>
           </a>
           <span class="spacer"></span>
           <a #saveButton (click)="clickSave($event)" class="btn">
@@ -113,7 +113,7 @@
 
       </div>
 
-      <div class="web-view-inner" (swipe)="swipeWebView($event,false,true,false)">
+      <div class="web-view-inner" (swiperight)="swipeWebView($event,false,true,false)">
 
         <section #saveSection class="hide">
           <div class="header">
@@ -175,7 +175,7 @@
             </ion-item>
             <ion-item (click)="onEqChanged('BurningShip')">
               <ion-icon name="ios-cog"></ion-icon>
-              Burning Ship
+              Burning ship
             </ion-item>
             <ion-item (click)="onEqChanged('Julia')">
               <ion-icon name="ios-cog"></ion-icon>
@@ -191,7 +191,7 @@
           </div>
 
           <a class="btn" (click)="addToGradient()">
-            <ion-icon name="ios-star"></ion-icon>Save Colour</a>
+            <ion-icon name="ios-star"></ion-icon>Save colour</a>
 
           <ion-list *ngFor="let gra of gradients">
             <ion-item (click)="onGradientChanged(gra)">
@@ -215,16 +215,16 @@
         <section #FavoritesSection class="hide">
           <div class="header">
             <ion-icon (click)="clickWebView(true)" name="md-close-circle"></ion-icon>
-            <h1>Favorites</h1>
+            <h1>Favourites</h1>
           </div>
 
           <a class="btn" (click)="addToFavorites()">
-            <ion-icon name="ios-star"></ion-icon>Save to favorites</a>
+            <ion-icon name="ios-star"></ion-icon>Save to favourites</a>
 
           <div *ngFor="let fav of favorites">
             <div class="cards clickable" (click)="onLibrarySelection($event,fav)">
               <img class="fractalTumb" src="{{fav.base64}}" width="512px" height="288px">
-              <ion-icon  class="delete" (click)="deleteFavorite($event,fav)" name="md-close-circle"></ion-icon>
+              <ion-icon class="delete" (click)="deleteFavorite($event,fav)" name="md-close-circle"></ion-icon>
             </div>
           </div>
 
@@ -295,11 +295,14 @@
 
           <div class="cards">
             <h3>Rendering Mode</h3>
-            <p>Somtimes you might want to force the rendering to be either on the GPU or the CPU, The default mode is autodetect.
+            <p class="left">You might want to force the rendering to be either on the GPU or the CPU, The default mode is autodetect.
+              <br> Sometimes, for example when exploring extreme Julia numbers, precision can be lost early even when you are not zoomed excessively. In this case you can select to force CPU mode for extra precision.
               <br>
-              <br> When in autodetect mode the rendering will automaticly switch between CPU or GPU
+              <br> Auto: Rendering will automatically switch between CPU or GPU
               <br>
-              <br> Somtimes for example when exploring extrerm julia numbers presision can be lost early even when you are not zoomed excesivly, In this case you can select to force CPU mode for extra presission.
+              <br> Force GPU: Will probably be much faster.
+              <br>
+              <br> Force CPU: Will probably allow you to zoom to much greater levels of detail.
             </p>
 
             <ion-list radio-group [(ngModel)]="renderingMode" (ngModelChange)="render(renderingMode)">
@@ -319,10 +322,11 @@
           </div>
 
           <div class="cards">
-            <h3>GPU target fps</h3>
-            <p>This is only releavent during animations, The final render quality is not affected, This is an experemental feature.
-              <br> If the FPS falls below the minimum quality will be reduced, If the FPS exedes the maximum then quality will be incressed
-              </p>
+            <h3>GPU target FPS</h3>
+            <p class="left">
+                This is only relevant during animations.
+                <br> If the FPS falls below the minimum, image quality will be reduced, If the FPS exceeds the maximum then image quality will be increased.
+            </p>
 
             <ion-item>
               <ion-label>Minimum target FPS</ion-label>
@@ -343,36 +347,36 @@
           </div>
 
 
-          <a class="btn" (click)="myApp.openOnboarding()">Restart Onboarding</a>
+          <a class="btn" (click)="myApp.openOnboarding()">Restart onboarding</a>
 
           <div class="cards">
             <h3>Exploring</h3>
-            <p>Use drag and pinch gestures or double tap to zoom. Mouse, trackpad and mouse wheels are also supported.</p>               
-            <iframe class="video" height="150px" width="300px"  src="https://www.youtube.com/embed/g1EzVctnG-Y?modestbranding=1&showinfo=0&rel=0" frameborder="0" allowfullscreen sandbox="allow-forms allow-scripts allow-pointer-lock allow-same-origin allow-top-navigation"></iframe>
+            <p class="left">Use drag and pinch gestures or double tap to zoom. Mouse, trackpad and mouse wheels are also supported.</p>
+            <iframe class="video" height="150px" width="300px" src="https://www.youtube.com/embed/g1EzVctnG-Y?modestbranding=1&showinfo=0&rel=0" frameborder="0" allowfullscreen></iframe>
           </div>
 
           <div class="cards">
-            <h3>Changing Iterations</h3>
-            <p>Iterations control the detail of the fractal.</p>
-            <iframe class="video" height="150px" width="300px"  src="https://www.youtube.com/embed/IQ-fYrpP0so?modestbranding=0&showinfo=0&rel=0" frameborder="0" allowfullscreen sandbox="allow-forms allow-scripts allow-pointer-lock allow-same-origin allow-top-navigation"></iframe>
+            <h3>Changing iterations</h3>
+            <p class="left">Iterations control the detail of the fractal.</p>
+            <iframe class="video" height="150px" width="300px" src="https://www.youtube.com/embed/IQ-fYrpP0so?modestbranding=0&showinfo=0&rel=0" frameborder="0" allowfullscreen></iframe>
           </div>
 
           <div class="cards">
             <h3>Create a gradient</h3>
-            <p>Creating a gradient.</p>
-            <iframe class="video" height="150px" width="300px"  src="https://www.youtube.com/embed/UolwThXN-TA?modestbranding=0&showinfo=0&rel=0" frameborder="0" allowfullscreen sandbox="allow-forms allow-scripts allow-pointer-lock allow-same-origin allow-top-navigation"></iframe>
+            <p class="left">How to create a gradient &amp; save it for later.</p>
+            <iframe class="video" height="150px" width="300px" src="https://www.youtube.com/embed/UolwThXN-TA?modestbranding=0&showinfo=0&rel=0" frameborder="0" allowfullscreen></iframe>
           </div>
 
           <div class="cards">
             <h3>Using the histogram</h3>
-            <p>Distort the gradient onto the fractal to control what colour is placed where.</p>
-            <iframe class="video" height="150px" width="300px"  src="https://www.youtube.com/embed/3DEhgT9bcDc?modestbranding=0&showinfo=0&rel=0" frameborder="0" allowfullscreen sandbox="allow-forms allow-scripts allow-pointer-lock allow-same-origin allow-top-navigation"></iframe>
+            <p class="left">Use the histogram controls to distort the gradient onto the fractal.</p>
+            <iframe class="video" height="150px" width="300px" src="https://www.youtube.com/embed/3DEhgT9bcDc?modestbranding=0&showinfo=0&rel=0" frameborder="0" allowfullscreen></iframe>
           </div>
 
           <div class="cards">
-            <h3>The Julia Explorer</h3>
-            <p>Use the Julia picker to generate unique fractals from the Mandelbrot set.</p>
-            <iframe class="video" height="150px" width="300px"  src="https://www.youtube.com/embed/l241SNPdCxs?modestbranding=0&showinfo=0&rel=0" frameborder="0" allowfullscreen sandbox="allow-forms allow-scripts allow-pointer-lock allow-same-origin allow-top-navigation"></iframe>
+            <h3>The julia explorer</h3>
+            <p class="left">Use the Julia picker to generate unique fractals from the Mandelbrot set.</p>
+            <iframe class="video" height="150px" width="300px" src="https://www.youtube.com/embed/l241SNPdCxs?modestbranding=0&showinfo=0&rel=0" frameborder="0" allowfullscreen></iframe>
           </div>
 
         </section>

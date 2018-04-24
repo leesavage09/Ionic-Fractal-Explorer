@@ -18,6 +18,9 @@ export class MyApp {
 
   constructor(private platform: Platform, splashScreen: SplashScreen, private storage: Storage, private screenOrientation: ScreenOrientation) {
     platform.ready().then(() => {
+      if (platform.is("cordova")) {
+        splashScreen.hide();
+      }
 
       this.explorer.myApp = this;
       if (platform.is("android") && platform.is("cordova")) {
@@ -38,10 +41,8 @@ export class MyApp {
         if (val != null) doOnboarding = val;
         if (doOnboarding) {
           this.openOnboarding();
-        }
-        if (platform.is("cordova")) {
-          splashScreen.hide();
-        }
+        }        
+        document.getElementById("splash").style.display = "none";
       });
     });
 

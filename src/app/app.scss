@@ -306,6 +306,10 @@ $font-size-small: 18px !default;
     position: relative;
     display: block;
 
+    p.left {
+        text-align: left;
+    }
+
     .video {
         width: calc(80vw - #{$padding * 2});
         height: calc(40vw - #{$padding});
@@ -341,7 +345,7 @@ $font-size-small: 18px !default;
     visibility: hidden;
     pointer-events: all;
     box-shadow: $shadow_2;
-    width:50vw;
+    width:300px;
     font-size:$font-size-small;
 
     h4{

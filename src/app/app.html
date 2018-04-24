@@ -8,7 +8,8 @@
                     <img src="assets/imgs/onbording/border.png">
                 </div>
                 <div class="body-text">
-                    <p>Discover the infinite complexety of fractals.</p>
+                    <p>Discover the infinite complexity of fractals.</p>
+                    <a *ngIf="platform.is('mobile') == false" (click)="onboardingSlides.slideTo(1, 500)" class="btn">Next</a>     
                 </div>
             </div>
         </ion-slide>
@@ -20,7 +21,8 @@
                     <img src="assets/imgs/onbording/border.png">
                 </div>
                 <div class="body-text">
-                    <p>Create unique images using a simple &amp; powerfull colouing tool to.</p>
+                    <p>Create unique images using a simple &amp; powerful colouring tool.</p>
+                    <a *ngIf="platform.is('mobile') == false" (click)="onboardingSlides.slideTo(2, 500)" class="btn">Next</a> 
                 </div>
             </div>
         </ion-slide>
@@ -32,11 +34,26 @@
                     <img src="assets/imgs/onbording/border.png">
                 </div>
                 <div class="body-text">
-                    <p>Make desktop wallpapers &amp; share you discoveries. </p>
-                    <a (click)="closeOnboarding()" class="btn">Let me in.</a>     
+                    <p>Make desktop wallpapers &amp; share your discoveries.</p>
+                    <a *ngIf="platform.is('cordova')" (click)="closeOnboarding()" class="btn">Let me in.</a>  
+                    <a *ngIf="platform.is('mobile') == false" (click)="onboardingSlides.slideTo(3, 500)" class="btn">Next</a>    
                 </div>
             </div>
         </ion-slide>
+
+        <ion-slide *ngIf="platform.is('cordova') == false" >
+                <div class="cards">
+                    <div class="icon-logo red-gr">
+                        <h1>Android</h1>
+                        <ion-icon name="logo-android"></ion-icon>
+                        <img src="assets/imgs/onbording/border.png">
+                    </div>
+                    <div class="body-text">
+                        <p>The Android app is coming soon! </p>
+                        <a (click)="closeOnboarding()" class="btn">Let me in.</a>     
+                    </div>
+                </div>
+            </ion-slide>
     </ion-slides>
 </div>
 

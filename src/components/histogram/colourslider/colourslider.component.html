@@ -1,5 +1,6 @@
 <div id="container">
     <div id="canvas-container">
-        <canvas #slider (window:resize)="windowResized()" ></canvas>
+        <canvas #slider (window:resize)="windowResized()" 
+                        (window:orientationchange)="windowResized()" ></canvas>
     </div>
 </div>
