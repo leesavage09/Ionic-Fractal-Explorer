@@ -163,23 +163,31 @@ export class ExplorerComponent implements OnInit, Fractals.FractalEventListner, 
 
     if (!this.platform.is("cordova")) {
       var exp = this;
-      var ch =  {
-        changed(){
+      var ch = {
+        changed() {
           var stateObj = { foo: "bar" };
-          history.replaceState(stateObj, "page 2", exp.getShareURL());
+          var url = exp.getShareURL();
+          if (window.location.hostname == "localhost") {
+            url = url.replace("https://fractic.leesavage.co.uk/?","http://localhost:4200/?")
+          } 
+          history.replaceState(stateObj, "page 2", url);
         }
       }
       var col_ch = {
-        linearGradientChanging(){},
-        linearGradientChanged(){
+        linearGradientChanging() { },
+        linearGradientChanged() {
           var stateObj = { foo: "bar" };
-          history.replaceState(stateObj, "page 2", exp.getShareURL());
+          var url = exp.getShareURL();
+          if (window.location.hostname == "localhost") {
+            url = url.replace("https://fractic.leesavage.co.uk/?","http://localhost:4200/?")
+          } 
+          history.replaceState(stateObj, "page 2", url);
         }
       }
       this.fractal.subscribe(ch);
       this.fractal.getColor().subscribe(col_ch);
     }
-(col_ch);
+    (col_ch);
   }
 
   init(url: string) {
@@ -349,8 +357,8 @@ export class ExplorerComponent implements OnInit, Fractals.FractalEventListner, 
 
   stopChangingIterations(event) {
     event.preventDefault();
-    if(this.iterationsAreChanging) {
-      this.iterationsAreChanging = false;      
+    if (this.iterationsAreChanging) {
+      this.iterationsAreChanging = false;
       this.fractal.render();
     }
   }
@@ -611,38 +619,56 @@ export class ExplorerComponent implements OnInit, Fractals.FractalEventListner, 
   }
 
   clickShare(event) {
+    this.getShareURLshort();
+  }
+
+  launchShareShort(data) {
+    var host = "https://fractic.leesavage.co.uk/";
+    this.launchShare(host + "getShareUrl.php?id=" + data);
+  }
+
+  launchShare(url) {
     this.clickWebView(false);
-    var content = this.getShareURL();
     if ((this.platform.is("cordova") && this.platform.is("android"))) {
-      this.socialSharing.share("", "", null, content)
-    } else {
-      var textArea, copy, range, selection;
+      this.socialSharing.share("", "", null, url)
+    }
+    else {
+      this.HTMLalertComponent.titleStr = "Share Link"
+      this.HTMLalertComponent.textStr = "Click copy to copy share link to clipboard."
+      this.HTMLalertComponent.noStr = "Copy"
+      this.HTMLalertComponent.enableOptions(false, false, true)
+      this.HTMLalertComponent.setCallback(function () {
+        this.closeAlert(event)
+        var textArea, copy, range, selection;
 
-      textArea = document.createElement('textArea');
-      textArea.value = content;
-      textArea.style.fontSize = "xx-large";
-      document.body.appendChild(textArea);
+        textArea = document.createElement('textArea');
+        textArea.value = url;
+        textArea.style.fontSize = "xx-large";
+        document.body.appendChild(textArea);
 
-      if (navigator.userAgent.match(/ipad|iphone/i)) {
-        range = document.createRange();
-        range.selectNodeContents(textArea);
-        selection = window.getSelection();
-        selection.removeAllRanges();
-        selection.addRange(range);
-        textArea.setSelectionRange(0, 999999);
-      } else {
-        textArea.select();
-      }
+        if (navigator.userAgent.match(/ipad|iphone/i)) {
+          range = document.createRange();
+          range.selectNodeContents(textArea);
+          selection = window.getSelection();
+          selection.removeAllRanges();
+          selection.addRange(range);
+          textArea.setSelectionRange(0, 999999);
+        } else {
+          textArea.select();
+        }
 
-      document.execCommand('copy');
-      document.body.removeChild(textArea);
+        document.execCommand('copy');
+        document.body.removeChild(textArea);
 
-      this.toastCtrl.create({
-        message: 'Link copied to clipboard',
-        duration: 1000,
-        position: 'middle',
-        cssClass: "toast"
-      }).present();
+        this.toastCtrl.create({
+          message: 'Link copied to clipboard',
+          duration: 1000,
+          position: 'middle',
+          cssClass: "toast"
+        }).present();
+
+      }.bind(this))
+      this.HTMLalert.nativeElement.style.visibility = "visible";
     }
   }
 
@@ -989,7 +1015,7 @@ export class ExplorerComponent implements OnInit, Fractals.FractalEventListner, 
     this.HTMLalertComponent.titleStr = "Download Ready"
     this.HTMLalertComponent.textStr = ""
     this.HTMLalertComponent.downloadStr = "Download"
-   // var base64 = base64.replace(/^data:image\/[^;]+/, 'data:application/octet-stream');
+    // var base64 = base64.replace(/^data:image\/[^;]+/, 'data:application/octet-stream');
     this.HTMLalertComponent.setYesHref(base64)
     this.HTMLalertComponent.noStr = "Cancel"
     this.HTMLalertComponent.enableOptions(true, false, true)
@@ -1002,12 +1028,12 @@ export class ExplorerComponent implements OnInit, Fractals.FractalEventListner, 
   private saveJpg(width: number, height: number) {
     var self = this;
     if ((this.platform.is("cordova") && this.platform.is("android"))) {
-          this.mainFractalView.downloadImage(width, height, {
-            changed(fractal: Fractals.Fractal) {
-              self.getPhotoLibraryAuthorization(fractal.complexPlain.getViewCanvas().toDataURL("image/png"));
-            }
-          });
-          this.updateSaveProgress();
+      this.mainFractalView.downloadImage(width, height, {
+        changed(fractal: Fractals.Fractal) {
+          self.getPhotoLibraryAuthorization(fractal.complexPlain.getViewCanvas().toDataURL("image/png"));
+        }
+      });
+      this.updateSaveProgress();
     }
     else if (this.platform.is("core") || this.platform.is("mobileweb")) {
       this.mainFractalView.downloadImage(width, height, {
@@ -1036,12 +1062,40 @@ export class ExplorerComponent implements OnInit, Fractals.FractalEventListner, 
     section.nativeElement.parentElement.scrollTop = 0;
   }
 
+  private getShareURLshort() {
+    let server = 'https://fractic.leesavage.co.uk/createShare.php';
+    let urlData = this.getShareURL();
+    let base64Data = this.mainFractalView.getBase64Image(512, 512);
+    base64Data = base64Data.replace("data:image/jpeg;base64,","");
+    var exp = this;
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function () {
+      if (this.readyState == 4 && this.status == 200) {
+        exp.launchShareShort(this.responseText);
+      }
+      else if (this.readyState == 4 && this.status != 200) {
+        exp.launchShare(urlData);
+      }
+    };
+    xhttp.open("POST", server, true);
+    xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    xhttp.send("urlData=" + encodeURIComponent(urlData.replace("https://fractic.leesavage.co.uk/","")) + "&base64Data=" + encodeURIComponent(base64Data));
+  }
+
+  public alertNoNetwork(str:string){
+    this.HTMLalertComponent.titleStr = "Alert"
+    this.HTMLalertComponent.textStr = str;
+    this.HTMLalertComponent.noStr = "Continue"
+    this.HTMLalertComponent.enableOptions(false, false, true)
+    this.HTMLalertComponent.setCallback(function () {
+      this.closeAlert(event)
+      this.maxZoomReachedBefore = true;
+    }.bind(this))
+    this.HTMLalert.nativeElement.style.visibility = "visible";
+  }
+
   private getShareURL() {
     var host = "https://fractic.leesavage.co.uk/?";
-    if (window.location.hostname=="localhost") {
-      var host = "http://localhost:4200/?";
-    }
-
 
     let equation = this.fractal.getCalculationFunction().getName();
     let color = this.fractal.getColor().encodeJSON()
