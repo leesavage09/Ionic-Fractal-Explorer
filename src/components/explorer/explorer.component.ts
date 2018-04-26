@@ -101,6 +101,7 @@ export class ExplorerComponent implements OnInit, Fractals.FractalEventListner, 
   private activeSection: ElementRef = this.saveSection;
   private favorites: Array<{ url: string, base64: string }> = new Array();
   private gradients: Array<string> = new Array();
+  private maxZoomReachedBefore = false;
 
   public complexJuliaPicker: string = "-0.7,0.0";
   public juliaPickerWidth: string = "3";
@@ -134,7 +135,7 @@ export class ExplorerComponent implements OnInit, Fractals.FractalEventListner, 
     ctx.canvas.height = canvas.offsetHeight;
 
     let gradient = new FractalColor.LinearGradient();
-    gradient.decodeJSON(this.libGra[0])
+    gradient.decodeJSON(this.libGra[3])
 
     this.fractal = new Fractals.Fractal(new Fractals.ComplexPlain(-0.8, 0, 3, canvas), new FractalEquations.Mandelbrot, gradient);
     this.fractal.iterations = this.NumIterations;
@@ -840,13 +841,14 @@ export class ExplorerComponent implements OnInit, Fractals.FractalEventListner, 
   linearGradientChanged() { }
 
   maxZoomReached() {
+    if (this.maxZoomReachedBefore) return;
     this.HTMLalertComponent.titleStr = "Alert"
-    this.HTMLalertComponent.textStr = "You have reached the max zoom, What you can see are floting point errors as the diffrences between the numbers are so small!"
+    this.HTMLalertComponent.textStr = "Whilst fractals can theoretically be enlarged forever you have reached the max zoom, what you can see are floating point errors. Further zooming would require greater mathematical precision."
     this.HTMLalertComponent.noStr = "Continue"
     this.HTMLalertComponent.enableOptions(false, false, true)
     this.HTMLalertComponent.setCallback(function () {
       this.closeAlert(event)
-      this.fractal.deleteMaxZoomListener();
+      this.maxZoomReachedBefore = true;
     }.bind(this))
     this.HTMLalert.nativeElement.style.visibility = "visible";
   }

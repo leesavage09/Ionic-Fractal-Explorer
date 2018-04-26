@@ -466,7 +466,7 @@ export namespace Fractals {
 
 		public render(): void {
 			/*Alert zoom listner */
-			if (this.complexPlain.getSquare().width < 5.2291950245225395e-15) {
+			if (this.complexPlain.getSquare().width < 1.5665578211687522e-14) {
 				if (this.fractalEventListner != null) this.fractalEventListner.maxZoomReached();
 			}
 

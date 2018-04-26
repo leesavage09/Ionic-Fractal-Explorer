@@ -107,7 +107,7 @@ export class GradientBuilderComponent implements OnInit, FractalColor.LinearGrad
   */
 
 
-  dropMarker() {
+  dropMarker(changed:boolean = true) {
     if (this.selectedMarker == null) return;
     if (this.selectedMarkerIsPoped) {
       this.selectedMarker.thisRef.destroy();
@@ -115,7 +115,7 @@ export class GradientBuilderComponent implements OnInit, FractalColor.LinearGrad
     this.selectedMarker = undefined;
     this.selectedMarkerIsPoped = false;
 
-    this.gradient.notifyChanged(this);
+    if (changed) this.gradient.notifyChanged(this);
   }
 
   addStopMarker(stop: number, cssLeft: number, color: FractalColor.RGBcolor, draw: boolean = true) {

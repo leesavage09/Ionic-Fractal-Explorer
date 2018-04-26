@@ -55,12 +55,13 @@ export class StopMarkerComponent {
   }
 
   mouseup(event): void {
-    this.styleActive(false);
-    this.parent.dropMarker();
+    this.styleActive(false);    
     if (this.moveStarted) {
       this.moveStarted = false;
+      this.parent.dropMarker();
     }
     else {
+      this.parent.dropMarker(false);
       this.colorPicker.nativeElement.jscolor.show();
     }
   }

@@ -1,4 +1,4 @@
 RewriteEngine On 
 RewriteCond %{SERVER_PORT} 80 [OR]
 RewriteCond %{HTTP_HOST} ^www.fractic.leesavage.co.uk [NC]
-RewriteRule ^(.*)$ https://fractic.leesavage.co.uk/$1 [R,L]
+RewriteRule ^(.*)$ https://fractic.leesavage.co.uk/$1 [R=301,L]
