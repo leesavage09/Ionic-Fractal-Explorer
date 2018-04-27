@@ -168,8 +168,8 @@ export class ExplorerComponent implements OnInit, Fractals.FractalEventListner, 
           var stateObj = { foo: "bar" };
           var url = exp.getShareURL();
           if (window.location.hostname == "localhost") {
-            url = url.replace("https://fractic.leesavage.co.uk/?","http://localhost:4200/?")
-          } 
+            url = url.replace("https://fractic.leesavage.co.uk/?", "http://localhost:4200/?")
+          }
           history.replaceState(stateObj, "page 2", url);
         }
       }
@@ -179,8 +179,8 @@ export class ExplorerComponent implements OnInit, Fractals.FractalEventListner, 
           var stateObj = { foo: "bar" };
           var url = exp.getShareURL();
           if (window.location.hostname == "localhost") {
-            url = url.replace("https://fractic.leesavage.co.uk/?","http://localhost:4200/?")
-          } 
+            url = url.replace("https://fractic.leesavage.co.uk/?", "http://localhost:4200/?")
+          }
           history.replaceState(stateObj, "page 2", url);
         }
       }
@@ -593,30 +593,30 @@ export class ExplorerComponent implements OnInit, Fractals.FractalEventListner, 
     this.setWebViewSection(this.helpSection);
   }
 
-  testIntent() {
-    //this.saveAndroid(this.imageToDownload);
-    // id
-    // "9990;/storage/emulated/0/Pictures/Fractal Explorer/2018-2-27-18.png"
+  // testIntent() {
+  //   //this.saveAndroid(this.imageToDownload);
+  //   // id
+  //   // "9990;/storage/emulated/0/Pictures/Fractal Explorer/2018-2-27-18.png"
 
-    // photoURL
-    // "cdvphotolibrary://photo?photoId=9990%3B%2Fstorage%2Femulated%2F0%2FPictures%2FFractal%20Explorer%2F2018-2-27-18.png"
+  //   // photoURL
+  //   // "cdvphotolibrary://photo?photoId=9990%3B%2Fstorage%2Femulated%2F0%2FPictures%2FFractal%20Explorer%2F2018-2-27-18.png"
 
-    // thumbnailURL
-    // "cdvphotolibrary://thumbnail?photoId=9990%3B%2Fstorage%2Femulated%2F0%2FPictures%2FFractal%20Explorer%2F2018-2-27-18.png&width=512&height=384&quality=0.5"
+  //   // thumbnailURL
+  //   // "cdvphotolibrary://thumbnail?photoId=9990%3B%2Fstorage%2Femulated%2F0%2FPictures%2FFractal%20Explorer%2F2018-2-27-18.png&width=512&height=384&quality=0.5"
 
 
-    (<any>window).plugins.intentShim.startActivity({
-      action: (<any>window).plugins.intentShim.ACTION_VIEW,
-      url: "/storage/emulated/0/Pictures/Fractal Explorer/2018-2-27-18.png",
-      type: "image/jpeg"
-    },
-      function () { alert('yay') },
-      function (err) {
-        console.log("err", err);
-        alert('Failed to open Android Intent ' + err);
-      }
-    );
-  }
+  //   (<any>window).plugins.intentShim.startActivity({
+  //     action: (<any>window).plugins.intentShim.ACTION_VIEW,
+  //     url: "/storage/emulated/0/Pictures/Fractal Explorer/2018-2-27-18.png",
+  //     type: "image/jpeg"
+  //   },
+  //     function () { alert('yay') },
+  //     function (err) {
+  //       console.log("err", err);
+  //       alert('Failed to open Android Intent ' + err);
+  //     }
+  //   );
+  // }
 
   clickShare(event) {
     this.getShareURLshort();
@@ -986,7 +986,6 @@ export class ExplorerComponent implements OnInit, Fractals.FractalEventListner, 
     var self = this;
     this.photoLibrary.requestAuthorization({ read: true, write: true }).then(
       function () {
-        //console.log("requestAuthorization granted");
         self.saveAndroid(base64);
       },
       function (reason: any) {
@@ -1065,8 +1064,8 @@ export class ExplorerComponent implements OnInit, Fractals.FractalEventListner, 
   private getShareURLshort() {
     let server = 'https://fractic.leesavage.co.uk/createShare.php';
     let urlData = this.getShareURL();
-    let base64Data = this.mainFractalView.getBase64Image(512, 512);
-    base64Data = base64Data.replace("data:image/jpeg;base64,","");
+    let base64Data = this.mainFractalView.getBase64Image(300, 200);
+    base64Data = base64Data.replace("data:image/jpeg;base64,", "");
     var exp = this;
     var xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function () {
@@ -1079,19 +1078,7 @@ export class ExplorerComponent implements OnInit, Fractals.FractalEventListner, 
     };
     xhttp.open("POST", server, true);
     xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-    xhttp.send("urlData=" + encodeURIComponent(urlData.replace("https://fractic.leesavage.co.uk/","")) + "&base64Data=" + encodeURIComponent(base64Data));
-  }
-
-  public alertNoNetwork(str:string){
-    this.HTMLalertComponent.titleStr = "Alert"
-    this.HTMLalertComponent.textStr = str;
-    this.HTMLalertComponent.noStr = "Continue"
-    this.HTMLalertComponent.enableOptions(false, false, true)
-    this.HTMLalertComponent.setCallback(function () {
-      this.closeAlert(event)
-      this.maxZoomReachedBefore = true;
-    }.bind(this))
-    this.HTMLalert.nativeElement.style.visibility = "visible";
+    xhttp.send("urlData=" + encodeURIComponent(urlData.replace("https://fractic.leesavage.co.uk/", "")) + "&base64Data=" + encodeURIComponent(base64Data));
   }
 
   private getShareURL() {
