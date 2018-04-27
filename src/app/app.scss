@@ -266,6 +266,11 @@ $font-size-small: 18px !default;
                 margin: 0px;
                 width: 85vw;
                 font-size: $font-size;
+
+                position: absolute;
+                bottom: 0px;
+                margin-bottom: $padding;
+                min-height: 20vh;
             }
 
             .androidButtonHolder{
@@ -279,6 +284,7 @@ $font-size-small: 18px !default;
 
             .btn {
                 display: block;
+                margin:auto;
                 margin-top: $padding;
                 color: $color-green;
                 border-color: $color-green;
