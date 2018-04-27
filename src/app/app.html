@@ -44,13 +44,13 @@
         <ion-slide *ngIf="platform.is('cordova') == false" >
                 <div class="cards">
                     <div class="icon-logo red-gr">
-                        <h1>Android</h1>
+                        <h1>Available on the Play Store</h1>
                         <ion-icon name="logo-android"></ion-icon>
                         <img src="assets/imgs/onbording/border.png">
                     </div>
                     <div class="body-text">
-                        <p>The Android app is coming soon! </p>
-                        <a (click)="closeOnboarding()" class="btn">Let me in.</a>     
+                        <a class="androidButtonHolder" href='https://play.google.com/store/apps/details?id=uk.co.leesavage.fractic&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img class="androidImage" alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png'/></a>
+                        <a (click)="closeOnboarding()" class="btn">Open Web View</a>     
                     </div>
                 </div>
             </ion-slide>
