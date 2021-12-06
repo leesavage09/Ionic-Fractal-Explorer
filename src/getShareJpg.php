@@ -1,17 +1,17 @@
 <?php
 //ini_set('display_errors', 1);
 
-$servername = '$_ENV["dbserver"]';
-$dbname = '$_ENV["dbname"]';
-$username = '$_ENV["dbuser"]';
-$password = '$_ENV["dbpass"]';
+$servername = $_ENV['dbserver'];
+$dbname = $_ENV['dbname'];
+$username = $_ENV['dbuser'];
+$password = $_ENV['dbpass'];
 $id = $_GET["id"];
 
 // Create connection
 $conn = mysqli_connect($servername, $username, $password, $dbname);
 // Check connection
 if (!$conn) {
-    die("Connection failed: " . mysqli_connect_error());
+    die("Connection failed to " . $_ENV['dbserver'] . ": " . mysqli_connect_error());
 }
 
 $sql = "SELECT `base64` FROM `share` WHERE `id`=".$id;
