@@ -1,10 +1,10 @@
 <?php
 //ini_set('display_errors', 1);
 
-$servername = "servername";
-$dbname = "dbname";
-$username = "username";
-$password = "password";
+$servername = '$_ENV["dbserver"]';
+$dbname = '$_ENV["dbname"]';
+$username = '$_ENV["dbuser"]';
+$password = '$_ENV["dbpass"]';
 $from = $_GET["from"];
 $limit = $_GET["limit"];
 
