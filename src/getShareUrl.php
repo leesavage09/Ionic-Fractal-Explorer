@@ -1,10 +1,10 @@
 <?php
 //ini_set('display_errors', 1);
 
-$servername = '$_ENV["dbserver"]';
-$dbname = '$_ENV["dbname"]';
-$username = '$_ENV["dbuser"]';
-$password = '$_ENV["dbpass"]';
+$servername = $_ENV['dbserver'];
+$dbname = $_ENV['dbname'];
+$username = $_ENV['dbuser'];
+$password = $_ENV['dbpass'];
 $id = $_GET["id"];
 
 // Create connection

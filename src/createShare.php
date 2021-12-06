@@ -1,11 +1,10 @@
 <?php
 header("Access-Control-Allow-Origin: *");
 
-$servername = '$_ENV["dbserver"]';
-$dbname = '$_ENV["dbname"]';
-$username = '$_ENV["dbuser"]';
-$password = '$_ENV["dbpass"]';
-
+$servername = $_ENV['dbserver'];
+$dbname = $_ENV['dbname'];
+$username = $_ENV['dbuser'];
+$password = $_ENV['dbpass'];
 
 $base64 = $_POST["base64Data"];
 $url = $_POST["urlData"];
