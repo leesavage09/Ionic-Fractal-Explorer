@@ -42,8 +42,8 @@ $conn->close();
   <meta property="og:description" content="Explore beautiful fractal images">
   <meta name="description" content="Explore beautiful fractal images" />
   <meta property="og:title" content="Fractic">
-  <meta property="og:image" content="https://fractic.leesavage.co.uk/getShareJpg.php?id=<?php echo $id; ?>">
-  <meta property="og:url" content="https://fractic.leesavage.co.uk">
+  <meta property="og:image" content="http://fractic.leesavage.co.uk/getShareJpg.php?id=<?php echo $id; ?>">
+  <meta property="og:url" content="http://fractic.leesavage.co.uk">
 
 <link rel="apple-touch-icon" sizes="180x180" href="assets/icon/apple-touch-icon.png?v=rMlmQWy2dM">
   <link rel="icon" type="image/png" sizes="32x32" href="assets/icon/favicon-32x32.png?v=rMlmQWy2dM">
@@ -53,7 +53,7 @@ $conn->close();
   <link rel="shortcut icon" href="assets/icon/favicon.ico?v=rMlmQWy2dM">
 
 <script>
-    window.location.replace("https://fractic.leesavage.co.uk/<?php echo $url; ?>");
+    window.location.replace("http://fractic.leesavage.co.uk/<?php echo $url; ?>");
 </script>
  
 </head>

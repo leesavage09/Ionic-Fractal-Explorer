@@ -2,7 +2,7 @@
 <widget id="uk.co.leesavage.fractic" version="1.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:android="http://schemas.android.com/apk/res/android" xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <name>Fractic</name>
     <description>Explore beautiful fractal images.</description>
-    <author email="lee@fractic.leesavage.co.uk" href="https://fractic.leesavage.co.uk/">Lee Savage</author>
+    <author email="lee@fractic.leesavage.co.uk" href="http://fractic.leesavage.co.uk/">Lee Savage</author>
     <content src="index.html" />
     <access origin="*" />
     <allow-intent href="http://*/*" />

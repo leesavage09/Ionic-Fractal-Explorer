@@ -94,7 +94,7 @@ export class MyApp {
         let id = st.split('=')[1];
         var self = this;
         var xhttp = new XMLHttpRequest();
-        let server = 'https://fractic.leesavage.co.uk/getShareUrlString.php?id=' + id;
+        let server = 'http://fractic.leesavage.co.uk/getShareUrlString.php?id=' + id;
         xhttp.onreadystatechange = function () {
           if (this.readyState == 4 && this.status == 200) {
             if (this.responseText.includes("error")) {

@@ -21,7 +21,7 @@ $result = $conn->query($sql);
 
 if ($result->num_rows > 0) { 
     while($row = $result->fetch_assoc()) {
-        echo "<a href='https://fractic.leesavage.co.uk/".$row['url']."' ><img width='300px' height='200' src='data:image/jpeg;base64,".$row['base64']."' /></a>";
+        echo "<a href='http://fractic.leesavage.co.uk/".$row['url']."' ><img width='300px' height='200' src='data:image/jpeg;base64,".$row['base64']."' /></a>";
     }
 } else {
     echo "0 results =";

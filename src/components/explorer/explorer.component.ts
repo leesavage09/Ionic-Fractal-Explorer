@@ -168,7 +168,7 @@ export class ExplorerComponent implements OnInit, Fractals.FractalEventListner, 
           var stateObj = { foo: "bar" };
           var url = exp.getShareURL();
           if (window.location.hostname == "localhost") {
-            url = url.replace("https://fractic.leesavage.co.uk/?", "http://localhost:4200/?")
+            url = url.replace("http://fractic.leesavage.co.uk/?", "http://localhost:4200/?")
           }
           history.replaceState(stateObj, "page 2", url);
         }
@@ -179,7 +179,7 @@ export class ExplorerComponent implements OnInit, Fractals.FractalEventListner, 
           var stateObj = { foo: "bar" };
           var url = exp.getShareURL();
           if (window.location.hostname == "localhost") {
-            url = url.replace("https://fractic.leesavage.co.uk/?", "http://localhost:4200/?")
+            url = url.replace("http://fractic.leesavage.co.uk/?", "http://localhost:4200/?")
           }
           history.replaceState(stateObj, "page 2", url);
         }
@@ -623,7 +623,7 @@ export class ExplorerComponent implements OnInit, Fractals.FractalEventListner, 
   }
 
   launchShareShort(data) {
-    var host = "https://fractic.leesavage.co.uk/";
+    var host = "http://fractic.leesavage.co.uk/";
     this.launchShare(host + "getShareUrl.php?id=" + data);
   }
 
@@ -1062,7 +1062,7 @@ export class ExplorerComponent implements OnInit, Fractals.FractalEventListner, 
   }
 
   private getShareURLshort() {
-    let server = 'https://fractic.leesavage.co.uk/createShare.php';
+    let server = 'http://fractic.leesavage.co.uk/createShare.php';
     let urlData = this.getShareURL();
     let base64Data = this.mainFractalView.getBase64Image(300, 200);
     base64Data = base64Data.replace("data:image/jpeg;base64,", "");
@@ -1078,11 +1078,11 @@ export class ExplorerComponent implements OnInit, Fractals.FractalEventListner, 
     };
     xhttp.open("POST", server, true);
     xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-    xhttp.send("urlData=" + encodeURIComponent(urlData.replace("https://fractic.leesavage.co.uk/", "")) + "&base64Data=" + encodeURIComponent(base64Data));
+    xhttp.send("urlData=" + encodeURIComponent(urlData.replace("http://fractic.leesavage.co.uk/", "")) + "&base64Data=" + encodeURIComponent(base64Data));
   }
 
   private getShareURL() {
-    var host = "https://fractic.leesavage.co.uk/?";
+    var host = "http://fractic.leesavage.co.uk/?";
 
     let equation = this.fractal.getCalculationFunction().getName();
     let color = this.fractal.getColor().encodeJSON()
